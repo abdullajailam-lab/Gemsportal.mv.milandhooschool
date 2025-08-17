@@ -83,6 +83,22 @@ textarea{min-height:80px;resize:vertical}
 </head>
 <body>
 <!-- LOGIN / REGISTER -->
+ <body>
+  <h1>Welcome to GEMS Milandhoo Portal</h1>
+
+  <!-- Add this section where you want registration form -->
+  <h2>Register User</h2>
+  <input type="text" id="name" placeholder="Name">
+  <input type="email" id="email" placeholder="Email">
+  <button onclick="registerUser()">Register</button>
+
+  <h2>Users List</h2>
+  <button onclick="getUsers()">Load Users</button>
+  <div id="users"></div>
+
+  <!-- Other portal content continues below -->
+</body>
+
 <div id="authScreen" style="position:fixed;inset:0;background:linear-gradient(180deg,#071a2b,#0a8b8b);display:flex;align-items:center;justify-content:center;z-index:999">
   <div style="width:480px;background:rgba(255,255,255,0.06);padding:28px;border-radius:14px;color:#fff;box-shadow:0 16px 40px rgba(0,0,0,.5)">
     <h2 style="margin:0 0 8px 0;text-align:center">Welcome to GEMS Milandhoo School Portal</h2>
@@ -922,5 +938,50 @@ document.addEventListener('DOMContentLoaded', ()=>{
   window.removeActionItem = removeActionItem;
 });
 </script>
+</body>
+<body>
+  <h1>Welcome to GEMS Milandhoo Portal</h1>
+
+  <!-- Your existing portal content -->
+
+  <!-- Optional: Add input fields for testing database -->
+  <input type="text" id="name" placeholder="Name">
+  <input type="email" id="email" placeholder="Email">
+  <button onclick="registerUser()">Register</button>
+
+  <div id="users"></div>
+  <button onclick="getUsers()">Load Users</button>
+
+  <!-- ---------- Paste Supabase Code Below This Line ---------- -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://supabase-emerald-car.supabase.co";
+    const SUPABASE_ANON_KEY = "YOUR_ANON_KEY_HERE"; // Replace with your anon key
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function registerUser() {
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      if (!name || !email) { alert("Enter name and email"); return; }
+
+      const { data, error } = await supabase
+        .from("users") // replace with your table name
+        .insert([{ name, email }]);
+
+      if (error) alert(error.message);
+      else { alert("User registered!"); getUsers(); }
+    }
+
+    async function getUsers() {
+      const { data, error } = await supabase.from("users").select("*");
+      if (error) { alert(error.message); return; }
+
+      const usersDiv = document.getElementById("users");
+      usersDiv.innerHTML = "";
+      data.forEach(user => {
+        usersDiv.innerHTML += `<p>${user.name} - ${user.email}</p>`;
+      });
+    }
+  </script>
 </body>
 </html>

@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>GEMS Milandhoo School Portal — Pro</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>GEMS Milandhoo School Portal — Pro</title>
 
-<!-- CDNs -->
-<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
+    <!-- CDNs -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style>
+    <style>
 :root{
   --sidebar-a:#06283d; --sidebar-b:#0aa3a3; --accent:#ffd166;
   --card:#ffffff; --muted:#6b7c93; --success:#2ea44f; --danger:#ef5350;
@@ -80,287 +84,373 @@ textarea{min-height:80px;resize:vertical}
 /* pill badges */
 .badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #cfe0ea;font-size:12px;color:#375a74;background:#f6fbfe}
 </style>
-</head>
-<body>
-<!-- LOGIN / REGISTER -->
- <body>
-  <h1>Welcome to GEMS Milandhoo Portal</h1>
+  </head>
+  <body>
+    <!-- LOGIN / REGISTER -->
+    <body>
 
-  <!-- Add this section where you want registration form -->
-  <h2>Register User</h2>
-  <input type="text" id="name" placeholder="Name">
-  <input type="email" id="email" placeholder="Email">
-  <button onclick="registerUser()">Register</button>
+      <script>
+    const SUPABASE_URL = "https://sasodvdokwybanovtuwl.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhc29kdmRva3d5YmFub3Z0dXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNzMzNTAsImV4cCI6MjA3MDc0OTM1MH0.sUJx73vkjPlKo9m8De6dUNGMcdWjb1vh8hnsMBVMgRQ"; // 
+   
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  <h2>Users List</h2>
-  <button onclick="getUsers()">Load Users</button>
-  <div id="users"></div>
+    async function registerUser() {
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      if (!name || !email) { alert("Enter name and email"); return; }
 
-  <!-- Other portal content continues below -->
-</body>
+      supabaseClient.auth.signUp({
+        email: email,
+        password: name
+      })
+    }
 
-<div id="authScreen" style="position:fixed;inset:0;background:linear-gradient(180deg,#071a2b,#0a8b8b);display:flex;align-items:center;justify-content:center;z-index:999">
-  <div style="width:480px;background:rgba(255,255,255,0.06);padding:28px;border-radius:14px;color:#fff;box-shadow:0 16px 40px rgba(0,0,0,.5)">
-    <h2 style="margin:0 0 8px 0;text-align:center">Welcome to GEMS Milandhoo School Portal</h2>
-    <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap">
-      <div style="flex:1;min-width:220px">
-        <h3 style="margin:0 0 8px 0">Login</h3>
-        <input id="loginUser" placeholder="Username" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
-        <input id="loginPass" placeholder="Password" type="password" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
-        <button id="btnLogin" style="width:100%;padding:10px;border-radius:8px;border:none;background:#ffd166;font-weight:800;color:#000">Login</button>
-      </div>
-      <div style="flex:1;min-width:220px">
-        <h3 style="margin:0 0 8px 0">Register</h3>
-        <input id="regUser" placeholder="Choose username" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
-        <input id="regPass" placeholder="Choose password" type="password" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
-        <button id="btnRegister" style="width:100%;padding:10px;border-radius:8px;border:none;background:#4ce0c9;font-weight:800;color:#003">Register & Sign in</button>
+
+  </script>
+
+      <!-- Other portal content continues below -->
+    </body>
+
+    <div id="authScreen"
+      style="position:fixed;inset:0;background:linear-gradient(180deg,#071a2b,#0a8b8b);display:flex;align-items:center;justify-content:center;z-index:999">
+      <div
+        style="width:480px;background:rgba(255,255,255,0.06);padding:28px;border-radius:14px;color:#fff;box-shadow:0 16px 40px rgba(0,0,0,.5)">
+        <h2 style="margin:0 0 8px 0;text-align:center">Welcome to GEMS Milandhoo
+          School Portal</h2>
+        <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap">
+          <div style="flex:1;min-width:220px">
+            <h3 style="margin:0 0 8px 0">Login</h3>
+            <input id="loginUser" placeholder="Username"
+              style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
+            <input id="loginPass" placeholder="Password" type="password"
+              style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
+            <button id="btnLogin"
+              style="width:100%;padding:10px;border-radius:8px;border:none;background:#ffd166;font-weight:800;color:#000">Login</button>
+          </div>
+          <div style="flex:1;min-width:220px">
+            <h3 style="margin:0 0 8px 0">Register</h3>
+            <input id="regUser" placeholder="Choose username"
+              style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
+            <input id="regPass" placeholder="Choose password" type="password"
+              style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
+            <button id="btnRegister"
+              style="width:100%;padding:10px;border-radius:8px;border:none;background:#4ce0c9;font-weight:800;color:#003">Register
+              & Sign in</button>
+          </div>
+        </div>
+        <p
+          style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.8)">Use
+          unique usernames. Data is shared across users in this browser.</p>
       </div>
     </div>
-    <p style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.8)">Use unique usernames. Data is shared across users in this browser.</p>
-  </div>
-</div>
 
-<!-- APP -->
-<div class="app" id="appRoot" style="display:none">
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="logo" aria-hidden>
-        <svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 2 L22 8 L17 22 L7 22 L2 8 Z" fill="white" opacity="0.12"/></svg>
-      </div>
-      <div>
-        <h1>GEMS Milandhoo</h1>
-        <div class="small-note">School Portal</div>
-      </div>
-    </div>
-
-    <nav>
-      <ul class="nav">
-        <li><button onclick="navigate('dashboard')">🏠 Dashboard</button></li>
-        <li><button onclick="navigate('students')">👥 Students</button></li>
-        <li><button onclick="navigate('attendance')">📋 Attendance</button></li>
-        <li><button onclick="navigate('meetings')">🗒️ Meeting Minutes</button></li>
-        <li><button onclick="navigate('lessons')">📚 Lesson Plans</button></li>
-        <li style="margin-top:12px"><button onclick="logout()" style="background:transparent;border:1px solid rgba(255,255,255,0.08);color:#fff;padding:10px;border-radius:8px">Logout</button></li>
-      </ul>
-    </nav>
-
-    <div style="margin-top:auto">
-      <div class="small-note">Logged in as</div>
-      <div id="currentUser" style="font-weight:800"></div>
-    </div>
-  </aside>
-
-  <!-- Main -->
-  <main class="main">
-    <div class="header">
-      <div class="title">GEMS Milandhoo School Portal</div>
-      <div class="note" id="currentTime">--</div>
-    </div>
-
-    <!-- DASHBOARD -->
-    <section id="dashboard" class="card">
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <div class="card"><div class="big" id="totalStudents">0</div><div class="small-note">Students</div></div>
-        <div class="card"><div class="big" id="attendanceDays">0</div><div class="small-note">Attendance Days</div></div>
-        <div class="card"><div class="big" id="meetingsCount">0</div><div class="small-note">Meetings</div></div>
-        <div class="card"><div class="big" id="lessonsCount">0</div><div class="small-note">Lesson Plans</div></div>
-      </div>
-      <div class="panel" style="margin-top:12px">
-        <h3 style="margin:0 0 8px 0">Overview</h3>
-        <p class="small-note">Use the sidebar to manage Students, Attendance, Meeting Minutes and Lesson Plans. All records are saved locally and shared across users who sign in on this browser.</p>
-      </div>
-    </section>
-
-    <!-- STUDENTS -->
-    <section id="students" class="hidden">
-      <div class="panel">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><h3 style="margin:0">Students Management</h3><div class="small-note">Add / Edit / Delete students</div></div>
-          <div id="studentEditingBadge" class="small-note hidden" style="color:#b55">Editing...</div>
-        </div>
-        <form id="studentForm" style="margin-top:12px">
-          <div class="controls">
-            <input id="stuName" placeholder="Full name" required>
-            <input id="stuAge" type="number" placeholder="Age" min="3">
-            <input id="stuGrade" placeholder="Grade">
-            <input id="stuLevel" placeholder="Level">
-            <button class="btn" type="submit">Add / Save</button>
-            <button id="cancelStudent" class="btn secondary" type="button" style="display:none" onclick="cancelEdit('student')">Cancel</button>
+    <!-- APP -->
+    <div class="app" id="appRoot" style="display:none">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="logo" aria-hidden>
+            <svg viewBox="0 0 24 24" width="22" height="22"><path
+                d="M12 2 L22 8 L17 22 L7 22 L2 8 Z" fill="white"
+                opacity="0.12" /></svg>
           </div>
-        </form>
-      </div>
-
-      <div class="panel">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <div><strong>Students List</strong><div class="small-note">Search & manage students below</div></div>
-          <div class="controls">
-            <input id="studentSearch" placeholder="Search name or grade" oninput="renderStudents()">
-            <button class="small" onclick="exportStudentsCSV()">Export CSV</button>
+          <div>
+            <h1>GEMS Milandhoo</h1>
+            <div class="small-note">School Portal</div>
           </div>
         </div>
-        <table class="table" id="studentsTable">
-          <thead><tr><th>Name</th><th>Age</th><th>Grade</th><th>Level</th><th>Actions</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
 
-    <!-- ATTENDANCE -->
-    <section id="attendance" class="hidden section-att">
-      <div class="panel">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><h3 style="margin:0">Attendance</h3><div class="small-note">Black-text fields for clarity</div></div>
-          <div class="controls">
-            <label>Start <input id="attStart" type="date"></label>
-            <label>End <input id="attEnd" type="date"></label>
-            <button class="small" onclick="loadAttendanceRange()">Load Range</button>
-            <button class="small" onclick="exportAttendanceExcel()">Export Excel</button>
-          </div>
+        <nav>
+          <ul class="nav">
+            <li><button onclick="navigate('dashboard')">🏠
+                Dashboard</button></li>
+            <li><button onclick="navigate('students')">👥 Students</button></li>
+            <li><button onclick="navigate('attendance')">📋
+                Attendance</button></li>
+            <li><button onclick="navigate('meetings')">🗒️ Meeting
+                Minutes</button></li>
+            <li><button onclick="navigate('lessons')">📚 Lesson
+                Plans</button></li>
+            <li style="margin-top:12px"><button onclick="logout()"
+                style="background:transparent;border:1px solid rgba(255,255,255,0.08);color:#fff;padding:10px;border-radius:8px">Logout</button></li>
+          </ul>
+        </nav>
+
+        <div style="margin-top:auto">
+          <div class="small-note">Logged in as</div>
+          <div id="currentUser" style="font-weight:800"></div>
         </div>
-      </div>
+      </aside>
 
-      <div class="panel">
-        <div class="controls">
-          <label>Date <input id="attDate" type="date"></label>
-          <button class="small" onclick="loadAttendanceForDate()">Load Students</button>
-          <button class="small" onclick="saveAttendance()">Save Attendance</button>
-          <div style="margin-left:auto;display:flex;gap:8px">
-            <button class="small" onclick="markAll('Present')">All Present</button>
-            <button class="small" onclick="markAll('Absent')">All Absent</button>
-            <button class="small" onclick="markAll('Holiday')">All Holiday</button>
-          </div>
+      <!-- Main -->
+      <main class="main">
+        <div class="header">
+          <div class="title">GEMS Milandhoo School Portal</div>
+          <div class="note" id="currentTime">--</div>
         </div>
-        <div class="small-note" style="margin-top:8px">Pick a date, click Load Students, mark statuses, then Save Attendance.</div>
-      </div>
 
-      <div class="panel">
-        <table class="table" id="attendanceTable">
-          <thead><tr><th>Date</th><th>Student</th><th>Status</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="card">
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <div class="card"><div class="big" id="totalStudents">0</div><div
+                class="small-note">Students</div></div>
+            <div class="card"><div class="big" id="attendanceDays">0</div><div
+                class="small-note">Attendance Days</div></div>
+            <div class="card"><div class="big" id="meetingsCount">0</div><div
+                class="small-note">Meetings</div></div>
+            <div class="card"><div class="big" id="lessonsCount">0</div><div
+                class="small-note">Lesson Plans</div></div>
+          </div>
+          <div class="panel" style="margin-top:12px">
+            <h3 style="margin:0 0 8px 0">Overview</h3>
+            <p class="small-note">Use the sidebar to manage Students,
+              Attendance, Meeting Minutes and Lesson Plans. All records are
+              saved locally and shared across users who sign in on this
+              browser.</p>
+          </div>
+        </section>
 
-    <!-- MEETINGS (Pro) -->
-    <section id="meetings" class="hidden section-meet">
-      <div class="panel">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><h3 style="margin:0">Meeting Minutes</h3><div class="small-note">Professional fields & PDF export</div></div>
-          <div class="controls">
-            <label>Start <input id="mtStart" type="date"></label>
-            <label>End <input id="mtEnd" type="date"></label>
-            <button class="small" onclick="loadMeetingsRange()">Load Range</button>
-            <button class="small" onclick="exportMeetingsRangePDF()">Export Range (PDF)</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <form id="meetingForm">
-          <div class="controls">
-            <input id="mtDate" type="date" required>
-            <input id="mtStartTime" type="time" placeholder="Start time">
-            <input id="mtEndTime" type="time" placeholder="End time">
-            <input id="mtTitle" type="text" placeholder="Meeting Title" required>
-            <input id="mtLocation" type="text" placeholder="Location">
-          </div>
-          <div class="controls" style="margin-top:8px">
-            <input id="mtChair" type="text" placeholder="Lading Teacher ">
-            <select id="mtParticipants" multiple style="min-width:220px;max-height:110px;overflow:auto"></select>
-            <input id="mtParticipantsFree" type="text" placeholder="Extra participants (comma separated)">
-          </div>
-          <div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
-            <textarea id="mtAgenda" placeholder="Agenda (bullet points or text)" style="min-height:120px"></textarea>
-            <textarea id="mtDecisions" placeholder="Key Decisions" style="min-height:120px"></textarea>
-          </div>
-          <div style="margin-top:8px">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><strong>Action Items</strong><span class="badge">owner + due + status</span></div>
-            <div class="controls">
-              <input id="aiText" type="text" placeholder="Action item description">
-              <input id="aiOwner" type="text" placeholder="Owner">
-              <input id="aiDue" type="date">
-              <select id="aiStatus">
-                <option value="Open">Open</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Done">Done</option>
-              </select>
-              <button class="small" type="button" onclick="addActionItem()">Add</button>
+        <!-- STUDENTS -->
+        <section id="students" class="hidden">
+          <div class="panel">
+            <div
+              style="display:flex;justify-content:space-between;align-items:center">
+              <div><h3 style="margin:0">Students Management</h3><div
+                  class="small-note">Add / Edit / Delete students</div></div>
+              <div id="studentEditingBadge" class="small-note hidden"
+                style="color:#b55">Editing...</div>
             </div>
-            <table class="table" id="actionsTable" style="margin-top:8px">
-              <thead><tr><th>#</th><th>Description</th><th>Owner</th><th>Due</th><th>Status</th><th>Actions</th></tr></thead>
+            <form id="studentForm" style="margin-top:12px">
+              <div class="controls">
+                <input id="stuName" placeholder="Full name" required>
+                <input id="stuAge" type="number" placeholder="Age" min="3">
+                <input id="stuGrade" placeholder="Grade">
+                <input id="stuLevel" placeholder="Level">
+                <button class="btn" type="submit">Add / Save</button>
+                <button id="cancelStudent" class="btn secondary" type="button"
+                  style="display:none"
+                  onclick="cancelEdit('student')">Cancel</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="panel">
+            <div
+              style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <div><strong>Students List</strong><div class="small-note">Search
+                  & manage students below</div></div>
+              <div class="controls">
+                <input id="studentSearch" placeholder="Search name or grade"
+                  oninput="renderStudents()">
+                <button class="small" onclick="exportStudentsCSV()">Export
+                  CSV</button>
+              </div>
+            </div>
+            <table class="table" id="studentsTable">
+              <thead><tr><th>Name</th><th>Age</th><th>Grade</th><th>Level</th><th>Actions</th></tr></thead>
               <tbody></tbody>
             </table>
           </div>
-          <div style="margin-top:8px;display:flex;gap:8px">
-            <button class="btn" type="submit">Add / Save Meeting</button>
-            <button id="cancelMeeting" class="btn secondary" type="button" style="display:none" onclick="cancelEdit('meeting')">Cancel</button>
-          </div>
-        </form>
-      </div>
+        </section>
 
-      <div class="panel">
-        <table class="table" id="meetingsTable">
-          <thead><tr><th>Date</th><th>Title</th><th>Participants</th><th>Actions</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- LESSONS -->
-    <section id="lessons" class="hidden section-less">
-      <div class="panel">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><h3 style="margin:0">Lesson Plans</h3><div class="small-note">Black-text fields — export to boxed template PDF</div></div>
-          <div class="controls">
-            <label>Start <input id="lsStart" type="date"></label>
-            <label>End <input id="lsEnd" type="date"></label>
-            <button class="small" onclick="loadLessonsRange()">Load Range</button>
-            <button class="small" onclick="exportLessonsPDF()">Export Lesson Plans (PDF)</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <form id="lessonForm">
-          <div class="controls">
-            <input id="lsDate" type="date" required>
-            <select id="lsStudent" required style="min-width:220px"><option value="">-- choose student --</option></select>
-            <input id="lsSubject" placeholder="Subject / Course" required>
-            <input id="lsTopic" placeholder="Name of Lesson" required>
-          </div>
-
-          <div style="margin-top:10px">
-            <textarea id="lsObjectives" placeholder="Objectives / General description" style="width:100%;min-height:100px"></textarea>
-          </div>
-
-          <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap">
-            <textarea id="lsMaterials" placeholder="Materials" style="flex:1;min-width:260px"></textarea>
-            <textarea id="lsActivities" placeholder="Activities" style="flex:1;min-width:260px"></textarea>
-          </div>
-
-          <div style="margin-top:10px">
-            <textarea id="lsHomework" placeholder="Homework" style="width:100%;min-height:60px"></textarea>
-            <div style="margin-top:8px;display:flex;gap:8px">
-              <button class="btn" type="submit">Add / Save Lesson</button>
-              <button id="cancelLesson" class="btn secondary" type="button" style="display:none" onclick="cancelEdit('lesson')">Cancel</button>
+        <!-- ATTENDANCE -->
+        <section id="attendance" class="hidden section-att">
+          <div class="panel">
+            <div
+              style="display:flex;justify-content:space-between;align-items:center">
+              <div><h3 style="margin:0">Attendance</h3><div
+                  class="small-note">Black-text fields for clarity</div></div>
+              <div class="controls">
+                <label>Start <input id="attStart" type="date"></label>
+                <label>End <input id="attEnd" type="date"></label>
+                <button class="small" onclick="loadAttendanceRange()">Load
+                  Range</button>
+                <button class="small" onclick="exportAttendanceExcel()">Export
+                  Excel</button>
+              </div>
             </div>
           </div>
-        </form>
-      </div>
 
-      <div class="panel">
-        <table class="table" id="lessonsTable">
-          <thead><tr><th>Date</th><th>Student</th><th>Subject</th><th>Lesson</th><th>Objectives</th><th>Materials</th><th>Activities</th><th>Homework</th><th>Actions</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
+          <div class="panel">
+            <div class="controls">
+              <label>Date <input id="attDate" type="date"></label>
+              <button class="small" onclick="loadAttendanceForDate()">Load
+                Students</button>
+              <button class="small" onclick="saveAttendance()">Save
+                Attendance</button>
+              <div style="margin-left:auto;display:flex;gap:8px">
+                <button class="small" onclick="markAll('Present')">All
+                  Present</button>
+                <button class="small" onclick="markAll('Absent')">All
+                  Absent</button>
+                <button class="small" onclick="markAll('Holiday')">All
+                  Holiday</button>
+              </div>
+            </div>
+            <div class="small-note" style="margin-top:8px">Pick a date, click
+              Load Students, mark statuses, then Save Attendance.</div>
+          </div>
 
-  </main>
-</div>
+          <div class="panel">
+            <table class="table" id="attendanceTable">
+              <thead><tr><th>Date</th><th>Student</th><th>Status</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
 
-<script>
+        <!-- MEETINGS (Pro) -->
+        <section id="meetings" class="hidden section-meet">
+          <div class="panel">
+            <div
+              style="display:flex;justify-content:space-between;align-items:center">
+              <div><h3 style="margin:0">Meeting Minutes</h3><div
+                  class="small-note">Professional fields & PDF
+                  export</div></div>
+              <div class="controls">
+                <label>Start <input id="mtStart" type="date"></label>
+                <label>End <input id="mtEnd" type="date"></label>
+                <button class="small" onclick="loadMeetingsRange()">Load
+                  Range</button>
+                <button class="small" onclick="exportMeetingsRangePDF()">Export
+                  Range (PDF)</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <form id="meetingForm">
+              <div class="controls">
+                <input id="mtDate" type="date" required>
+                <input id="mtStartTime" type="time" placeholder="Start time">
+                <input id="mtEndTime" type="time" placeholder="End time">
+                <input id="mtTitle" type="text" placeholder="Meeting Title"
+                  required>
+                <input id="mtLocation" type="text" placeholder="Location">
+              </div>
+              <div class="controls" style="margin-top:8px">
+                <input id="mtChair" type="text" placeholder="Lading Teacher ">
+                <select id="mtParticipants" multiple
+                  style="min-width:220px;max-height:110px;overflow:auto"></select>
+                <input id="mtParticipantsFree" type="text"
+                  placeholder="Extra participants (comma separated)">
+              </div>
+              <div
+                style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <textarea id="mtAgenda"
+                  placeholder="Agenda (bullet points or text)"
+                  style="min-height:120px"></textarea>
+                <textarea id="mtDecisions" placeholder="Key Decisions"
+                  style="min-height:120px"></textarea>
+              </div>
+              <div style="margin-top:8px">
+                <div
+                  style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><strong>Action
+                    Items</strong><span class="badge">owner + due +
+                    status</span></div>
+                <div class="controls">
+                  <input id="aiText" type="text"
+                    placeholder="Action item description">
+                  <input id="aiOwner" type="text" placeholder="Owner">
+                  <input id="aiDue" type="date">
+                  <select id="aiStatus">
+                    <option value="Open">Open</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Done">Done</option>
+                  </select>
+                  <button class="small" type="button"
+                    onclick="addActionItem()">Add</button>
+                </div>
+                <table class="table" id="actionsTable" style="margin-top:8px">
+                  <thead><tr><th>#</th><th>Description</th><th>Owner</th><th>Due</th><th>Status</th><th>Actions</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+              <div style="margin-top:8px;display:flex;gap:8px">
+                <button class="btn" type="submit">Add / Save Meeting</button>
+                <button id="cancelMeeting" class="btn secondary" type="button"
+                  style="display:none"
+                  onclick="cancelEdit('meeting')">Cancel</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="panel">
+            <table class="table" id="meetingsTable">
+              <thead><tr><th>Date</th><th>Title</th><th>Participants</th><th>Actions</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- LESSONS -->
+        <section id="lessons" class="hidden section-less">
+          <div class="panel">
+            <div
+              style="display:flex;justify-content:space-between;align-items:center">
+              <div><h3 style="margin:0">Lesson Plans</h3><div
+                  class="small-note">Black-text fields — export to boxed
+                  template PDF</div></div>
+              <div class="controls">
+                <label>Start <input id="lsStart" type="date"></label>
+                <label>End <input id="lsEnd" type="date"></label>
+                <button class="small" onclick="loadLessonsRange()">Load
+                  Range</button>
+                <button class="small" onclick="exportLessonsPDF()">Export Lesson
+                  Plans (PDF)</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <form id="lessonForm">
+              <div class="controls">
+                <input id="lsDate" type="date" required>
+                <select id="lsStudent" required style="min-width:220px"><option
+                    value>-- choose student --</option></select>
+                <input id="lsSubject" placeholder="Subject / Course" required>
+                <input id="lsTopic" placeholder="Name of Lesson" required>
+              </div>
+
+              <div style="margin-top:10px">
+                <textarea id="lsObjectives"
+                  placeholder="Objectives / General description"
+                  style="width:100%;min-height:100px"></textarea>
+              </div>
+
+              <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap">
+                <textarea id="lsMaterials" placeholder="Materials"
+                  style="flex:1;min-width:260px"></textarea>
+                <textarea id="lsActivities" placeholder="Activities"
+                  style="flex:1;min-width:260px"></textarea>
+              </div>
+
+              <div style="margin-top:10px">
+                <textarea id="lsHomework" placeholder="Homework"
+                  style="width:100%;min-height:60px"></textarea>
+                <div style="margin-top:8px;display:flex;gap:8px">
+                  <button class="btn" type="submit">Add / Save Lesson</button>
+                  <button id="cancelLesson" class="btn secondary" type="button"
+                    style="display:none"
+                    onclick="cancelEdit('lesson')">Cancel</button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="panel">
+            <table class="table" id="lessonsTable">
+              <thead><tr><th>Date</th><th>Student</th><th>Subject</th><th>Lesson</th><th>Objectives</th><th>Materials</th><th>Activities</th><th>Homework</th><th>Actions</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <script>
 /* ------------------------------
    Full portal JavaScript — Pro
    ------------------------------ */
@@ -938,50 +1028,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
   window.removeActionItem = removeActionItem;
 });
 </script>
-</body>
-<body>
-  <h1>Welcome to GEMS Milandhoo Portal</h1>
-
-  <!-- Your existing portal content -->
-
-  <!-- Optional: Add input fields for testing database -->
-  <input type="text" id="name" placeholder="Name">
-  <input type="email" id="email" placeholder="Email">
-  <button onclick="registerUser()">Register</button>
-
-  <div id="users"></div>
-  <button onclick="getUsers()">Load Users</button>
+  </body>
 
   <!-- ---------- Paste Supabase Code Below This Line ---------- -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const SUPABASE_URL = "https://supabase-emerald-car.supabase.co";
-    const SUPABASE_ANON_KEY = "YOUR_ANON_KEY_HERE"; // sasodvdokwybanovtuwl
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    async function registerUser() {
-      const name = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
-      if (!name || !email) { alert("Enter name and email"); return; }
-
-      const { data, error } = await supabase
-        .from("users") // replace with your table name
-        .insert([{ name, email }]);
-
-      if (error) alert(error.message);
-      else { alert("User registered!"); getUsers(); }
-    }
-
-    async function getUsers() {
-      const { data, error } = await supabase.from("users").select("*");
-      if (error) { alert(error.message); return; }
-
-      const usersDiv = document.getElementById("users");
-      usersDiv.innerHTML = "";
-      data.forEach(user => {
-        usersDiv.innerHTML += `<p>${user.name} - ${user.email}</p>`;
-      });
-    }
-  </script>
-</body>
 </html>

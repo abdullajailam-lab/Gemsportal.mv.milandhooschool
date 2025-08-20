@@ -1031,7 +1031,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
   </body>
 
   <!-- ---------- Paste Supabase Code Below This Line ---------- -->
-  <!-- ---------- Paste Supabase Code Below This Line ---------- -->
 
 <script>
 /* ------------------------------
@@ -1061,6 +1060,10 @@ function ensureStorage(){
    ---------------------------------------------------------------------------- */
 
 // Initialize Supabase
+/* ----------------------------------------------------------------------------
+   SUPABASE DATABASE FUNCTIONS (REPLACES LOCALSTORAGE)
+   ---------------------------------------------------------------------------- */
+
 let currentData = {
   students: [],
   attendance: {},
@@ -1159,16 +1162,6 @@ function setupRealtimeUpdates() {
         refreshAll();
       }
     )
-    .on(
-      'broadcast',
-      { event: 'data-updated' },
-      (payload) => {
-        console.log('Data updated by another client', payload);
-        // Reload data when another user makes changes
-        isInitialized = false;
-        refreshAll();
-      }
-    )
     .subscribe();
 }
 
@@ -1210,6 +1203,21 @@ function openApp(user){
   setInterval(()=> $('currentTime').innerText = new Date().toLocaleString(), 60*1000);
   
   // Setup real-time updates
+  function openApp(user){
+  $('authScreen').style.display = 'none';
+  document.querySelector('.app').style.display = 'flex';
+  $('currentUser').innerText = user;
+  // set default dates
+  $('attDate').value = today(); $('lsDate').value = today(); $('mtDate').value = today();
+  // show default section
+  navigate('dashboard');
+  // populate selects/tables
+  refreshAll();
+  // update clock
+  $('currentTime').innerText = new Date().toLocaleString();
+  setInterval(()=> $('currentTime').innerText = new Date().toLocaleString(), 60*1000);
+  
+  // Setup real-time updates - ADD THIS LINE
   setupRealtimeUpdates();
 }
 
@@ -1948,4 +1956,5 @@ document.addEventListener('DOMContentLoaded', ()=>{
 </html>
 
 </html>
+
 

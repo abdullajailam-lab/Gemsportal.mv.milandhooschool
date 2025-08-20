@@ -29,7 +29,7 @@
             color:#fff;display:flex;flex-direction:column;gap:18px;box-shadow:var(--shadow)
         }
         .brand{display:flex;align-items:center;gap:12px}
-        .brand .logo{width:48px;height:48px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center}
+        .brand .logo{width:48px;height:48px;border-radius:10px;background:rgba(255,255,255,0.06;display:flex;align-items:center;justify-content:center}
         .brand h1{margin:0;font-size:18px;font-weight:800}
         .nav{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
         .nav button{background:transparent;border:none;color:#e9fbfb;padding:12px;border-radius:10px;text-align:left;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .15s}
@@ -372,7 +372,7 @@
     <script>
         // Initialize Supabase
         const SUPABASE_URL = "https://sasodvdokwybanovtuwl.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhc29kdmRva3d5YmFub3Z0dXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNzMzNTAsImV4cCI6MjA3MDc0OTM1MH0.sUJx73vkjPlKo9m8De6dUNGMcdWjb1vh8hnsMBVMgRQ";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6InNhc29kdmRva3d5YmFub3Z0dXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNzMzNTAsImV4cCI6MjA3MDc0OTM1MH0.sUJx73vkjPlKo9m8De6dUNGMcdWjb1vh8hnsMBVMgRQ";
         
         // Create Supabase client
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -491,6 +491,18 @@
                 } else {
                     status.textContent = 'Account created! Please check your email for confirmation.';
                     status.className = 'auth-status auth-success';
+                    
+                    // Auto login after registration
+                    const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+                        email,
+                        password
+                    });
+                    
+                    if (loginError) {
+                        status.textContent = 'Account created but automatic login failed. Please login manually.';
+                    } else {
+                        currentUser = loginData.user;
+                    }
                 }
             } catch (error) {
                 status.textContent = 'Registration failed. Please try again.';
@@ -529,6 +541,7 @@
             } else {
                 currentData.students = data || [];
                 populateStudentSelect();
+                populateParticipantSelect();
             }
         }
         
@@ -936,10 +949,10 @@
                     <td>${escapeHtml(lesson.student)}</td>
                     <td>${escapeHtml(lesson.subject)}</td>
                     <td>${escapeHtml(lesson.topic)}</td>
-                    <td>${escapeHtml(lesson.objectives.substring(0, 50)}...</td>
-                    <td>${escapeHtml(lesson.materials.substring(0, 30)}...</td>
-                    <td>${escapeHtml(lesson.activities.substring(0, 30)}...</td>
-                    <td>${escapeHtml(lesson.homework.substring(0, 30)}...</td>
+                    <td>${escapeHtml(lesson.objectives.substring(0, 50))}...</td>
+                    <td>${escapeHtml(lesson.materials.substring(0, 30))}...</td>
+                    <td>${escapeHtml(lesson.activities.substring(0, 30))}...</td>
+                    <td>${escapeHtml(lesson.homework.substring(0, 30))}...</td>
                     <td>
                         <button class="action-btn edit" onclick="editLesson(${index})">Edit</button>
                         <button class="action-btn del" onclick="deleteLesson(${index})">Delete</button>

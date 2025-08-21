@@ -178,7 +178,7 @@
                     <li><button onclick="navigate('attendance')">📋 Attendance</button></li>
                     <li><button onclick="navigate('meetings')">🗒️ Meeting Minutes</button></li>
                     <li><button onclick="navigate('lessons')">📚 Lesson Plans</button></li>
-                    <li style="margin-top:12px"><button onclick="logout()" style="background:transparent;border:1px solid rgba(255,255,255,0.08);color:#fff;padding:10px;border-radius:8px">Logout</button></li>
+                    <li style="margin-top:12px"><button onclick="logout()" style="background:transparent;border:1px solid rgba(255,255,255,0.08;color:#fff;padding:10px;border-radius:8px">Logout</button></li>
                 </ul>
             </nav>
 
@@ -1450,15 +1450,247 @@
         }
         
         function exportMeetingsRangePDF() {
-            showStatus('PDF export feature coming soon');
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Add title
+                doc.setFontSize(20);
+                doc.text("Meeting Minutes Report", 105, 15, { align: "center" });
+                
+                // Add date range
+                const startDate = document.getElementById('mtStart').value;
+                const endDate = document.getElementById('mtEnd').value;
+                doc.setFontSize(12);
+                doc.text(`Date Range: ${startDate} to ${endDate}`, 105, 25, { align: "center" });
+                
+                // Filter meetings by date range
+                const filteredMeetings = currentData.meetings.filter(meeting => {
+                    return (!startDate || meeting.date >= startDate) && (!endDate || meeting.date <= endDate);
+                });
+                
+                let yPosition = 40;
+                
+                // Add each meeting
+                filteredMeetings.forEach((meeting, index) => {
+                    if (yPosition > 250) {
+                        doc.addPage();
+                        yPosition = 20;
+                    }
+                    
+                    doc.setFontSize(14);
+                    doc.text(`${meeting.date} - ${meeting.title}`, 14, yPosition);
+                    yPosition += 10;
+                    
+                    doc.setFontSize(10);
+                    doc.text(`Time: ${meeting.start_time || 'N/A'} - ${meeting.end_time || 'N/A'}`, 14, yPosition);
+                    yPosition += 6;
+                    doc.text(`Location: ${meeting.location || 'N/A'}`, 14, yPosition);
+                    yPosition += 6;
+                    doc.text(`Chair: ${meeting.chair || 'N/A'}`, 14, yPosition);
+                    yPosition += 6;
+                    
+                    const participants = Array.isArray(meeting.participants) ? 
+                        meeting.participants.join(', ') : meeting.participants;
+                    doc.text(`Participants: ${participants || 'N/A'}`, 14, yPosition);
+                    yPosition += 10;
+                    
+                    // Add agenda if available
+                    if (meeting.agenda) {
+                        const splitAgenda = doc.splitTextToSize(`Agenda: ${meeting.agenda}`, 180);
+                        doc.text(splitAgenda, 14, yPosition);
+                        yPosition += splitAgenda.length * 6;
+                    }
+                    
+                    // Add decisions if available
+                    if (meeting.decisions) {
+                        const splitDecisions = doc.splitTextToSize(`Decisions: ${meeting.decisions}`, 180);
+                        doc.text(splitDecisions, 14, yPosition);
+                        yPosition += splitDecisions.length * 6;
+                    }
+                    
+                    // Add action items if available
+                    if (meeting.actions && meeting.actions.length > 0) {
+                        doc.text("Action Items:", 14, yPosition);
+                        yPosition += 6;
+                        
+                        meeting.actions.forEach(action => {
+                            const actionText = `- ${action.text} (Owner: ${action.owner || 'N/A'}, Due: ${action.due || 'N/A'}, Status: ${action.status || 'N/A'})`;
+                            const splitAction = doc.splitTextToSize(actionText, 180);
+                            doc.text(splitAction, 20, yPosition);
+                            yPosition += splitAction.length * 6;
+                        });
+                    }
+                    
+                    yPosition += 10;
+                });
+                
+                doc.save("meeting_minutes_report.pdf");
+                showStatus('Meeting minutes exported to PDF');
+            } catch (error) {
+                console.error('Error exporting PDF:', error);
+                showStatus('Error exporting PDF', 'error');
+            }
         }
         
         function exportLessonsPDF() {
-            showStatus('PDF export feature coming soon');
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Add title
+                doc.setFontSize(20);
+                doc.text("Lesson Plans Report", 105, 15, { align: "center" });
+                
+                // Add date range
+                const startDate = document.getElementById('lsStart').value;
+                const endDate = document.getElementById('lsEnd').value;
+                doc.setFontSize(12);
+                doc.text(`Date Range: ${startDate} to ${endDate}`, 105, 25, { align: "center" });
+                
+                // Filter lessons by date range
+                const filteredLessons = currentData.lessons.filter(lesson => {
+                    return (!startDate || lesson.date >= startDate) && (!endDate || lesson.date <= endDate);
+                });
+                
+                let yPosition = 40;
+                
+                // Add each lesson
+                filteredLessons.forEach((lesson, index) => {
+                    if (yPosition > 250) {
+                        doc.addPage();
+                        yPosition = 20;
+                    }
+                    
+                    doc.setFontSize(14);
+                    doc.text(`${lesson.date} - ${lesson.student} - ${lesson.subject}`, 14, yPosition);
+                    yPosition += 8;
+                    
+                    doc.setFontSize(12);
+                    doc.text(`Topic: ${lesson.topic || 'N/A'}`, 14, yPosition);
+                    yPosition += 8;
+                    
+                    doc.setFontSize(10);
+                    
+                    // Add objectives if available
+                    if (lesson.objectives) {
+                        const splitObjectives = doc.splitTextToSize(`Objectives: ${lesson.objectives}`, 180);
+                        doc.text(splitObjectives, 14, yPosition);
+                        yPosition += splitObjectives.length * 6;
+                    }
+                    
+                    // Add materials if available
+                    if (lesson.materials) {
+                        const splitMaterials = doc.splitTextToSize(`Materials: ${lesson.materials}`, 180);
+                        doc.text(splitMaterials, 14, yPosition);
+                        yPosition += splitMaterials.length * 6;
+                    }
+                    
+                    // Add activities if available
+                    if (lesson.activities) {
+                        const splitActivities = doc.splitTextToSize(`Activities: ${lesson.activities}`, 180);
+                        doc.text(splitActivities, 14, yPosition);
+                        yPosition += splitActivities.length * 6;
+                    }
+                    
+                    // Add homework if available
+                    if (lesson.homework) {
+                        const splitHomework = doc.splitTextToSize(`Homework: ${lesson.homework}`, 180);
+                        doc.text(splitHomework, 14, yPosition);
+                        yPosition += splitHomework.length * 6;
+                    }
+                    
+                    yPosition += 10;
+                });
+                
+                doc.save("lesson_plans_report.pdf");
+                showStatus('Lesson plans exported to PDF');
+            } catch (error) {
+                console.error('Error exporting PDF:', error);
+                showStatus('Error exporting PDF', 'error');
+            }
         }
         
         function exportSingleMeetingPDF(index) {
-            showStatus('PDF export feature coming soon');
+            try {
+                const meeting = currentData.meetings[index];
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Add title
+                doc.setFontSize(20);
+                doc.text("Meeting Minutes", 105, 15, { align: "center" });
+                
+                let yPosition = 30;
+                
+                doc.setFontSize(12);
+                doc.text(`Date: ${meeting.date || 'N/A'}`, 20, yPosition);
+                yPosition += 8;
+                doc.text(`Time: ${meeting.start_time || 'N/A'} - ${meeting.end_time || 'N/A'}`, 20, yPosition);
+                yPosition += 8;
+                doc.text(`Title: ${meeting.title || 'N/A'}`, 20, yPosition);
+                yPosition += 8;
+                doc.text(`Location: ${meeting.location || 'N/A'}`, 20, yPosition);
+                yPosition += 8;
+                doc.text(`Chair: ${meeting.chair || 'N/A'}`, 20, yPosition);
+                yPosition += 8;
+                
+                const participants = Array.isArray(meeting.participants) ? 
+                    meeting.participants.join(', ') : meeting.participants;
+                const splitParticipants = doc.splitTextToSize(`Participants: ${participants || 'N/A'}`, 170);
+                doc.text(splitParticipants, 20, yPosition);
+                yPosition += splitParticipants.length * 6 + 8;
+                
+                // Add agenda if available
+                if (meeting.agenda) {
+                    doc.setFontSize(14);
+                    doc.text("Agenda:", 20, yPosition);
+                    yPosition += 8;
+                    
+                    doc.setFontSize(10);
+                    const splitAgenda = doc.splitTextToSize(meeting.agenda, 170);
+                    doc.text(splitAgenda, 20, yPosition);
+                    yPosition += splitAgenda.length * 6 + 8;
+                }
+                
+                // Add decisions if available
+                if (meeting.decisions) {
+                    doc.setFontSize(14);
+                    doc.text("Decisions:", 20, yPosition);
+                    yPosition += 8;
+                    
+                    doc.setFontSize(10);
+                    const splitDecisions = doc.splitTextToSize(meeting.decisions, 170);
+                    doc.text(splitDecisions, 20, yPosition);
+                    yPosition += splitDecisions.length * 6 + 8;
+                }
+                
+                // Add action items if available
+                if (meeting.actions && meeting.actions.length > 0) {
+                    doc.setFontSize(14);
+                    doc.text("Action Items:", 20, yPosition);
+                    yPosition += 8;
+                    
+                    doc.setFontSize(10);
+                    meeting.actions.forEach(action => {
+                        if (yPosition > 250) {
+                            doc.addPage();
+                            yPosition = 20;
+                        }
+                        
+                        const actionText = `- ${action.text} (Owner: ${action.owner || 'N/A'}, Due: ${action.due || 'N/A'}, Status: ${action.status || 'N/A'})`;
+                        const splitAction = doc.splitTextToSize(actionText, 170);
+                        doc.text(splitAction, 25, yPosition);
+                        yPosition += splitAction.length * 6 + 4;
+                    });
+                }
+                
+                doc.save(`meeting_minutes_${meeting.date}.pdf`);
+                showStatus('Meeting minutes exported to PDF');
+            } catch (error) {
+                console.error('Error exporting PDF:', error);
+                showStatus('Error exporting PDF', 'error');
+            }
         }
         
         // Initialize the app

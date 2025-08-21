@@ -109,15 +109,6 @@
             background: rgba(255,255,255,0.1);
             border-radius: 8px;
         }
-        
-        /* Config toggle */
-        .config-toggle {
-            text-align: center;
-            margin-top: 10px;
-            color: rgba(255,255,255,0.7);
-            cursor: pointer;
-            font-size: 13px;
-        }
     </style>
 </head>
 <body>
@@ -126,8 +117,7 @@
         <div style="width:480px;background:rgba(255,255,255,0.06);padding:28px;border-radius:14px;color:#fff;box-shadow:0 16px 40px rgba(0,0,0,.5)">
             <h2 style="margin:0 0 8px 0;text-align:center">Welcome to GEMS Milandhoo School Portal</h2>
             
-            <div class="config-toggle" id="toggleConfig">Show Configuration</div>
-            <div class="api-key-container" id="configContainer" style="display:none">
+            <div class="api-key-container">
                 <h3 style="margin:0 0 8px 0;color:#fff">Supabase Configuration</h3>
                 <input id="supabaseUrl" placeholder="Supabase URL" value="https://sasodvdokwybanovtuwl.supabase.co" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
                 <input id="supabaseKey" placeholder="Supabase API Key" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhc29kdmRva3d5YmFub3Z0dXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNzMzNTAsImV4cCI6MjA3MDc0OTM1MH0.sUJx73vkjPlKo9m8De6dUNGMcdWjb1vh8hnsMBVMgRQ" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
@@ -327,7 +317,7 @@
                             <table class="table" id="actionsTable" style="margin-top:8px">
                                 <thead><tr><th>#</th><th>Description</th><th>Owner</th><th>Due</th><th>Status</th><th>Actions</th></tr></thead>
                                 <tbody></tbody>
-                    </table>
+                            </table>
                         </div>
                         <div style="margin-top:8px;display:flex;gap:8px">
                             <button class="btn" type="submit">Add / Save Meeting</button>
@@ -408,7 +398,7 @@
         let currentUser = null;
         let currentData = {
             students: [],
-            attendance: [],
+            attendance: {},
             meetings: [],
             lessons: []
         };
@@ -417,7 +407,6 @@
         let editingMeeting = null;
         let editingLesson = null;
         let actionItems = [];
-        let currentAttendanceDate = null;
         
         /* -------------------------
            AUTHENTICATION
@@ -451,20 +440,6 @@
             document.getElementById('btnLogin').addEventListener('click', login);
             document.getElementById('btnRegister').addEventListener('click', register);
             document.getElementById('btnSaveConfig').addEventListener('click', saveConfig);
-            document.getElementById('toggleConfig').addEventListener('click', toggleConfig);
-        }
-        
-        function toggleConfig() {
-            const container = document.getElementById('configContainer');
-            const toggle = document.getElementById('toggleConfig');
-            
-            if (container.style.display === 'none') {
-                container.style.display = 'block';
-                toggle.textContent = 'Hide Configuration';
-            } else {
-                container.style.display = 'none';
-                toggle.textContent = 'Show Configuration';
-            }
         }
         
         function saveConfig() {
@@ -644,27 +619,14 @@
         
         async function saveStudents() {
             try {
-                // Delete all existing students first
-                const { error: deleteError } = await supabase
+                const { error } = await supabase
                     .from('students')
-                    .delete()
-                    .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all records
+                    .upsert(currentData.students, { onConflict: 'id' });
                     
-                if (deleteError) {
-                    console.error('Error deleting students:', deleteError);
-                }
-                
-                // Insert all current students
-                if (currentData.students.length > 0) {
-                    const { error } = await supabase
-                        .from('students')
-                        .insert(currentData.students);
-                        
-                    if (error) {
-                        console.error('Error saving students:', error);
-                        showStatus('Error saving students', 'error');
-                        return false;
-                    }
+                if (error) {
+                    console.error('Error saving students:', error);
+                    showStatus('Error saving students', 'error');
+                    return false;
                 }
                 return true;
             } catch (error) {
@@ -672,9 +634,7 @@
                 showStatus('Error saving students', 'error');
                 return false;
             }
-       
-
-
+        }
         
         // ... (other data management functions remain the same)
         
@@ -1118,4 +1078,3 @@
     </script>
 </body>
 </html>
-

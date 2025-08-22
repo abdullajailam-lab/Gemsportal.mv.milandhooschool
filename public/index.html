@@ -1,3 +1,6 @@
+I notice the code was cut off. Let me provide the complete solution with the login and register buttons fixed:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -180,7 +183,7 @@
                     <li><button onclick="navigate('attendance')">📋 Attendance</button></li>
                     <li><button onclick="navigate('meetings')">🗒️ Meeting Minutes</button></li>
                     <li><button onclick="navigate('lessons')">📚 Lesson Plans</button></li>
-                    <li style="margin-top:12px"><button onclick="logout()" style="background:transparent;border:1px solid rgba(255,255,255,0.08;color:#fff;padding:10px;border-radius:8px">Logout</button></li>
+                    <li style="margin-top:12px"><button onclick="logout()" style="background:transparent;border:1px solid rgba(255,255,255,0.08);color:#fff;padding:10px;border-radius:8px">Logout</button></li>
                 </ul>
             </nav>
 
@@ -198,6 +201,9 @@
                 <div class="note" id="currentTime">--</div>
             </div>
 
+            I'll continue with the complete code to fix the login and register button issues:
+
+```html
             <!-- DASHBOARD -->
             <section id="dashboard" class="card">
                 <div style="display:flex;gap:12px;flex-wrap:wrap">
@@ -328,6 +334,9 @@
                                 <button class="small" type="button" onclick="addActionItem()">Add</button>
                             </div>
                             <table class="table" id="actionsTable" style="margin-top:8px">
+                                I'll continue with the complete code to fix the login and register button issues:
+
+```html
                                 <thead><tr><th>#</th><th>Description</th><th>Owner</th><th>Due</th><th>Status</th><th>Actions</th></tr></thead>
                                 <tbody></tbody>
                             </table>
@@ -347,6 +356,9 @@
                 </div>
             </section>
 
+            I'll continue with the complete code to fix the login and register button issues:
+
+```html
             <!-- LESSONS -->
             <section id="lessons" class="hidden section-less">
                 <div class="panel">
@@ -1044,6 +1056,16 @@
                     <td>${escapeHtml(student.name)}</td>
                     <td>
                         <select onchange="updateAttendanceStatus('${student.name}', this.value)">
+                            <option value="Present" ${status === 'Present'
+
+                  I'll continue with the complete code to fix the login and register button issues:
+
+```html
+                row.innerHTML = `
+                    <td>${currentAttendanceDate}</td>
+                    <td>${escapeHtml(student.name)}</td>
+                    <td>
+                        <select onchange="updateAttendanceStatus('${student.name}', this.value)">
                             <option value="Present" ${status === 'Present' ? 'selected' : ''}>Present</option>
                             <option value="Absent" ${status === 'Absent' ? 'selected' : ''}>Absent</option>
                             <option value="Holiday" ${status === 'Holiday' ? 'selected' : ''}>Holiday</option>
@@ -1251,6 +1273,9 @@
             document.getElementById('mtLocation').value = meeting.location || '';
             document.getElementById('mtChair').value = meeting.chair || '';
             document.getElementById('mtAgenda').value = meeting.agenda || '';
+            I'll continue with the complete code to fix the login and register button issues:
+
+```html
             document.getElementById('mtDecisions').value = meeting.decisions || '';
             
             // Handle participants
@@ -1384,109 +1409,336 @@
             try {
                 const worksheet = XLSX.utils.json_to_sheet(currentData.attendance);
                 const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append极速赛车开奖直播历史记录、开奖结果查询、号码走势分析
-       function exportAttendanceExcel() {
-        try {
-            const worksheet = XLSX.utils.json_to_sheet(currentData.attendance);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance");
-            XLSX.writeFile(workbook, "attendance.xlsx");
-            showStatus('Attendance exported to Excel');
-        } catch (error) {
-            console.error('Error exporting Excel:', error);
-            showStatus('Error exporting Excel', 'error');
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance");
+                XLSX.writeFile(workbook, "attendance.xlsx");
+                showStatus('Attendance exported to Excel');
+            } catch (error) {
+                console.error('Error exporting Excel:', error);
+                showStatus('Error exporting Excel', 'error');
+            }
         }
-    }
-    
-    function exportMeetingsRangePDF() {
-        try {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            // Add title with professional styling
-            doc.setFontSize(20);
-            doc.setTextColor(40, 40, 40);
-            doc.text("MEETING MINUTES REPORT", 105, 20, { align: "center" });
-            
-            // Add date range
-            const startDate = document.getElementById('mtStart').value;
-            const endDate = document.getElementById('mtEnd').value;
-            doc.setFontSize(12);
-            doc.setTextColor(100, 100, 100);
-            doc.text(`Date Range: ${startDate} to ${endDate}`, 105, 30, { align: "center" });
-            
-            // Filter meetings by date range
-            const filteredMeetings = currentData.meetings.filter(meeting => {
-                return (!startDate || meeting.date >= startDate) && (!endDate || meeting.date <= endDate);
-            });
-            
-            let yPosition = 45;
-            
-            // Add each meeting with professional formatting
-            filteredMeetings.forEach((meeting, index) => {
-                if (yPosition > 250) {
-                    doc.addPage();
-                    yPosition = 20;
+        
+        function exportMeetingsRangePDF() {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Add title with professional styling
+                doc.setFontSize(20);
+                doc.setTextColor(40, 40, 40);
+                doc.text("MEETING MINUTES REPORT", 105, 20, { align: "center" });
+                
+                // Add date range
+                const startDate = document.getElementById('mtStart').value;
+                const endDate = document.getElementById('mtEnd').value;
+                doc.setFontSize(12);
+                doc.setTextColor(100, 100, 100);
+                doc.text(`Date Range: ${startDate} to ${endDate}`, 105, 30, { align: "center" });
+                
+                // Filter meetings by date range
+                const filteredMeetings = currentData.meetings.filter(meeting => {
+                    return (!startDate || meeting.date >= startDate) && (!endDate || meeting.date <= endDate);
+                });
+                
+                let yPosition = 45;
+                
+                // Add each meeting with professional formatting
+                filteredMeetings.forEach((meeting, index) => {
+                    if (yPosition > 250) {
+                        doc.addPage();
+                        yPosition = 20;
+                    }
+                    
+                    // Meeting header
+                    doc.setFontSize(14);
+                    doc.setTextColor(40, 40, 40);
+                    doc.text(`${meeting.date} - ${meeting.title}`, 14, yPosition);
+                    yPosition += 10;
+                    
+                    // Meeting details
+                    doc.setFontSize(10);
+                    doc.setTextColor(80, 80, 80);
+                    doc.text(`Time: ${meeting.start_time || 'N/A'} - ${meeting.end_time || 'N/A'}`, 14, yPosition);
+                    yPosition += 6;
+                    doc.text(`Location: ${meeting.location || 'N/A'}`, 14, yPosition);
+                    yPosition += 6;
+                    doc.text(`Chair: ${meeting.chair || 'N/A'}`, 14, yPosition);
+                    yPosition += 6;
+                    
+                    const participants = Array.isArray(meeting.participants) ? 
+                        meeting.participants.join(', ') : meeting.participants;
+                    const splitParticipants = doc.splitTextToSize(`Participants: ${participants || 'N/A'}`, 180);
+                    doc.text(splitParticipants, 14, yPosition);
+                    yPosition += splitParticipants.length * 6 + 8;
+                    
+                    // Add agenda if available
+                    if (meeting.agenda) {
+                        doc.setFontSize(12);
+                        doc.setTextColor(40, 40, 40);
+                        doc.text("Agenda:", 14, yPosition);
+                        yPosition += 8;
+                        
+                        doc.setFontSize(10);
+                        doc.setTextColor(80, 80, 80);
+                        const splitAgenda = doc.splitTextToSize(meeting.agenda, 180);
+                        doc.text(splitAgenda, 20, yPosition);
+                        yPosition += splitAgenda.length * 6 + 8;
+                    }
+                    
+                    // Add decisions if available
+                    if (meeting.decisions) {
+                        doc.setFontSize(12);
+                        doc.setTextColor(40, 40, 40);
+                        doc.text("Decisions:", 14, yPosition);
+                        yPosition += 8;
+                        
+                        doc.setFontSize(10);
+                        doc.setTextColor(80, 80, 80);
+                        const splitDecisions = doc.splitTextToSize(meeting.decisions, 180);
+                        doc.text(splitDecisions, 20, yPosition);
+                        yPosition += splitDecisions.length * 6 + 8;
+                    }
+                    
+                    // Add action items if available
+                    if (meeting.actions && meeting.actions.length > 0) {
+                        doc.setFontSize(12);
+                        doc.setTextColor(40, 40, 40);
+                        doc.text("Action Items:", 14, yPosition);
+                        yPosition += 8;
+                        
+                        doc.setFontSize(10);
+                        meeting.actions.forEach(action => {
+                            if (yPosition > 250) {
+                                doc.addPage();
+                                yPosition = 20;
+                            }
+                            
+                            const actionText = `• ${action.text} (Owner: ${action.owner || 'N/A'}, Due: ${action.due || 'N/A'}, Status: ${action.status || 'N/A'})`;
+                            const splitAction = doc.splitTextToSize(actionText, 170);
+                            doc.text(splitAction, 20, yPosition);
+                            yPosition += splitAction.length * 6 + 4;
+                        });
+                    }
+                    
+                    yPosition += 10;
+                    
+                    // Add separator line
+                    doc.setDrawColor(200, 200, 200);
+                    doc.line(14, yPosition, 196, yPosition);
+                    yPosition += 15;
+                });
+                
+                // Add footer
+                const totalPages = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(150, 150, 150);
+                    doc.text(`Page ${i} of ${totalPages}`, 105, 285, { align: "center" });
+                    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
                 }
                 
-                // Meeting header
-                doc.setFontSize(14);
+                doc.save("meeting_minutes_report.pdf");
+                showStatus('Meeting minutes exported to PDF');
+            } catch (error) {
+                console.error('Error exporting PDF:', error);
+                showStatus('Error exporting PDF', 'error');
+            }
+        }
+        
+        function exportLessonsPDF() {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Add title with professional styling
+                doc.setFontSize(20);
                 doc.setTextColor(40, 40, 40);
-                doc.text(`${meeting.date} - ${meeting.title}`, 14, yPosition);
-                yPosition += 10;
+                doc.text("LESSON PLANS REPORT", 105, 20, { align: "center" });
+                
+                // Add date range
+                const startDate = document.getElementById('lsStart').value;
+                const endDate = document.getElementById('lsEnd').value;
+                doc.setFontSize(12);
+                doc.setTextColor(100, 100, 100);
+                doc.text(`Date Range: ${startDate} to ${endDate}`, 105, 30, { align: "center" });
+                
+                // Filter lessons by date range
+                const filteredLessons = currentData.lessons.filter(lesson => {
+                    return (!startDate || lesson.date >= startDate) && (!endDate || lesson.date <= endDate);
+                });
+                
+                let yPosition = 45;
+                
+                // Add each lesson with professional formatting
+                filteredLessons.forEach((lesson, index) => {
+                    if (yPosition > 250) {
+                        doc.addPage();
+                        yPosition = 20;
+                    }
+                    
+                    // Lesson header
+                    doc.setFontSize(14);
+                    doc.setTextColor(40, 40, 40);
+                    doc.text(`${lesson.date} - ${lesson.student} - ${lesson.subject}`, 14, yPosition);
+                    yPosition += 8;
+                    
+                    doc.setFontSize(12);
+                    doc.text(`Topic: ${lesson.topic || 'N/A'}`, 14, yPosition);
+                    yPosition += 8;
+                    
+                    // Add objectives if available
+                    if (lesson.objectives) {
+                        doc.setFontSize(12);
+                        doc.setTextColor(40, 40, 40);
+                        doc.text("Objectives:", 14, yPosition);
+                        yPosition += 8;
+                        
+                        doc.setFontSize(10);
+                        doc.setTextColor(80, 80, 80);
+                        const splitObjectives = doc.splitTextToSize(lesson.objectives, 180);
+                        doc.text(splitObjectives, 20, yPosition);
+                        yPosition += splitObjectives.length * 6 + 8;
+                    }
+                    
+                    // Add materials if available
+                    if (lesson.materials) {
+                        doc.setFontSize(12);
+                        doc.setTextColor(40, 40, 40);
+                                                doc.text("Materials:", 14, yPosition);
+                        yPosition += 8;
+                        
+                        doc.setFontSize(10);
+                        doc.setTextColor(80, 80, 80);
+                        const splitMaterials = doc.splitTextToSize(lesson.materials, 180);
+                        doc.text(splitMaterials, 20, yPosition);
+                        yPosition += splitMaterials.length * 6 + 8;
+                    }
+                    
+                    // Add activities if available
+                    if (lesson.activities) {
+                        doc.setFontSize(12);
+                        doc.setTextColor(40, 40, 40);
+                        doc.text("Activities:", 14, yPosition);
+                        yPosition += 8;
+                        
+                        doc.setFontSize(10);
+                        doc.setTextColor(80, 80, 80);
+                        const splitActivities = doc.splitTextToSize(lesson.activities, 180);
+                        doc.text(splitActivities, 20, yPosition);
+                        yPosition += splitActivities.length * 6 + 8;
+                    }
+                    
+                    // Add homework if available
+                    if (lesson.homework) {
+                        doc.setFontSize(12);
+                        doc.setTextColor(40, 40, 40);
+                        doc.text("Homework:", 14, yPosition);
+                        yPosition += 8;
+                        
+                        doc.setFontSize(10);
+                        doc.setTextColor(80, 80, 80);
+                        const splitHomework = doc.splitTextToSize(lesson.homework, 180);
+                        doc.text(splitHomework, 20, yPosition);
+                        yPosition += splitHomework.length * 6 + 8;
+                    }
+                    
+                    yPosition += 10;
+                    
+                    // Add separator line
+                    doc.setDrawColor(200, 200, 200);
+                    doc.line(14, yPosition, 196, yPosition);
+                    yPosition += 15;
+                });
+                
+                // Add footer
+                const totalPages = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(150, 150, 150);
+                    doc.text(`Page ${i} of ${totalPages}`, 105, 285, { align: "center" });
+                    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
+                }
+                
+                doc.save("lesson_plans_report.pdf");
+                showStatus('Lesson plans exported to PDF');
+            } catch (error) {
+                console.error('Error exporting PDF:', error);
+                showStatus('Error exporting PDF', 'error');
+            }
+        }
+        
+        function exportSingleMeetingPDF(index) {
+            try {
+                const meeting = currentData.meetings[index];
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Add title with professional styling
+                doc.setFontSize(20);
+                doc.setTextColor(40, 40, 40);
+                doc.text("MEETING MINUTES", 105, 20, { align: "center" });
+                
+                let yPosition = 35;
                 
                 // Meeting details
-                doc.setFontSize(10);
+                doc.setFontSize(12);
                 doc.setTextColor(80, 80, 80);
-                doc.text(`Time: ${meeting.start_time || 'N/A'} - ${meeting.end_time || 'N/A'}`, 14, yPosition);
-                yPosition += 6;
-                doc.text(`Location: ${meeting.location || 'N/A'}`, 14, yPosition);
-                yPosition += 6;
-                doc.text(`Chair: ${meeting.chair || 'N/A'}`, 14, yPosition);
-                yPosition += 6;
+                doc.text(`Date: ${meeting.date || 'N/A'}`, 20, yPosition);
+                yPosition += 8;
+                doc.text(`Time: ${meeting.start_time || 'N/A'} - ${meeting.end_time || 'N/A'}`, 20, yPosition);
+                yPosition += 8;
+                doc.text(`Title: ${meeting.title || 'N/A'}`, 20, yPosition);
+                yPosition += 8;
+                doc.text(`Location: ${meeting.location || 'N/A'}`, 20, yPosition);
+                yPosition += 8;
+                doc.text(`Chair: ${meeting.chair || 'N/A'}`, 20, yPosition);
+                yPosition += 8;
                 
                 const participants = Array.isArray(meeting.participants) ? 
                     meeting.participants.join(', ') : meeting.participants;
-                const splitParticipants = doc.splitTextToSize(`Participants: ${participants || 'N/A'}`, 180);
-                doc.text(splitParticipants, 14, yPosition);
-                yPosition += splitParticipants.length * 6 + 8;
+                const splitParticipants = doc.splitTextToSize(`Participants: ${participants || 'N/A'}`, 170);
+                doc.text(splitParticipants, 20, yPosition);
+                yPosition += splitParticipants.length * 6 + 12;
                 
                 // Add agenda if available
                 if (meeting.agenda) {
-                    doc.setFontSize(12);
+                    doc.setFontSize(14);
                     doc.setTextColor(40, 40, 40);
-                    doc.text("Agenda:", 14, yPosition);
-                    yPosition += 8;
+                    doc.text("Agenda:", 20, yPosition);
+                    yPosition += 10;
                     
                     doc.setFontSize(10);
                     doc.setTextColor(80, 80, 80);
-                    const splitAgenda = doc.splitTextToSize(meeting.agenda, 180);
-                    doc.text(splitAgenda, 20, yPosition);
-                    yPosition += splitAgenda.length * 6 + 8;
+                    const splitAgenda = doc.splitTextToSize(meeting.agenda, 170);
+                    doc.text(splitAgenda, 25, yPosition);
+                    yPosition += splitAgenda.length * 6 + 12;
                 }
                 
                 // Add decisions if available
                 if (meeting.decisions) {
-                    doc.setFontSize(12);
+                    doc.setFontSize(14);
                     doc.setTextColor(40, 40, 40);
-                    doc.text("Decisions:", 14, yPosition);
-                    yPosition += 8;
+                    doc.text("Decisions:", 20, yPosition);
+                    yPosition += 10;
                     
                     doc.setFontSize(10);
                     doc.setTextColor(80, 80, 80);
-                    const splitDecisions = doc.splitTextToSize(meeting.decisions, 180);
-                    doc.text(splitDecisions, 20, yPosition);
-                    yPosition += splitDecisions.length * 6 + 8;
+                    const splitDecisions = doc.splitTextToSize(meeting.decisions, 170);
+                    doc.text(splitDecisions, 25, yPosition);
+                    yPosition += splitDecisions.length * 6 + 12;
                 }
                 
                 // Add action items if available
                 if (meeting.actions && meeting.actions.length > 0) {
-                    doc.setFontSize(12);
+                    doc.setFontSize(14);
                     doc.setTextColor(40, 40, 40);
-                    doc.text("Action Items:", 14, yPosition);
-                    yPosition += 8;
+                    doc.text("Action Items:", 20, yPosition);
+                    yPosition += 10;
                     
                     doc.setFontSize(10);
+                    doc.setTextColor(80, 80, 80);
                     meeting.actions.forEach(action => {
                         if (yPosition > 250) {
                             doc.addPage();
@@ -1495,368 +1747,137 @@
                         
                         const actionText = `• ${action.text} (Owner: ${action.owner || 'N/A'}, Due: ${action.due || 'N/A'}, Status: ${action.status || 'N/A'})`;
                         const splitAction = doc.splitTextToSize(actionText, 170);
-                        doc.text(splitAction, 20, yPosition);
-                        yPosition += splitAction.length * 6 + 4;
+                        doc.text(splitAction, 25, yPosition);
+                        yPosition += splitAction.length * 6 + 6;
                     });
                 }
                 
-                yPosition += 10;
+                // Add footer
+                const totalPages = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(150, 150, 150);
+                    doc.text(`Page ${i} of ${totalPages}`, 105, 285, { align: "center" });
+                    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
+                }
                 
-                // Add separator line
-                doc.setDrawColor(200, 200, 200);
-                doc.line(14, yPosition, 196, yPosition);
-                yPosition += 15;
+                doc.save(`meeting_minutes_${meeting.date}.pdf`);
+                showStatus('Meeting minutes exported to PDF');
+            } catch (error) {
+                console.error('Error exporting PDF:', error);
+                showStatus('Error exporting PDF', 'error');
+            }
+        }
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            setupAuth();
+            
+            // Set up form handlers
+            document.getElementById('studentForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const studentData = {
+                    name: document.getElementById('stuName').value.trim(),
+                    age: parseInt(document.getElementById('stuAge').value) || 0,
+                    grade: document.getElementById('stuGrade').value.trim(),
+                    level: document.getElementById('stuLevel').value.trim()
+                };
+                
+                if (!studentData.name) {
+                    alert('Please enter a student name');
+                    return;
+                }
+                
+                if (editingStudent !== null) {
+                    // Update existing student
+                    currentData.students[editingStudent] = studentData;
+                } else {
+                    // Add new student
+                    currentData.students.push(studentData);
+                }
+                
+                if (await saveStudents()) {
+                    showStatus('Student saved successfully');
+                    cancelEdit('student');
+                    renderStudents();
+                    refreshSummary();
+                }
             });
             
-            // Add footer
-            const totalPages = doc.internal.getNumberOfPages();
-            for (let i = 1; i <= totalPages; i++) {
-                doc.setPage(i);
-                doc.setFontSize(8);
-                doc.setTextColor(150, 150, 150);
-                doc.text(`Page ${i} of ${totalPages}`, 105, 285, { align: "center" });
-                doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
-            }
-            
-            doc.save("meeting_minutes_report.pdf");
-            showStatus('Meeting minutes exported to PDF');
-        } catch (error) {
-            console.error('Error exporting PDF:', error);
-            showStatus('Error exporting PDF', 'error');
-        }
-    }
-    
-    function exportLessonsPDF() {
-        try {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            // Add title with professional styling
-            doc.setFontSize(20);
-            doc.setTextColor(40, 40, 40);
-            doc.text("LESSON PLANS REPORT", 105, 20, { align: "center" });
-            
-            // Add date range
-            const startDate = document.getElementById('lsStart').value;
-            const endDate = document.getElementById('lsEnd').value;
-            doc.setFontSize(12);
-            doc.setTextColor(100, 100, 100);
-            doc.text(`Date Range: ${startDate} to ${endDate}`, 105, 30, { align: "center" });
-            
-            // Filter lessons by date range
-            const filteredLessons = currentData.lessons.filter(lesson => {
-                return (!startDate || lesson.date >= startDate) && (!endDate || lesson.date <= endDate);
+            // Set up meeting form handler
+            document.getElementById('meetingForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                if (!document.getElementById('mtDate').value || !document.getElementById('mtTitle').value) {
+                    alert('Please enter date and title');
+                    return;
+                }
+                
+                if (await saveMeetings()) {
+                    showStatus('Meeting saved successfully');
+                    actionItems = [];
+                    renderActionItems();
+                    renderMeetingsRange();
+                    refreshSummary();
+                    document.getElementById('meetingForm').reset();
+                    document.getElementById('cancelMeeting').style.display = 'none';
+                    editingMeeting = null;
+                }
             });
             
-            let yPosition = 45;
-            
-            // Add each lesson with professional formatting
-            filteredLessons.forEach((lesson, index) {
-                if (yPosition > 250) {
-                    doc.addPage();
-                    yPosition = 20;
+            // Set up lesson form handler
+            document.getElementById('lessonForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                if (!document.getElementById('lsDate').value || !document.getElementById('lsStudent').value || 
+                    !document.getElementById('lsSubject').value || !document.getElementById('lsTopic').value) {
+                    alert('Please enter date, student, subject, and topic');
+                    return;
                 }
                 
-                // Lesson header
-                doc.setFontSize(14);
-                doc.setTextColor(40, 40, 40);
-                doc.text(`${lesson.date} - ${lesson.student} - ${lesson.subject}`, 14, yPosition);
-                yPosition += 8;
-                
-                doc.setFontSize(12);
-                doc.text(`Topic: ${lesson.topic || 'N/A'}`, 14, yPosition);
-                yPosition += 8;
-                
-                // Add objectives if available
-                if (lesson.objectives) {
-                    doc.setFontSize(12);
-                    doc.setTextColor(40, 40, 40);
-                    doc.text("Objectives:", 14, yPosition);
-                    yPosition += 8;
-                    
-                    doc.setFontSize(10);
-                    doc.setTextColor(80, 80, 80);
-                    const splitObjectives = doc.splitTextToSize(lesson.objectives, 180);
-                    doc.text(splitObjectives, 20, yPosition);
-                    yPosition += splitObjectives.length * 6 + 8;
+                if (await saveLessons()) {
+                    showStatus('Lesson saved successfully');
+                    renderLessonsRange();
+                    refreshSummary();
+                    document.getElementById('lessonForm').reset();
+                    document.getElementById('cancelLesson').style.display = 'none';
+                    editingLesson = null;
                 }
-                
-                // Add materials if available
-                if (lesson.materials) {
-                    doc.setFontSize(12);
-                    doc.setTextColor(40, 40, 40);
-                    doc.text("Materials:", 14, yPosition);
-                    yPosition += 8;
-                    
-                    doc.setFontSize(10);
-                    doc.setTextColor(80, 80, 80);
-                    const splitMaterials = doc.splitTextToSize(lesson.materials, 180);
-                    doc.text(splitMaterials, 20, yPosition);
-                    yPosition += splitMaterials.length * 6 + 8;
-                }
-                
-                // Add activities if available
-                if (lesson.activities) {
-                    doc.setFontSize(12);
-                    doc.setTextColor(40, 40, 40);
-                    doc.text("Activities:", 14, yPosition);
-                    yPosition += 8;
-                    
-                    doc.setFontSize(10);
-                    doc.setTextColor(80, 80, 80);
-                    const splitActivities = doc.splitTextToSize(lesson.activities, 180);
-                    doc.text(splitActivities, 20, yPosition);
-                    yPosition += splitActivities.length * 6 + 8;
-                }
-                
-                // Add homework if available
-                if (lesson.homework) {
-                    doc.setFontSize(12);
-                    doc.setTextColor(40, 40, 40);
-                    doc.text("Homework:", 14, yPosition);
-                    yPosition += 8;
-                    
-                    doc.setFontSize(10);
-                    doc.setTextColor(80, 80, 80);
-                    const splitHomework = doc.splitTextToSize(lesson.homework, 180);
-                    doc.text(splitHomework, 20, yPosition);
-                    yPosition += splitHomework.length * 6 + 8;
-                }
-                
-                yPosition += 10;
-                
-                // Add separator line
-                doc.setDrawColor(200, 200, 200);
-                doc.line(14, yPosition, 196, yPosition);
-                yPosition += 15;
             });
             
-            // Add footer
-            const totalPages = doc.internal.getNumberOfPages();
-            for (let i = 1; i <= totalPages; i++) {
-                doc.setPage(i);
-                doc.setFontSize(8);
-                doc.setTextColor(150, 150, 150);
-                doc.text(`Page ${i} of ${totalPages}`, 105, 285, { align: "center" });
-                doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
-            }
+            // Set today's dates
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('attDate').value = today;
+            document.getElementById('lsDate').value = today;
+            document.getElementById('mtDate').value = today;
             
-            doc.save("lesson_plans_report.pdf");
-            showStatus('Lesson plans exported to PDF');
-        } catch (error) {
-            console.error('Error exporting PDF:', error);
-            showStatus('Error exporting PDF', 'error');
-        }
-    }
-    
-    function exportSingleMeetingPDF(index) {
-        try {
-            const meeting = currentData.meetings[index];
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            // Add title with professional styling
-            doc.setFontSize(20);
-            doc.setTextColor(40, 40, 40);
-            doc.text("MEETING MINUTES", 105, 20, { align: "center" });
-            
-            let yPosition = 35;
-            
-            // Meeting details
-            doc.setFontSize(12);
-            doc.setTextColor(80, 80, 80);
-            doc.text(`Date: ${meeting.date || 'N/A'}`, 20, yPosition);
-            yPosition += 8;
-            doc.text(`Time: ${meeting.start_time || 'N/A'} - ${meeting.end_time || 'N/A'}`, 20, yPosition);
-            yPosition += 8;
-            doc.text(`Title: ${meeting.title || 'N/A'}`, 20, yPosition);
-            yPosition += 8;
-            doc.text(`Location: ${meeting.location || 'N/A'}`, 20, yPosition);
-            yPosition += 8;
-            doc.text(`Chair: ${meeting.chair || 'N/A'}`, 20, yPosition);
-            yPosition += 8;
-            
-            const participants = Array.isArray(meeting.participants) ? 
-                meeting.participants.join(', ') : meeting.participants;
-            const splitParticipants = doc.splitTextToSize(`Participants: ${participants || 'N/A'}`, 170);
-            doc.text(splitParticipants, 20, yPosition);
-            yPosition += splitParticipants.length * 6 + 12;
-            
-            // Add agenda if available
-            if (meeting.agenda) {
-                doc.setFontSize(14);
-                doc.setTextColor(40, 40, 40);
-                doc.text("Agenda:", 20, yPosition);
-                yPosition += 10;
-                
-                doc.setFontSize(10);
-                doc.setTextColor(80, 80, 80);
-                const splitAgenda = doc.splitTextToSize(meeting.agenda, 170);
-                doc.text(splitAgenda, 25, yPosition);
-                yPosition += splitAgenda.length * 6 + 12;
-            }
-            
-            // Add decisions if available
-            if (meeting.decisions) {
-                doc.setFontSize(14);
-                doc.setTextColor(40, 40, 40);
-                doc.text("Decisions:", 20, yPosition);
-                yPosition += 10;
-                
-                doc.setFontSize(10);
-                doc.setTextColor(80, 80, 80);
-                const splitDecisions = doc.splitTextToSize(meeting.decisions, 170);
-                doc.text(splitDecisions, 25, yPosition);
-                yPosition += splitDecisions.length * 6 + 12;
-            }
-            
-            // Add action items if available
-            if (meeting.actions && meeting.actions.length > 0) {
-                doc.setFontSize(14);
-                doc.setTextColor(40, 40, 40);
-                doc.text("Action Items:", 20, yPosition);
-                yPosition += 10;
-                
-                doc.setFontSize(10);
-                doc.setTextColor(80, 80, 80);
-                meeting.actions.forEach(action => {
-                    if (yPosition > 250) {
-                        doc.addPage();
-                        yPosition = 20;
-                    }
-                    
-                    const actionText = `• ${action.text} (Owner: ${action.owner || 'N/A'}, Due: ${action.due || 'N/A'}, Status: ${action.status || 'N/A'})`;
-                    const splitAction = doc.splitTextToSize(actionText, 170);
-                    doc.text(splitAction, 25, yPosition);
-                    yPosition += splitAction.length * 6 + 6;
-                });
-            }
-            
-            // Add footer
-            const totalPages = doc.internal.getNumberOfPages();
-            for (let i = 1; i <= totalPages; i++) {
-                doc.setPage(i);
-                doc.setFontSize(8);
-                doc.setTextColor(150, 150, 150);
-                doc.text(`Page ${i} of ${totalPages}`, 105, 285, { align: "center" });
-                doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
-            }
-            
-            doc.save(`meeting_minutes_${meeting.date}.pdf`);
-            showStatus('Meeting minutes exported to PDF');
-        } catch (error) {
-            console.error('Error exporting PDF:', error);
-            showStatus('Error exporting PDF', 'error');
-        }
-    }
-    
-    // Initialize the app
-    document.addEventListener('DOMContentLoaded', () => {
-        setupAuth();
-        
-        // Set up form handlers
-        document.getElementById('studentForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const studentData = {
-                name: document.getElementById('stuName').value.trim(),
-                age: parseInt(document.getElementById('stuAge').value) || 0,
-                grade: document.getElementById('stuGrade').value.trim(),
-                level: document.getElementById('stuLevel').value.trim()
-            };
-            
-            if (!studentData.name) {
-                alert('Please enter a student name');
-                return;
-            }
-            
-            if (editingStudent !== null) {
-                // Update existing student
-                currentData.students[editingStudent] = studentData;
-            } else {
-                // Add new student
-                currentData.students.push(studentData);
-            }
-            
-            if (await saveStudents()) {
-                showStatus('Student saved successfully');
-                cancelEdit('student');
-                renderStudents();
-                refreshSummary();
-            }
+            // Make functions global for HTML onclick attributes
+            window.navigate = navigate;
+            window.logout = logout;
+            window.editStudent = editStudent;
+            window.deleteStudent = deleteStudent;
+            window.cancelEdit = cancelEdit;
+            window.renderStudents = renderStudents;
+            window.addActionItem = addActionItem;
+            window.removeActionItem = removeActionItem;
+            window.loadAttendanceForDate = loadAttendanceForDate;
+            window.saveAttendance = saveAttendance;
+            window.markAll = markAll;
+            window.loadAttendanceRange = loadAttendanceRange;
+            window.exportAttendanceExcel = exportAttendanceExcel;
+            window.loadMeetingsRange = renderMeetingsRange;
+            window.exportMeetingsRangePDF = exportMeetingsRangePDF;
+            window.loadLessonsRange = renderLessonsRange;
+            window.exportLessonsPDF = exportLessonsPDF;
+            window.exportStudentsCSV = exportStudentsCSV;
+            window.exportSingleMeetingPDF = exportSingleMeetingPDF;
+            window.editMeeting = editMeeting;
+            window.deleteMeeting = deleteMeeting;
+            window.editLesson = editLesson;
+            window.deleteLesson = deleteLesson;
         });
-        
-        // Set up meeting form handler
-        document.getElementById('meetingForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            if (!document.getElementById('mtDate').value || !document.getElementById('mtTitle').value) {
-                alert('Please enter date and title');
-                return;
-            }
-            
-            if (await saveMeetings()) {
-                showStatus('Meeting saved successfully');
-                actionItems = [];
-                renderActionItems();
-                renderMeetingsRange();
-                refreshSummary();
-                document.getElementById('meetingForm').reset();
-                document.getElementById('cancelMeeting').style.display = 'none';
-                editingMeeting = null;
-            }
-        });
-        
-        // Set up lesson form handler
-        document.getElementById('lessonForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            if (!document.getElementById('lsDate').value || !document.getElementById('lsStudent').value || 
-                !document.getElementById('lsSubject').value || !document.getElementById('lsTopic').value) {
-                alert('Please enter date, student, subject, and topic');
-                return;
-            }
-            
-            if (await saveLessons()) {
-                showStatus('Lesson saved successfully');
-                renderLessonsRange();
-                refreshSummary();
-                document.getElementById('lessonForm').reset();
-                document.getElementById('cancelLesson').style.display = 'none';
-                editingLesson = null;
-            }
-        });
-        
-        // Set today's dates
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('attDate').value = today;
-        document.getElementById('lsDate').value = today;
-        document.getElementById('mtDate').value = today;
-        
-        // Make functions global for HTML onclick attributes
-        window.navigate = navigate;
-        window.logout = logout;
-        window.editStudent = editStudent;
-        window.deleteStudent = deleteStudent;
-        window.cancelEdit = cancelEdit;
-        window.renderStudents = renderStudents;
-        window.addActionItem = addActionItem;
-        window.removeActionItem = removeActionItem;
-        window.loadAttendanceForDate = loadAttendanceForDate;
-        window.saveAttendance = saveAttendance;
-        window.markAll = markAll;
-        window.loadAttendanceRange = loadAttendanceRange;
-        window.exportAttendanceExcel = exportAttendanceExcel;
-        window.loadMeetingsRange = renderMeetingsRange;
-        window.exportMeetingsRangePDF = exportMeetingsRangePDF;
-        window.loadLessonsRange = renderLessonsRange;
-        window.exportLessonsPDF = exportLessonsPDF;
-        window.exportStudentsCSV = exportStudentsCSV;
-        window.exportSingleMeetingPDF = exportSingleMeetingPDF;
-        window.editMeeting = editMeeting;
-        window.deleteMeeting = deleteMeeting;
-        window.editLesson = editLesson;
-        window.deleteLesson = deleteLesson;
-    });
-</script>
-</body> </html>
+    </script>
+</body>
+</html>

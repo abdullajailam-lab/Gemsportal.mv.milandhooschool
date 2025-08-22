@@ -29,7 +29,7 @@
             color:#fff;display:flex;flex-direction:column;gap:18px;box-shadow:var(--shadow)
         }
         .brand{display:flex;align-items:center;gap:12px}
-        .brand .logo{width:48px;height:48px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center}
+        .brand .logo{width:48px;height:48px;border-radius:10px;background:rgba(255,255,255,0.06;display:flex;align-items:center;justify-content:center}
         .brand h1{margin:0;font-size:18px;font-weight:800}
         .nav{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
         .nav button{background:transparent;border:none;color:#e9fbfb;padding:12px;border-radius:10px;text-align:left;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .15s}
@@ -117,6 +117,34 @@
             color: rgba(255,255,255,0.7);
             cursor: pointer;
             font-size: 13px;
+        }
+        
+        /* PDF template styles */
+        .pdf-template {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 10px 0;
+            background: white;
+            border-radius: 8px;
+        }
+        .pdf-header {
+            text-align: center;
+            border-bottom: 2px solid #06283d;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .pdf-section {
+            margin: 15px 0;
+        }
+        .pdf-section-title {
+            font-weight: bold;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+        .action-item {
+            padding: 5px;
+            border-bottom: 1px dotted #eee;
         }
     </style>
 </head>
@@ -1587,8 +1615,7 @@
                     // Add activities if available
                     if (lesson.activities) {
                         const splitActivities = doc.splitTextToSize(`Activities: ${lesson.activities}`, 180);
-                        doc.text(splitActivities, 14, yPosition);
-                        yPosition += splitActivities.length * 6;
+                        doc.text(splitActivities, 14,yPosition += splitActivities.length * 6;
                     }
                     
                     // Add homework if available

@@ -118,34 +118,6 @@
             cursor: pointer;
             font-size: 13px;
         }
-        
-        /* PDF template styles */
-        .pdf-template {
-            border: 1px solid #ccc;
-            padding: 20px;
-            margin: 10px 0;
-            background: white;
-            border-radius: 8px;
-        }
-        .pdf-header {
-            text-align: center;
-            border-bottom: 2px solid #06283d;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .pdf-section {
-            margin: 15px 0;
-        }
-        .pdf-section-title {
-            font-weight: bold;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-            margin-bottom: 10px;
-        }
-        .action-item {
-            padding: 5px;
-            border-bottom: 1px dotted #eee;
-        }
     </style>
 </head>
 <body>
@@ -156,8 +128,8 @@
             
             <div class="api-key-container" id="supabaseConfig" style="display:none">
                 <h3 style="margin:0 0 8px 0;color:#fff">Supabase Configuration</h3>
-                <input id="supabaseUrl" placeholder="Supabase URL" value="https://your-project.supabase.co" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
-                <input id="supabaseKey" placeholder="Supabase API Key" value="your-anon-key" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
+                <input id="supabaseUrl" placeholder="Supabase URL" value="https://sasodvdokwybanovtuwl.supabase.co" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
+                <input id="supabaseKey" placeholder="Supabase API Key" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhc29kdmRva3d5YmFub3Z0dXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNzMzNTAsImV4cCI6MjA3MDc0OTM1MH0.sUJx73vkjPlKo9m8De6dUNGMcdWjb1vh8hnsMBVMgRQ" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
                 <button id="btnSaveConfig" style="width:100%;padding:10px;border-radius:8px;border:none;background:#9c56e0;font-weight:800;color:#fff">Save Configuration</button>
                 <div id="configStatus" class="auth-status"></div>
             </div>
@@ -427,11 +399,11 @@
 
     <script>
         // Initialize Supabase with correct API key
-        let SUPABASE_URL = "https://your-project.supabase.co";
-        let SUPABASE_KEY = "your-anon-key";
+        let SUPABASE_URL = "https://sasodvdokwybanovtuwl.supabase.co";
+        let SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhc29kdmRva3d5YmFub3Z0dXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNzMzNTAsImV4cCI6MjA3MDc0OTM1MH0.sUJx73vkjPlKo9m8De6dUNGMcdWjb1vh8hnsMBVMgRQ";
         
         // Create Supabase client
-        let supabase = null;
+        let supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
         // Global state
         let currentUser = null;
@@ -454,20 +426,14 @@
         async function setupAuth() {
             // Check for existing session
             try {
-                // Initialize Supabase with default values
-                if (localStorage.getItem('supabase_url') && localStorage.getItem('supabase_key')) {
-                    SUPABASE_URL = localStorage.getItem('supabase_url');
-                    SUPABASE_KEY = localStorage.getItem('supabase_key');
+                const { data: { session }, error } = await supabase.auth.getSession();
+                if (error) {
+                    console.error('Error getting session:', error);
+                    document.getElementById('loginStatus').textContent = 'Error connecting to server';
+                    document.getElementById('loginStatus').className = 'auth-status auth-error';
+                    return;
                 }
                 
-                // Set input values
-                document.getElementById('supabaseUrl').value = SUPABASE_URL;
-                document.getElementById('supabaseKey').value = SUPABASE_KEY;
-                
-                // Create client
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                
-                const { data: { session } } = await supabase.auth.getSession();
                 if (session) {
                     currentUser = session.user;
                     openApp();
@@ -523,11 +489,6 @@
                 // Update Supabase client with new configuration
                 SUPABASE_URL = url;
                 SUPABASE_KEY = key;
-                
-                // Save to localStorage
-                localStorage.setItem('supabase_url', url);
-                localStorage.setItem('supabase_key', key);
-                
                 supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
                 
                 document.getElementById('configStatus').textContent = 'Configuration saved successfully!';
@@ -1509,7 +1470,7 @@
                 let yPosition = 40;
                 
                 // Add each meeting
-                filteredMeetings.forEach((meeting, index) => {
+                filteredMeetings.forEach((meeting, index) {
                     if (yPosition > 250) {
                         doc.addPage();
                         yPosition = 20;
@@ -1593,7 +1554,7 @@
                 let yPosition = 40;
                 
                 // Add each lesson
-                filteredLessons.forEach((lesson, index) => {
+                filteredLessons.forEach((lesson, index) {
                     if (yPosition > 250) {
                         doc.addPage();
                         yPosition = 20;

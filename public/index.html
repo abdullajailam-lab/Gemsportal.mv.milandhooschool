@@ -1,1860 +1,1667 @@
-html
+```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>GEMS Milandhoo School Portal — Pro</title>
-
     <!-- CDNs -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <style>
-        :root{
-            --sidebar-a:#06283d; --sidebar-b:#0aa3a3; --accent:#ffd166;
-            --card:#ffffff; --muted:#6b7c93; --success:#2ea44f; --danger:#ef5350;
-            --radius:12px; --shadow:0 10px 30px rgba(2,6,23,0.12);
-            --input-text:#000; --ink:#072031; --bg:#eef6f9;
-        }
-        *{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial}
-        html,body{height:100%;margin:0;background:var(--bg);color:var(--ink)}
-
-        /* App shell */
-        .app{display:flex;height:100vh;overflow:hidden}
-        .sidebar{
-            width:280px;padding:22px;background:linear-gradient(180deg,var(--sidebar-a),var(--sidebar-b));
-            color:#fff;display:flex;flex-direction:column;gap:18px;box-shadow:var(--shadow)
-        }
-        .brand{display:flex;align-items:center;gap:12px}
-        .brand .logo{width:48px;height:48px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center}
-        .brand h1{margin:0;font-size:18px;font-weight:800}
-        .nav{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
-        .nav button{background:transparent;border:none;color:#e9fbfb;padding:12px;border-radius:10px;text-align:left;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .15s}
-        .nav button:hover{background:rgba(255,255,255,0.06);transform:translateX(6px)}
-
-        .main{flex:1;padding:20px;overflow:auto}
-        .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-        .title{font-weight:800;font-size:20px;color:#072031}
-        .header .note{color:var(--muted)}
-
-        .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
-        .card{background:var(--card);padding:14px;border-radius:var(--radius);box-shadow:var(--shadow);min-width:160px}
-        .big{font-size:20px;font-weight:900;color:#052235}
-        .small-note{font-size:13px;color:var(--muted)}
-
-        /* panels & forms */
-        .panel{background:#fff;padding:14px;border-radius:12px;box-shadow:var(--shadow);margin-bottom:14px}
-        .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-        input[type="text"], input[type="date"], input[type="time"], input[type="number"], select, textarea{
-            padding:10px;border-radius:10px;border:1px solid #d8e6ee;background:#fff;color:var(--input-text);min-width:160px;font-size:13px;
-        }
-        textarea{min-height:80px;resize:vertical}
-        .btn{padding:10px 12px;border-radius:10px;border:none;background:var(--accent);font-weight:800;cursor:pointer}
-        .btn.secondary{background:transparent;border:1px solid #cfdce8}
-        .small{padding:8px 10px;font-size:13px;border-radius:8px}
-        .table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden}
-        .table th,.table td{padding:10px;border:1px solid #eef4f8;text-align:left;font-size:13px}
-
-        /* section accents */
-        .section-att .panel{border-left:6px solid #000}
-        .section-meet .panel{border-left:6px solid #000}
-        .section-less .panel{border-left:6px solid #000}
-
-        /* ensure inputs have black text */
-        .section-att input, .section-att textarea, .section-att select,
-        .section-meet input, .section-meet textarea, .section-meet select,
-        .section-less input, .section-less textarea, .section-less select { color:#000;background:#fff;border:1px solid #c6d3df; }
-
-        /* action buttons */
-        .action-btn{padding:6px 10px;border-radius:8px;color:#fff;border:none;cursor:pointer}
-        .edit{background:var(--success)}
-        .del{background:var(--danger)}
-        .link{background:#5b76ff}
-
-        .hidden{display:none}
-        .note{color:var(--muted);font-size:13px}
-        @media (max-width:900px){ .sidebar{display:none} .app{flex-direction:column} }
-
-        /* pill badges */
-        .badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #cfe0ea;font-size:12px;color:#375a74;background:#f6fbfe}
-        
-        /* Auth status messages */
-        .auth-status {
-            padding: 8px;
-            border-radius: 6px;
-            margin-top: 10px;
-            font-size: 14px;
-            text-align: center;
-        }
-        .auth-success {
-            background-color: rgba(46, 164, 79, 0.2);
-            color: #2ea44f;
-        }
-        .auth-error {
-            background-color: rgba(239, 83, 80, 0.2);
-            color: #ef5350;
-        }
-        
-        /* Loading indicator */
-        .loading {display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; margin-left: 10px;}
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        /* Fix for login/register buttons */
-        #btnLogin, #btnRegister {
-            transition: all 0.2s ease;
-        }
-        #btnLogin:hover, #btnRegister:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        #btnLogin:active, #btnRegister:active {
-            transform: translateY(0);
-        }
-    </style>
-</head>
-<body>
+:root{
+  --sidebar-a:#06283d; --sidebar-b:#0aa3a3; --accent:#ffd166;
+  --card:#ffffff; --muted:#6b7c93; --success:#2ea44f; --danger:#ef5350;
+  --radius:12px; --shadow:0 10px 30px rgba(2,6,23,0.12);
+  --input-text:#000; --ink:#072031; --bg:#eef6f9;
+}
+*{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--ink)}
+/* App shell */
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{
+  width:280px;padding:22px;background:linear-gradient(180deg,var(--sidebar-a),var(--sidebar-b));
+  color:#fff;display:flex;flex-direction:column;gap:18px;box-shadow:var(--shadow)
+}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .logo{width:48px;height:48px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center}
+.brand h1{margin:0;font-size:18px;font-weight:800}
+.nav{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
+.nav button{background:transparent;border:none;color:#e9fbfb;padding:12px;border-radius:10px;text-align:left;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .15s}
+.nav button:hover{background:rgba(255,255,255,0.06);transform:translateX(6px)}
+.main{flex:1;padding:20px;overflow:auto}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.title{font-weight:800;font-size:20px;color:#072031}
+.header .note{color:var(--muted)}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.card{background:var(--card);padding:14px;border-radius:var(--radius);box-shadow:var(--shadow);min-width:160px}
+.big{font-size:20px;font-weight:900;color:#052235}
+.small-note{font-size:13px;color:var(--muted)}
+/* panels & forms */
+.panel{background:#fff;padding:14px;border-radius:12px;box-shadow:var(--shadow);margin-bottom:14px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input[type="text"], input[type="date"], input[type="time"], input[type="number"], select, textarea{
+  padding:10px;border-radius:10px;border:1px solid #d8e6ee;background:#fff;color:var(--input-text);min-width:160px;font-size:13px;
+}
+textarea{min-height:80px;resize:vertical}
+.btn{padding:10px 12px;border-radius:10px;border:none;background:var(--accent);font-weight:800;cursor:pointer}
+.btn.secondary{background:transparent;border:1px solid #cfdce8}
+.small{padding:8px 10px;font-size:13px;border-radius:8px}
+.table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden}
+.table th,.table td{padding:10px;border:1px solid #eef4f8;text-align:left;font-size:13px}
+/* section accents */
+.section-att .panel{border-left:6px solid #000}
+.section-meet .panel{border-left:6px solid #000}
+.section-less .panel{border-left:6px solid #000}
+/* ensure inputs have black text */
+.section-att input, .section-att textarea, .section-att select,
+.section-meet input, .section-meet textarea, .section-meet select,
+.section-less input, .section-less textarea, .section-less select { color:#000;background:#fff;border:1px solid #c6d3df; }
+/* action buttons */
+.action-btn{padding:6px 10px;border-radius:8px;color:#fff;border:none;cursor:pointer}
+.edit{background:var(--success)}
+.del{background:var(--danger)}
+.link{background:#5b76ff}
+.hidden{display:none}
+.note{color:var(--muted);font-size:13px}
+@media (max-width:900px){ .sidebar{display:none} .app{flex-direction:column} }
+/* pill badges */
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #cfe0ea;font-size:12px;color:#375a74;background:#f6fbfe}
+</style>
+  </head>
+  <body>
     <!-- LOGIN / REGISTER -->
-    <div id="authScreen" style="position:fixed;inset:0;background:linear-gradient(180deg,#071a2b,#0a8b8b);display:flex;align-items:center;justify-content:center;z-index:999">
-        <div style="width:480px;background:rgba(255,255,255,0.06);padding:28px;border-radius:14px;color:#fff;box-shadow:0 16px 40px rgba(0,0,0,.5)">
-            <h2 style="margin:0 0 8px 0;text-align:center">Welcome to GEMS Milandhoo School Portal</h2>
-            
-            <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap">
-                <div style="flex:1;min-width:220px">
-                    <h3 style="margin:0 0 8px 0">Login</h3>
-                    <input id="loginEmail" placeholder="Email" type="email" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
-                    <input id="loginPass" placeholder="Password" type="password" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
-                    <button id="btnLogin" style="width:100%;padding:10px;border-radius:8px;border:none;background:#ffd166;font-weight:800;color:#000">Login</button>
-                    <div id="loginStatus" class="auth-status"></div>
-                </div>
-                <div style="flex:1;min-width:220px">
-                    <h3 style="margin:0 0 8px 0">Register</h3>
-                    <input id="regName" placeholder="Full Name" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
-                    <input id="regEmail" placeholder="Email" type="email" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
-                    <input id="regPass" placeholder="Password (min 6 characters)" type="password" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
-                    <button id="btnRegister" style="width:100%;padding:10px;border-radius:8px;border:none;background:#4ce0c9;font-weight:800;color:#003">Register & Sign in</button>
-                    <div id="registerStatus" class="auth-status"></div>
-                </div>
-            </div>
-            <p style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.8)">All data is securely stored and shared with other teachers.</p>
+    <div id="authScreen"
+      style="position:fixed;inset:0;background:linear-gradient(180deg,#071a2b,#0a8b8b);display:flex;align-items:center;justify-content:center;z-index:999">
+      <div
+        style="width:480px;background:rgba(255,255,255,0.06);padding:28px;border-radius:14px;color:#fff;box-shadow:0 16px 40px rgba(0,0,0,.5)">
+        <h2 style="margin:0 0 8px 0;text-align:center">Welcome to GEMS Milandhoo
+          School Portal</h2>
+        <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap">
+          <div style="flex:1;min-width:220px">
+            <h3 style="margin:0 0 8px 0">Login</h3>
+            <input id="loginUser" placeholder="Username"
+              style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
+            <input id="loginPass" placeholder="Password" type="password"
+              style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
+            <button id="btnLogin"
+              style="width:100%;padding:10px;border-radius:8px;border:none;background:#ffd166;font-weight:800;color:#003">Login</button>
+          </div>
+          <div style="flex:1;min-width:220px">
+            <h3 style="margin:0 0 8px 0">Register</h3>
+            <input id="regUser" placeholder="Choose username"
+              style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
+            <input id="regPass" placeholder="Choose password" type="password"
+              style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
+            <button id="btnRegister"
+              style="width:100%;padding:10px;border-radius:8px;border:none;background:#4ce0c9;font-weight:800;color:#003">Register
+              & Sign in</button>
+          </div>
         </div>
+        <p
+          style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.8)">Use
+          unique usernames. Data is stored in Supabase cloud database.</p>
+      </div>
     </div>
-
     <!-- APP -->
     <div class="app" id="appRoot" style="display:none">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="brand">
-                <div class="logo" aria-hidden>
-                    <svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 2 L22 8 L17 22 L7 22 L2 8 Z" fill="white" opacity="0.12" /></svg>
-                </div>
-                <div>
-                    <h1>GEMS Milandhoo</h1>
-                    <div class="small-note">School Portal</div>
-                </div>
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="logo" aria-hidden>
+            <svg viewBox="0 0 24 24" width="22" height="22"><path
+                d="M12 2 L22 8 L17 22 L7 22 L2 8 Z" fill="white"
+                opacity="0.12" /></svg>
+          </div>
+          <div>
+            <h1>GEMS Milandhoo</h1>
+            <div class="small-note">School Portal</div>
+          </div>
+        </div>
+        <nav>
+          <ul class="nav">
+            <li><button onclick="navigate('dashboard')">🏠
+                Dashboard</button></li>
+            <li><button onclick="navigate('students')">👥 Students</button></li>
+            <li><button onclick="navigate('attendance')">📋
+                Attendance</button></li>
+            <li><button onclick="navigate('meetings')">🗒️ Meeting
+                Minutes</button></li>
+            <li><button onclick="navigate('lessons')">📚 Lesson
+                Plans</button></li>
+            <li style="margin-top:12px"><button onclick="logout()"
+                style="background:transparent;border:1px solid rgba(255,255,255,0.08);color:#fff;padding:10px;border-radius:8px">Logout</button></li>
+          </ul>
+        </nav>
+        <div style="margin-top:auto">
+          <div class="small-note">Logged in as</div>
+          <div id="currentUser" style="font-weight:800"></div>
+        </div>
+      </aside>
+      <!-- Main -->
+      <main class="main">
+        <div class="header">
+          <div class="title">GEMS Milandhoo School Portal</div>
+          <div class="note" id="currentTime">--</div>
+        </div>
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="card">
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <div class="card"><div class="big" id="totalStudents">0</div><div
+                class="small-note">Students</div></div>
+            <div class="card"><div class="big" id="attendanceDays">0</div><div
+                class="small-note">Attendance Days</div></div>
+            <div class="card"><div class="big" id="meetingsCount">0</div><div
+                class="small-note">Meetings</div></div>
+            <div class="card"><div class="big" id="lessonsCount">0</div><div
+                class="small-note">Lesson Plans</div></div>
+          </div>
+          <div class="panel" style="margin-top:12px">
+            <h3 style="margin:0 0 8px 0">Overview</h3>
+            <p class="small-note">Use the sidebar to manage Students,
+              Attendance, Meeting Minutes and Lesson Plans. All records are
+              saved to Supabase cloud database.</p>
+          </div>
+        </section>
+        <!-- STUDENTS -->
+        <section id="students" class="hidden">
+          <div class="panel">
+            <div
+              style="display:flex;justify-content:space-between;align-items:center">
+              <div><h3 style="margin:0">Students Management</h3><div
+                  class="small-note">Add / Edit / Delete students</div></div>
+              <div id="studentEditingBadge" class="small-note hidden"
+                style="color:#b55">Editing...</div>
             </div>
-
-            <nav>
-                <ul class="nav">
-                    <li><button onclick="navigate('dashboard')">🏠 Dashboard</button></li>
-                    <li><button onclick="navigate('students')">👥 Students</button></li>
-                    <li><button onclick="navigate('attendance')">📋 Attendance</button></li>
-                    <li><button onclick="navigate('meetings')">🗒️ Meeting Minutes</button></li>
-                    <li><button onclick="navigate('lessons')">📚 Lesson Plans</button></li>
-                    <li style="margin-top:12px"><button onclick="logout()" style="background:transparent;border:1px solid rgba(255,255,255,0.08);color:#fff;padding:10px;border-radius:8px">Logout</button></li>
-                </ul>
-            </nav>
-
-            <div style="margin-top:auto">
-                <div class="small-note">Logged in as</div>
-                <div id="currentUser" style="font-weight:800"></div>
-                <div id="saveStatus" class="small-note"></div>
+            <form id="studentForm" style="margin-top:12px">
+              <div class="controls">
+                <input id="stuName" placeholder="Full name" required>
+                <input id="stuAge" type="number" placeholder="Age" min="3">
+                <input id="stuGrade" placeholder="Grade">
+                <input id="stuLevel" placeholder="Level">
+                <button class="btn" type="submit">Add / Save</button>
+                <button id="cancelStudent" class="btn secondary" type="button"
+                  style="display:none"
+                  onclick="cancelEdit('student')">Cancel</button>
+              </div>
+            </form>
+          </div>
+          <div class="panel">
+            <div
+              style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <div><strong>Students List</strong><div class="small-note">Search
+                  & manage students below</div></div>
+              <div class="controls">
+                <input id="studentSearch" placeholder="Search name or grade"
+                  oninput="renderStudents()">
+                <button class="small" onclick="exportStudentsCSV()">Export
+                  CSV</button>
+              </div>
             </div>
-        </aside>
-
-        <!-- Main -->
-        <main class="main">
-            <div class="header">
-                <div class="title">GEMS Milandhoo School Portal</div>
-                <div class="note" id="currentTime">--</div>
+            <table class="table" id="studentsTable">
+              <thead><tr><th>Name</th><th>Age</th><th>Grade</th><th>Level</th><th>Actions</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+        <!-- ATTENDANCE -->
+        <section id="attendance" class="hidden section-att">
+          <div class="panel">
+            <div
+              style="display:flex;justify-content:space-between;align-items:center">
+              <div><h3 style="margin:0">Attendance</h3><div
+                  class="small-note">Black-text fields for clarity</div></div>
+              <div class="controls">
+                <label>Start <input id="attStart" type="date"></label>
+                <label>End <input id="attEnd" type="date"></label>
+                <button class="small" onclick="loadAttendanceRange()">Load
+                  Range</button>
+                <button class="small" onclick="exportAttendanceExcel()">Export
+                  Excel</button>
+              </div>
             </div>
-
-            <!-- DASHBOARD -->
-            <section id="dashboard" class="card">
-                <div style="display:flex;gap:12px;flex-wrap:wrap">
-                    <div class="card"><div class="big" id="totalStudents">0</div><div class="small-note">Students</div></div>
-                    <div class="card"><div class="big" id="attendanceDays">0</div><div class="small-note">Attendance Days</div></div>
-                    <div class="card"><div class="big" id="meetingsCount">0</div><div class="small-note">Meetings</div></div>
-                    <div class="card"><div class="big" id="lessonsCount">0</div><div class="small-note">Lesson Plans</div></div>
+          </div>
+          <div class="panel">
+            <div class="controls">
+              <label>Date <input id="attDate" type="date"></label>
+              <button class="small" onclick="loadAttendanceForDate()">Load
+                Students</button>
+              <button class="small" onclick="saveAttendance()">Save
+                Attendance</button>
+              <div style="margin-left:auto;display:flex;gap:8px">
+                <button class="small" onclick="markAll('Present')">All
+                  Present</button>
+                <button class="small" onclick="markAll('Absent')">All
+                  Absent</button>
+                <button class="small" onclick="markAll('Holiday')">All
+                  Holiday</button>
+              </div>
+            </div>
+            <div class="small-note" style="margin-top:8px">Pick a date, click
+              Load Students, mark statuses, then Save Attendance.</div>
+          </div>
+          <div class="panel">
+            <table class="table" id="attendanceTable">
+              <thead><tr><th>Date</th><th>Student</th><th>Status</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+        <!-- MEETINGS (Pro) -->
+        <section id="meetings" class="hidden section-meet">
+          <div class="panel">
+            <div
+              style="display:flex;justify-content:space-between;align-items:center">
+              <div><h3 style="margin:0">Meeting Minutes</h3><div
+                  class="small-note">Professional fields & PDF
+                  export</div></div>
+              <div class="controls">
+                <label>Start <input id="mtStart" type="date"></label>
+                <label>End <input id="mtEnd" type="date"></label>
+                <button class="small" onclick="loadMeetingsRange()">Load
+                  Range</button>
+                <button class="small" onclick="exportMeetingsRangePDF()">Export
+                  Range (PDF)</button>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <form id="meetingForm">
+              <div class="controls">
+                <input id="mtDate" type="date" required>
+                <input id="mtStartTime" type="time" placeholder="Start time">
+                <input id="mtEndTime" type="time" placeholder="End time">
+                <input id="mtTitle" type="text" placeholder="Meeting Title"
+                  required>
+                <input id="mtLocation" type="text" placeholder="Location">
+              </div>
+              <div class="controls" style="margin-top:8px">
+                <input id="mtChair" type="text" placeholder="Lading Teacher ">
+                <select id="mtParticipants" multiple
+                  style="min-width:220px;max-height:110px;overflow:auto"></select>
+                <input id="mtParticipantsFree" type="text"
+                  placeholder="Extra participants (comma separated)">
+              </div>
+              <div
+                style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <textarea id="mtAgenda"
+                  placeholder="Agenda (bullet points or text)"
+                  style="min-height:120px"></textarea>
+                <textarea id="mtDecisions" placeholder="Key Decisions"
+                  style="min-height:120px"></textarea>
+              </div>
+              <div style="margin-top:8px">
+                <div
+                  style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><strong>Action
+                    Items</strong><span class="badge">owner + due +
+                    status</span></div>
+                <div class="controls">
+                  <input id="aiText" type="text"
+                    placeholder="Action item description">
+                  <input id="aiOwner" type="text" placeholder="Owner">
+                  <input id="aiDue" type="date">
+                  <select id="aiStatus">
+                    <option value="Open">Open</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Done">Done</option>
+                  </select>
+                  <button class="small" type="button"
+                    onclick="addActionItem()">Add</button>
                 </div>
-                <div class="panel" style="margin-top:12px">
-                    <h3 style="margin:0 0 8px 0">Overview</h3>
-                    <p class="small-note">Use the sidebar to manage Students, Attendance, Meeting Minutes and Lesson Plans. All records are saved to the cloud and shared with all teachers.</p>
+                <table class="table" id="actionsTable" style="margin-top:8px">
+                  <thead><tr><th>#</th><th>Description</th><th>Owner</th><th>Due</th><th>Status</th><th>Actions</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+              <div style="margin-top:8px;display:flex;gap:8px">
+                <button class="btn" type="submit">Add / Save Meeting</button>
+                <button id="cancelMeeting" class="btn secondary" type="button"
+                  style="display:none"
+                  onclick="cancelEdit('meeting')">Cancel</button>
+              </div>
+            </form>
+          </div>
+          <div class="panel">
+            <table class="table" id="meetingsTable">
+              <thead><tr><th>Date</th><th>Title</th><th>Participants</th><th>Actions</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+        <!-- LESSONS -->
+        <section id="lessons" class="hidden section-less">
+          <div class="panel">
+            <div
+              style="display:flex;justify-content:space-between;align-items:center">
+              <div><h3 style="margin:0">Lesson Plans</h3><div
+                  class="small-note">Black-text fields — export to boxed
+                  template PDF</div></div>
+              <div class="controls">
+                <label>Start <input id="lsStart" type="date"></label>
+                <label>End <input id="lsEnd" type="date"></label>
+                <button class="small" onclick="loadLessonsRange()">Load
+                  Range</button>
+                <button class="small" onclick="exportLessonsPDF()">Export Lesson
+                  Plans (PDF)</button>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <form id="lessonForm">
+              <div class="controls">
+                <input id="lsDate" type="date" required>
+                <select id="lsStudent" required style="min-width:220px"><option
+                    value>-- choose student --</option></select>
+                <input id="lsSubject" placeholder="Subject / Course" required>
+                <input id="lsTopic" placeholder="Name of Lesson" required>
+              </div>
+              <div style="margin-top:10px">
+                <textarea id="lsObjectives"
+                  placeholder="Objectives / General description"
+                  style="width:100%;min-height:100px"></textarea>
+              </div>
+              <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap">
+                <textarea id="lsMaterials" placeholder="Materials"
+                  style="flex:1;min-width:260px"></textarea>
+                <textarea id="lsActivities" placeholder="Activities"
+                  style="flex:1;min-width:260px"></textarea>
+              </div>
+              <div style="margin-top:10px">
+                <textarea id="lsHomework" placeholder="Homework"
+                  style="width:100%;min-height:60px"></textarea>
+                <div style="margin-top:8px;display:flex;gap:8px">
+                  <button class="btn" type="submit">Add / Save Lesson</button>
+                  <button id="cancelLesson" class="btn secondary" type="button"
+                    style="display:none"
+                    onclick="cancelEdit('lesson')">Cancel</button>
                 </div>
-            </section>
-
-            <!-- STUDENTS -->
-            <section id="students" class="hidden">
-                <div class="panel">
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                        <div><h3 style="margin:0">Students Management</h3><div class="small-note">Add / Edit / Delete students</div></div>
-                        <div id="studentEditingBadge" class="small-note hidden" style="color:#b55">Editing...</div>
-                    </div>
-                    <form id="studentForm" style="margin-top:12px">
-                        <div class="controls">
-                            <input id="stuName" placeholder="Full name" required>
-                            <input id="stuAge" type="number" placeholder="Age" min="3">
-                            <input id="stuGrade" placeholder="Grade">
-                            <input id="stuLevel" placeholder="Level">
-                            <button class="btn" type="submit">Add / Save</button>
-                            <button id="cancelStudent" class="btn secondary" type="button" style="display:none" onclick="cancelEdit('student')">Cancel</button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="panel">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-                        <div><strong>Students List</strong><div class="small-note">Search & manage students below</div></div>
-                        <div class="controls">
-                            <input id="studentSearch" placeholder="Search name or grade" oninput="renderStudents()">
-                            <button class="small" onclick="exportStudentsCSV()">Export CSV</button>
-                        </div>
-                    </div>
-                    <table class="table" id="studentsTable">
-                        <thead><tr><th>Name</th><th>Age</th><th>Grade</th><th>Level</th><th>Actions</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- ATTENDANCE -->
-            <section id="attendance" class="hidden section-att">
-                <div class="panel">
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                        <div><h3 style="margin:0">Attendance</h3><div class="small-note">Black-text fields for clarity</div></div>
-                        <div class="controls">
-                            <label>Start <input id="attStart" type="date"></label>
-                            <label>End <input id="attEnd" type="date"></label>
-                            <button class="small" onclick="loadAttendanceRange()">Load Range</button>
-                            <button class="small" onclick="exportAttendanceExcel()">Export Excel</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel">
-                    <div class="controls">
-                        <label>Date <input id="attDate" type="date"></label>
-                        <button class="small" onclick="loadAttendanceForDate()">Load Students</button>
-                        <button class="small" onclick="saveAttendance()">Save Attendance</button>
-                        <div style="margin-left:auto;display:flex;gap:8px">
-                            <button class="small" onclick="markAll('Present')">All Present</button>
-                            <button class="small" onclick="markAll('Absent')">All Absent</button>
-                            <button class="small" onclick="markAll('Holiday')">All Holiday</button>
-                        </div>
-                    </div>
-                    <div class="small-note" style="margin-top:8px">Pick a date, click Load Students, mark statuses, then Save Attendance.</div>
-                </div>
-
-                <div class="panel">
-                    <table class="table" id="attendanceTable">
-                        <thead><tr><th>Date</th><th>Student</th><th>Status</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- MEETINGS (Pro) -->
-            <section id="meetings" class="hidden section-meet">
-                <div class="panel">
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                        <div><h3 style="margin:0">Meeting Minutes</h3><div class="small-note">Professional fields & PDF export</div></div>
-                        <div class="controls">
-                            <label>Start <input id="mtStart" type="date"></label>
-                            <label>End <input id="mtEnd" type="date"></label>
-                            <button class="small" onclick="loadMeetingsRange()">Load Range</button>
-                            <button class="small" onclick="exportMeetingsRangePDF()">Export Range (PDF)</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel">
-                    <form id="meetingForm">
-                        <div class="controls">
-                            <input id="mtDate" type="date" required>
-                            <input id="mtStartTime" type="time" placeholder="Start time">
-                            <input id="mtEndTime" type="time" placeholder="End time">
-                            <input id="mtTitle" type="text" placeholder="Meeting Title" required>
-                            <input id="mtLocation" type="text" placeholder="Location">
-                        </div>
-                        <div class="controls" style="margin-top:8px">
-                            <input id="mtChair" type="text" placeholder="Leading Teacher">
-                            <select id="mtParticipants" multiple style="min-width:220px;max-height:110px;overflow:auto"></select>
-                            <input id="mtParticipantsFree" type="text" placeholder="Extra participants (comma separated)">
-                        </div>
-                        <div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
-                            <textarea id="mtAgenda" placeholder="Agenda (bullet points or text)" style="min-height:120px"></textarea>
-                            <textarea id="mtDecisions" placeholder="Key Decisions" style="min-height:120px"></textarea>
-                        </div>
-                        <div style="margin-top:8px">
-                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><strong>Action Items</strong><span class="badge">owner + due + status</span></div>
-                            <div class="controls">
-                                <input id="aiText" type="text" placeholder="Action item description">
-                                <input id="aiOwner" type="text" placeholder="Owner">
-                                <input id="aiDue" type="date">
-                                <select id="aiStatus">
-                                    <option value="Open">Open</option>
-                                    <option value="In Progress">In Progress</option>
-                                    <option value="Done">Done</option>
-                                </select>
-                                <button class="small" type="button" onclick="addActionItem()">Add</button>
-                            </div>
-                            <table class="table" id="actionsTable" style="margin-top:8px">
-                                <thead><tr><th>#</th><th>Description</th><th>Owner</th><th>Due</th><th>Status</th><th>Actions</th></tr></thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                        <div style="margin-top:8px;display:flex;gap:8px">
-                            <button class="btn" type="submit">Add / Save Meeting</button>
-                            <button id="cancelMeeting" class="btn secondary" type="button" style="display:none" onclick="cancelEdit('meeting')">Cancel</button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="panel">
-                    <table class="table" id="meetingsTable">
-                        <thead><tr><th>Date</th><th>Title</th><th>Participants</th><th>Actions</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- LESSONS -->
-            <section id="lessons" class="hidden section-less">
-                <div class="panel">
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                        <div><h3 style="margin:0">Lesson Plans</h3><div class="small-note">Black-text fields — export to boxed template PDF</div></div>
-                        <div class="controls">
-                            <label>Start <input id="lsStart" type="date"></label>
-                            <label>End <input id="lsEnd" type="date"></label>
-                            <button class="small" onclick="loadLessonsRange()">Load Range</button>
-                            <button class="small" onclick="exportLessonsPDF()">Export Lesson Plans (PDF)</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel">
-                    <form id="lessonForm">
-                        <div class="controls">
-                            <input id="lsDate" type="date" required>
-                            <select id="lsStudent" required style="min-width:220px"><option value="">-- choose student --</option></select>
-                            <input id="lsSubject" placeholder="Subject / Course" required>
-                            <input id="lsTopic" placeholder="Name of Lesson" required>
-                        </div>
-
-                        <div style="margin-top:10px">
-                            <textarea id="lsObjectives" placeholder="Objectives / General description" style="width:100%;min-height:100px"></textarea>
-                        </div>
-
-                        <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap">
-                            <textarea id="lsMaterials" placeholder="Materials" style="flex:1;min-width:260px"></textarea>
-                            <textarea id="lsActivities" placeholder="Activities" style="flex:1;min-width:260px"></textarea>
-                        </div>
-
-                        <div style="margin-top:10px">
-                            <textarea id="lsHomework" placeholder="Homework" style="width:100%;min-height:60px"></textarea>
-                            <div style="margin-top:8px;display:flex;gap:8px">
-                                <button class="btn" type="submit">Add / Save Lesson</button>
-                                <button id="cancelLesson" class="btn secondary" type="button" style="display:none" onclick="cancelEdit('lesson')">Cancel</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="panel">
-                    <table class="table" id="lessonsTable">
-                        <thead><tr><th>Date</th><th>Student</th><th>Subject</th><th>Lesson</th><th>Objectives</th><th>Materials</th><th>Activities</th><th>Homework</th><th>Actions</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
+              </div>
+            </form>
+          </div>
+          <div class="panel">
+            <table class="table" id="lessonsTable">
+              <thead><tr><th>Date</th><th>Student</th><th>Subject</th><th>Lesson</th><th>Objectives</th><th>Materials</th><th>Activities</th><th>Homework</th><th>Actions</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
     </div>
-
     <script>
-        // Initialize Supabase with correct API key
-        let SUPABASE_URL = "https://sasodvdokwybanovtuwl.supabase.co";
-        let SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhc29kdmRva3d5YmFub3Z0dXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNzMzNTAsImV4cCI6MjA3MDc0OTM1MH0.sUJx73vkjPlKo9m8De6dUNGMcdWjb1vh8hnsMBVMgRQ";
-        
-        // Create Supabase client
-        let supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        
-        // Global state
-        let currentUser = null;
-        let currentData = {
-            students: [],
-            attendance: [],
-            meetings: [],
-            lessons: []
-        };
-        
-        let editingStudent = null;
-        let editingMeeting = null;
-        let editingLesson = null;
-        let actionItems = [];
-        let currentAttendanceDate = null;
-        
-        /* -------------------------
-           AUTHENTICATION
-        ------------------------- */
-        async function setupAuth() {
-            // Check for existing session
-            try {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session) {
-                    currentUser = session.user;
-                    openApp();
-                }
-                
-                // Listen for auth changes
-                supabase.auth.onAuthStateChange(async (event, session) => {
-                    if (event === 'SIGNED_IN' && session) {
-                        currentUser = session.user;
-                        openApp();
-                    } else if (event === 'SIGNED_OUT') {
-                        currentUser = null;
-                        location.reload();
-                    }
-                });
-            } catch (error) {
-                console.error('Error setting up auth:', error);
-                document.getElementById('loginStatus').textContent = 'Error connecting to Supabase. Please check your API key.';
-                document.getElementById('loginStatus').className = 'auth-status auth-error';
-            }
-            
-            // Bind auth buttons - FIXED: Added proper event listeners
-            document.getElementById('btnLogin').addEventListener('click', login);
-            document.getElementById('btnRegister').addEventListener('click', register);
-            
-            // Also allow form submission with Enter key
-            document.getElementById('loginEmail').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') login();
-            });
-            document.getElementById('loginPass').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') login();
-            });
-            document.getElementById('regName').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') register();
-            });
-            document.getElementById('regEmail').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') register();
-            });
-            document.getElementById('regPass').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') register();
-            });
-        }
-        
-        async function login() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPass').value;
-            const status = document.getElementById('loginStatus');
-            
-            if (!email || !password) {
-                status.textContent = 'Please enter email and password';
-                status.className = 'auth-status auth-error';
-                return;
-            }
-            
-            status.textContent = 'Logging in...';
-            status.className = 'auth-status';
-            
-            try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password
-                });
-                
-                if (error) {
-                    status.textContent = error.message;
-                    status.className = 'auth-status auth-error';
-                } else {
-                    status.textContent = 'Login successful!';
-                    status.className = 'auth-status auth-success';
-                    currentUser = data.user;
-                }
-            } catch (error) {
-                status.textContent = 'Login failed. Please try again.';
-                status.className = 'auth-status auth-error';
-                console.error('Login error:', error);
-            }
-        }
-        
-        async function register() {
-            const name = document.getElementById('regName').value;
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPass').value;
-            const status = document.getElementById('registerStatus');
-            
-            if (!name || !email || !password) {
-                status.textContent = 'Please fill all fields';
-                status.className = 'auth-status auth-error';
-                return;
-            }
-            
-            if (password.length < 6) {
-                status.textContent = 'Password must be at least 6 characters';
-                status.className = 'auth-status auth-error';
-                return;
-            }
-            
-            status.textContent = 'Creating account...';
-            status.className = 'auth-status';
-            
-            try {
-                const { data, error } = await supabase.auth.signUp({
-                    email,
-                    password,
-                    options: {
-                        data: {
-                            full_name: name
-                        }
-                    }
-                });
-                
-                if (error) {
-                    status.textContent = error.message;
-                    status.className = 'auth-status auth-error';
-                } else {
-                    status.textContent = 'Account created! Please check your email for confirmation.';
-                    status.className = 'auth-status auth-success';
-                    
-                    // Auto login after registration
-                    const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
-                        email,
-                        password
-                    });
-                    
-                    if (loginError) {
-                        status.textContent = 'Account created but automatic login failed. Please login manually.';
-                    } else {
-                        currentUser = loginData.user;
-                    }
-                }
-            } catch (error) {
-                status.textContent = 'Registration failed. Please try again.';
-                status.className = 'auth-status auth-error';
-                console.error('Registration error:', error);
-            }
-        }
-        
-        async function logout() {
-            await supabase.auth.signOut();
-        }
-        
-        /* -------------------------
-           DATA MANAGEMENT
-        ------------------------- */
-        
-        async function loadAllData() {
-            await Promise.all([
-                loadStudents(),
-                loadAttendance(),
-                loadMeetings(),
-                loadLessons()
-            ]);
-            refreshAll();
-        }
-        
-        async function loadStudents() {
-            try {
-                const { data, error } = await supabase
-                    .from('students')
-                    .select('*')
-                    .order('name');
-                    
-                if (error) {
-                    console.error('Error loading students:', error);
-                    showStatus('Error loading students', 'error');
-                } else {
-                    currentData.students = data || [];
-                    populateStudentSelect();
-                    populateParticipantSelect();
-                }
-            } catch (error) {
-                console.error('Error loading students:', error);
-                showStatus('Error loading students', 'error');
-            }
-        }
-        
-        async function saveStudents() {
-            try {
-                // Delete all existing students first
-                const { error: deleteError } = await supabase
-                    .from('students')
-                    .delete()
-                    .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all records
-                    
-                if (deleteError) {
-                    console.error('Error deleting students:', deleteError);
-                }
-                
-                // Insert all current students
-                const { error } = await supabase
-                    .from('students')
-                    .insert(currentData.students);
-                    
-                if (error) {
-                    console.error('Error saving students:', error);
-                    showStatus('Error saving students', 'error');
-                    return false;
-                }
-                return true;
-            } catch (error) {
-                console.error('Error saving students:', error);
-                showStatus('Error saving students', 'error');
-                return false;
-            }
-        }
-        
-        async function loadAttendance() {
-            try {
-                const { data, error } = await supabase
-                    .from('attendance')
-                    .select('*')
-                    .order('date', { ascending: false });
-                    
-                if (error) {
-                    console.error('Error loading attendance:', error);
-                    showStatus('Error loading attendance', 'error');
-                } else {
-                    currentData.attendance = data || [];
-                }
-            } catch (error) {
-                console.error('Error loading attendance:', error);
-                showStatus('Error loading attendance', 'error');
-            }
-        }
-        
-        async function saveAttendance() {
-            try {
-                // Get the current date
-                const date = document.getElementById('attDate').value;
-                if (!date) {
-                    showStatus('Please select a date first', 'error');
-                    return false;
-                }
-                
-                // Get all attendance records for this date
-                const attendanceRecords = [];
-                const rows = document.querySelectorAll('#attendanceTable tbody tr');
-                
-                rows.forEach(row => {
-                    const studentName = row.cells[1].textContent;
-                    const statusSelect = row.querySelector('select');
-                    const status = statusSelect ? statusSelect.value : 'Absent';
-                    
-                    attendanceRecords.push({
-                        date,
-                        student: studentName,
-                        status
-                    });
-                });
-                
-                // Delete existing records for this date
-                const { error: deleteError } = await supabase
-                    .from('attendance')
-                    .delete()
-                    .eq('date', date);
-                    
-                if (deleteError) {
-                    console.error('Error deleting attendance:', deleteError);
-                }
-                
-                // Insert new records
-                if (attendanceRecords.length > 0) {
-                    const { error } = await supabase
-                        .from('attendance')
-                        .insert(attendanceRecords);
-                        
-                    if (error) {
-                        console.error('Error saving attendance:', error);
-                        showStatus('Error saving attendance', 'error');
-                        return false;
-                    }
-                }
-                
-                // Reload attendance data
-                await loadAttendance();
-                showStatus('Attendance saved successfully');
-                return true;
-            } catch (error) {
-                console.error('Error saving attendance:', error);
-                showStatus('Error saving attendance', 'error');
-                return false;
-            }
-        }
-        
-        async function loadMeetings() {
-            try {
-                const { data, error } = await supabase
-                    .from('meetings')
-                    .select('*')
-                    .order('date', { ascending: false });
-                    
-                if (error) {
-                    console.error('Error loading meetings:', error);
-                    showStatus('Error loading meetings', 'error');
-                } else {
-                    currentData.meetings = data || [];
-                }
-            } catch (error) {
-                console.error('Error loading meetings:', error);
-                showStatus('Error loading meetings', 'error');
-            }
-        }
-        
-        async function saveMeetings() {
-            try {
-                const meetingData = {
-                    date: document.getElementById('mtDate').value,
-                    start_time: document.getElementById('mtStartTime').value,
-                    end_time: document.getElementById('mtEndTime').value,
-                    title: document.getElementById('mtTitle').value.trim(),
-                    location: document.getElementById('mtLocation').value.trim(),
-                    chair: document.getElementById('mtChair').value.trim(),
-                    participants: document.getElementById('mtParticipantsFree').value
-                        .split(',')
-                        .map(p => p.trim())
-                        .filter(p => p),
-                    agenda: document.getElementById('mtAgenda').value.trim(),
-                    decisions: document.getElementById('mtDecisions').value.trim(),
-                    actions: actionItems
-                };
-                
-                // Add selected participants from the multi-select
-                Array.from(document.getElementById('mtParticipants').selectedOptions).forEach(option => {
-                    meetingData.participants.push(option.value);
-                });
-                
-                if (editingMeeting !== null) {
-                    // Update existing meeting
-                    const meetingId = currentData.meetings[editingMeeting].id;
-                    const { error } = await supabase
-                        .from('meetings')
-                        .update(meetingData)
-                        .eq('id', meetingId);
-                        
-                    if (error) {
-                        console.error('Error updating meeting:', error);
-                        showStatus('Error updating meeting', 'error');
-                        return false;
-                    }
-                } else {
-                    // Add new meeting
-                    const { error } = await supabase
-                        .from('meetings')
-                        .insert([meetingData]);
-                        
-                    if (error) {
-                        console.error('Error saving meeting:', error);
-                        showStatus('Error saving meeting', 'error');
-                        return false;
-                    }
-                }
-                
-                // Reload meetings data
-                await loadMeetings();
-                return true;
-            } catch (error) {
-                console.error('Error saving meetings:', error);
-                showStatus('Error saving meetings', 'error');
-                return false;
-            }
-        }
-        
-        async function loadLessons() {
-            try {
-                const { data, error } = await supabase
-                    .from('lessons')
-                    .select('*')
-                    .order('date', { ascending: false });
-                    
-                if (error) {
-                    console.error('Error loading lessons:', error);
-                    showStatus('Error loading lessons', 'error');
-                } else {
-                    currentData.lessons = data || [];
-                }
-            } catch (error) {
-                console.error('Error loading lessons:', error);
-                showStatus('Error loading lessons', 'error');
-            }
-        }
-        
-        async function saveLessons() {
-            try {
-                const lessonData = {
-                    date: document.getElementById('lsDate').value,
-                    student: document.getElementById('lsStudent').value,
-                    subject: document.getElementById('lsSubject').value.trim(),
-                    topic: document.getElementById('lsTopic').value.trim(),
-                    objectives: document.getElementById('lsObjectives').value.trim(),
-                    materials: document.getElementById('lsMaterials').value.trim(),
-                    activities: document.getElementById('lsActivities').value.trim(),
-                    homework: document.getElementById('lsHomework').value.trim()
-                };
-                
-                if (editingLesson !== null) {
-                    // Update existing lesson
-                    const lessonId = currentData.lessons[editingLesson].id;
-                    const { error } = await supabase
-                        .from('lessons')
-                        .update(lessonData)
-                        .eq('id', lessonId);
-                        
-                    if (error) {
-                        console.error('Error updating lesson:', error);
-                        showStatus('Error updating lesson', 'error');
-                        return false;
-                    }
-                } else {
-                    // Add new lesson
-                    const { error } = await supabase
-                        .from('lessons')
-                        .insert([lessonData]);
-                        
-                    if (error) {
-                        console.error('Error saving lesson:', error);
-                        showStatus('Error saving lesson', 'error');
-                        return false;
-                    }
-                }
-                
-                // Reload lessons data
-                await loadLessons();
-                return true;
-            } catch (error) {
-                console.error('Error saving lessons:', error);
-                showStatus('Error saving lessons', 'error');
-                return false;
-            }
-        }
-        
-        function setupRealtimeUpdates() {
-            // Set up realtime subscriptions for each table
-            const channels = [
-                supabase.channel('students-changes')
-                    .on('postgres_changes', 
-                        { event: '*', schema: 'public', table: 'students' }, 
-                        () => loadStudents().then(renderStudents)
-                    )
-                    .subscribe(),
-                
-                supabase.channel('attendance-changes')
-                    .on('postgres_changes', 
-                        { event: '*', schema: 'public', table: 'attendance' }, 
-                        () => loadAttendance()
-                    )
-                    .subscribe(),
-                
-                supabase.channel('meetings-changes')
-                    .on('postgres_changes', 
-                        { event: '*', schema: 'public', table: 'meetings' }, 
-                        () => loadMeetings().then(renderMeetingsRange)
-                    )
-                    .subscribe(),
-                
-                supabase.channel('lessons-changes')
-                    .on('postgres_changes', 
-                        { event: '*', schema: 'public', table: 'lessons' }, 
-                        () => loadLessons().then(renderLessonsRange)
-                    )
-                    .subscribe()
-            ];
-        }
-        
-        /* -------------------------
-           UI FUNCTIONS
-        ------------------------- */
-        
-        function openApp() {
-            document.getElementById('authScreen').style.display = 'none';
-            document.getElementById('appRoot').style.display = 'flex';
-            document.getElementById('currentUser').textContent = currentUser.email;
-            
-            // Set default dates
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('attDate').value = today;
-            document.getElementById('lsDate').value = today;
-            document.getElementById('mtDate').value = today;
-            
-            // Load data and setup UI
-            loadAllData();
-            setupRealtimeUpdates();
-            
-            // Show dashboard by default
-            navigate('dashboard');
-            
-            // Update clock
-            updateClock();
-            setInterval(updateClock, 60000);
-        }
-        
-        function updateClock() {
-            document.getElementById('currentTime').textContent = new Date().toLocaleString();
-        }
-        
-        function showStatus(message, type = 'info') {
-            const statusEl = document.getElementById('saveStatus');
-            statusEl.textContent = message;
-            statusEl.style.color = type === 'error' ? 'var(--danger)' : 'var(--muted)';
-            
-            setTimeout(() => {
-                statusEl.textContent = '';
-            }, 3000);
-        }
-        
-        function navigate(section) {
-            // Hide all sections
-            document.querySelectorAll('main > section').forEach(sec => {
-                sec.classList.add('hidden');
-            });
-            
-            // Show the selected section
-            document.getElementById(section).classList.remove('hidden');
-            
-            // Load section-specific data
-            if (section === 'students') renderStudents();
-            if (section === 'attendance') renderAttendanceForDate();
-            if (section === 'meetings') renderMeetingsRange();
-            if (section === 'lessons') {
-                populateStudentSelect();
-                renderLessonsRange();
-            }
-        }
-        
-        function refreshAll() {
-            refreshSummary();
-            renderStudents();
-            renderAttendanceForDate();
-            renderMeetingsRange();
-            renderLessonsRange();
-        }
-        
-        function refreshSummary() {
-            document.getElementById('totalStudents').textContent = currentData.students.length;
-            
-            // Count unique attendance dates
-            const uniqueDates = new Set(currentData.attendance.map(a => a.date));
-            document.getElementById('attendanceDays').textContent = uniqueDates.size;
-            
-            document.getElementById('meetingsCount').textContent = currentData.meetings.length;
-            document.getElementById('lessonsCount').textContent = currentData.lessons.length;
-        }
-        
-        function renderStudents() {
-            const tbody = document.getElementById('studentsTable').querySelector('tbody');
-            tbody.innerHTML = '';
-            
-            const searchTerm = (document.getElementById('studentSearch').value || '').toLowerCase();
-            
-            currentData.students.forEach((student, index) => {
-                if (searchTerm && 
-                    !student.name.toLowerCase().includes(searchTerm) && 
-                    !(student.grade || '').toLowerCase().includes(searchTerm)) {
-                    return;
-                }
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${escapeHtml(student.name)}</td>
-                    <td>${student.age || ''}</td>
-                    <td>${escapeHtml(student.grade || '')}</td>
-                    <td>${escapeHtml(student.level || '')}</td>
-                    <td>
-                        <button class="action-btn edit" onclick="editStudent(${index})">Edit</button>
-                        <button class="action-btn del" onclick="deleteStudent(${index})">Delete</button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-        
-        function populateStudentSelect() {
-            const select = document.getElementById('lsStudent');
-            select.innerHTML = '<option value="">-- choose student --</option>';
-            
-            currentData.students.forEach((student, index) => {
-                const option = document.createElement('option');
-                option.value = student.name;
-                option.textContent = student.name;
-                select.appendChild(option);
-            });
-        }
-        
-        function populateParticipantSelect() {
-            const select = document.getElementById('mtParticipants');
-            select.innerHTML = '';
-            
-            currentData.students.forEach((student, index) => {
-                const option = document.createElement('option');
-                option.value = student.name;
-                option.textContent = student.name;
-                select.appendChild(option);
-            });
-        }
-        
-        async function loadAttendanceForDate() {
-            const date = document.getElementById('attDate').value;
-            if (!date) {
-                showStatus('Please select a date first', 'error');
-                return;
-            }
-            
-            currentAttendanceDate = date;
-            renderAttendanceForDate();
-            showStatus(`Loaded attendance for ${date}`);
-        }
-        
-        function renderAttendanceForDate() {
-            const tbody = document.getElementById('attendanceTable').querySelector('tbody');
-            tbody.innerHTML = '';
-            
-            if (!currentAttendanceDate) {
-                currentAttendanceDate = document.getElementById('attDate').value;
-            }
-            
-            // Get attendance for the selected date
-            const dateAttendance = currentData.attendance.filter(a => a.date === currentAttendanceDate);
-            
-            // Create a map of student->status for this date
-            const statusMap = {};
-            dateAttendance.forEach(a => {
-                statusMap[a.student] = a.status;
-            });
-            
-            // Render each student with their status
-            currentData.students.forEach(student => {
-                const row = document.createElement('tr');
-                const status = statusMap[student.name] || 'Absent';
-                
-                row.innerHTML = `
-                    <td>${currentAttendanceDate}</td>
-                    <td>${escapeHtml(student.name)}</td>
-                    <td>
-                        <select onchange="updateAttendanceStatus('${student.name}', this.value)">
-                            <option value="Present" ${status === 'Present' ? 'selected' : ''}>Present</option>
-                            <option value="Absent" ${status === 'Absent' ? 'selected' : ''}>Absent</option>
-                            <option value="Holiday" ${status === 'Holiday' ? 'selected' : ''}>Holiday</option>
-                        </select>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-        
-        function updateAttendanceStatus(studentName, status) {
-            // This will be saved when the user clicks "Save Attendance"
-            showStatus(`Marked ${studentName} as ${status}`);
-        }
-        
-        function markAll(status) {
-            const selects = document.querySelectorAll('#attendanceTable select');
-            selects.forEach(select => {
-                select.value = status;
-            });
-            showStatus(`Marked all students as ${status}`);
-        }
-        
-        async function loadAttendanceRange() {
-            const startDate = document.getElementById('attStart').value;
-            const endDate = document.getElementById('attEnd').value;
-            
-            if (!startDate || !endDate) {
-                showStatus('Please select both start and end dates', 'error');
-                return;
-            }
-            
-            try {
-                const { data, error } = await supabase
-                    .from('attendance')
-                    .select('*')
-                    .gte('date', startDate)
-                    .lte('date', endDate)
-                    .order('date', { ascending: false });
-                    
-                if (error) {
-                    console.error('Error loading attendance range:', error);
-                    showStatus('Error loading attendance range', 'error');
-                } else {
-                    // Display the results in the table
-                    const tbody = document.getElementById('attendanceTable').querySelector('tbody');
-                    tbody.innerHTML = '';
-                    
-                    data.forEach(record => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${record.date}</td>
-                            <td>${escapeHtml(record.student)}</td>
-                            <td>${record.status}</td>
-                        `;
-                        tbody.appendChild(row);
-                    });
-                    
-                    showStatus(`Loaded ${data.length} attendance records from ${startDate} to ${endDate}`);
-                }
-            } catch (error) {
-                console.error('Error loading attendance range:', error);
-                showStatus('Error loading attendance range', 'error');
-            }
-        }
-        
-        function editStudent(index) {
-            const student = currentData.students[index];
-            document.getElementById('stuName').value = student.name || '';
-            document.getElementById('stuAge').value = student.age || '';
-            document.getElementById('stuGrade').value = student.grade || '';
-            document.getElementById('stuLevel').value = student.level || '';
-            
-            editingStudent = index;
-            document.getElementById('studentEditingBadge').classList.remove('hidden');
-            document.getElementById('cancelStudent').style.display = 'inline-block';
-        }
-        
-        function deleteStudent(index) {
-            if (confirm('Are you sure you want to delete this student?')) {
-                currentData.students.splice(index, 1);
-                saveStudents().then(() => {
-                    renderStudents();
-                    refreshSummary();
-                    showStatus('Student deleted');
-                });
-            }
-        }
-        
-        function cancelEdit(type) {
-            if (type === 'student') {
-                editingStudent = null;
-                document.getElementById('studentForm').reset();
-                document.getElementById('studentEditingBadge').classList.add('hidden');
-                document.getElementById('cancelStudent').style.display = 'none';
-            } else if (type === 'meeting') {
-                editingMeeting = null;
-                document.getElementById('meetingForm').reset();
-                actionItems = [];
-                renderActionItems();
-                document.getElementById('cancelMeeting').style.display = 'none';
-            } else if (type === 'lesson') {
-                editingLesson = null;
-                document.getElementById('lessonForm').reset();
-                document.getElementById('cancelLesson').style.display = 'none';
-            }
-        }
-        
-        function escapeHtml(text) {
-            if (text === null || text === undefined) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // Meeting minutes functions
-        function addActionItem() {
-            const text = document.getElementById('aiText').value;
-            const owner = document.getElementById('aiOwner').value;
-                                const due = document.getElementById('aiDue').value;
-                    const status = document.getElementById('aiStatus').value;
-                    
-                    if (!text) {
-                        showStatus('Please enter action item description', 'error');
-                        return;
-                    }
-                    
-                    actionItems.push({
-                        text,
-                        owner,
-                        due,
-                        status
-                    });
-                    
-                    renderActionItems();
-                    
-                    // Clear the form
-                    document.getElementById('aiText').value = '';
-                    document.getElementById('aiOwner').value = '';
-                    document.getElementById('aiDue').value = '';
-                    document.getElementById('aiStatus').value = 'Open';
-                    
-                    showStatus('Action item added');
-                }
-                
-                function renderActionItems() {
-                    const tbody = document.getElementById('actionsTable').querySelector('tbody');
-                    tbody.innerHTML = '';
-                    
-                    actionItems.forEach((item, index) => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${index + 1}</td>
-                            <td>${escapeHtml(item.text)}</td>
-                            <td>${escapeHtml(item.owner)}</td>
-                            <td>${escapeHtml(item.due)}</td>
-                            <td>${escapeHtml(item.status)}</td>
-                            <td>
-                                <button class="action-btn del" onclick="removeActionItem(${index})">Remove</button>
-                            </td>
-                        `;
-                        tbody.appendChild(row);
-                    });
-                }
-                
-                function removeActionItem(index) {
-                    actionItems.splice(index, 1);
-                    renderActionItems();
-                    showStatus('Action item removed');
-                }
-                
-                function renderMeetingsRange() {
-                    const tbody = document.getElementById('meetingsTable').querySelector('tbody');
-                    tbody.innerHTML = '';
-                    
-                    const startDate = document.getElementById('mtStart').value;
-                    const endDate = document.getElementById('mtEnd').value;
-                    
-                    currentData.meetings.forEach((meeting, index) => {
-                        if ((startDate && meeting.date < startDate) || (endDate && meeting.date > endDate)) {
-                            return;
-                        }
-                        
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${meeting.date}</td>
-                            <td>${escapeHtml(meeting.title)}</td>
-                            <td>${escapeHtml(Array.isArray(meeting.participants) ? meeting.participants.join(', ') : meeting.participants)}</td>
-                            <td>
-                                <button class="action-btn edit" onclick="editMeeting(${index})">Edit</button>
-                                <button class="action-btn del" onclick="deleteMeeting(${index})">Delete</button>
-                                <button class="action-btn link" onclick="exportSingleMeetingPDF(${index})">PDF</button>
-                            </td>
-                        `;
-                        tbody.appendChild(row);
-                    });
-                }
-                
-                function editMeeting(index) {
-                    const meeting = currentData.meetings[index];
-                    document.getElementById('mtDate').value = meeting.date || '';
-                    document.getElementById('mtStartTime').value = meeting.start_time || '';
-                    document.getElementById('mtEndTime').value = meeting.end_time || '';
-                    document.getElementById('mtTitle').value = meeting.title || '';
-                    document.getElementById('mtLocation').value = meeting.location || '';
-                    document.getElementById('mtChair').value = meeting.chair || '';
-                    document.getElementById('mtAgenda').value = meeting.agenda || '';
-                    document.getElementById('mtDecisions').value = meeting.decisions || '';
-                    
-                    // Handle participants
-                    if (Array.isArray(meeting.participants)) {
-                        document.getElementById('mtParticipantsFree').value = meeting.participants.join(', ');
-                    } else {
-                        document.getElementById('mtParticipantsFree').value = meeting.participants || '';
-                    }
-                    
-                    // Set action items
-                    actionItems = meeting.actions || [];
-                    renderActionItems();
-                    
-                    editingMeeting = index;
-                    document.getElementById('cancelMeeting').style.display = 'inline-block';
-                }
-                
-                async function deleteMeeting(index) {
-                    if (confirm('Are you sure you want to delete this meeting?')) {
-                        const meetingId = currentData.meetings[index].id;
-                        
-                        try {
-                            const { error } = await supabase
-                                .from('meetings')
-                                .delete()
-                                .eq('id', meetingId);
-                                
-                            if (error) {
-                                console.error('Error deleting meeting:', error);
-                                showStatus('Error deleting meeting', 'error');
-                            } else {
-                                await loadMeetings();
-                                renderMeetingsRange();
-                                refreshSummary();
-                                showStatus('Meeting deleted');
-                            }
-                        } catch (error) {
-                            console.error('Error deleting meeting:', error);
-                            showStatus('Error deleting meeting', 'error');
-                        }
-                    }
-                }
-                
-                function renderLessonsRange() {
-                    const tbody = document.getElementById('lessonsTable').querySelector('tbody');
-                    tbody.innerHTML = '';
-                    
-                    const startDate = document.getElementById('lsStart').value;
-                    const endDate = document.getElementById('lsEnd').value;
-                    
-                    currentData.lessons.forEach((lesson, index) => {
-                        if ((startDate && lesson.date < startDate) || (endDate && lesson.date > endDate)) {
-                            return;
-                        }
-                        
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${lesson.date}</td>
-                            <td>${escapeHtml(lesson.student)}</td>
-                            <td>${escapeHtml(lesson.subject)}</td>
-                            <td>${escapeHtml(lesson.topic)}</td>
-                            <td>${escapeHtml(lesson.objectives?.substring(0, 50) || '')}...</td>
-                            <td>${escapeHtml(lesson.materials?.substring(0, 30) || '')}...</td>
-                            <td>${escapeHtml(lesson.activities?.substring(0, 30) || '')}...</td>
-                            <td>${escapeHtml(lesson.homework?.substring(0, 30) || '')}...</td>
-                            <td>
-                                <button class="action-btn edit" onclick="editLesson(${index})">Edit</button>
-                                <button class="action-btn del" onclick="deleteLesson(${index})">Delete</button>
-                            </td>
-                        `;
-                        tbody.appendChild(row);
-                    });
-                }
-                
-                function editLesson(index) {
-                    const lesson = currentData.lessons[index];
-                    document.getElementById('lsDate').value = lesson.date || '';
-                    document.getElementById('lsStudent').value = lesson.student || '';
-                    document.getElementById('lsSubject').value = lesson.subject || '';
-                    document.getElementById('lsTopic').value = lesson.topic || '';
-                    document.getElementById('lsObjectives').value = lesson.objectives || '';
-                    document.getElementById('lsMaterials').value = lesson.materials || '';
-                    document.getElementById('lsActivities').value = lesson.activities || '';
-                    document.getElementById('lsHomework').value = lesson.homework || '';
-                    
-                    editingLesson = index;
-                    document.getElementById('cancelLesson').style.display = 'inline-block';
-                }
-                
-                async function deleteLesson(index) {
-                    if (confirm('Are you sure you want to delete this lesson?')) {
-                        const lessonId = currentData.lessons[index].id;
-                        
-                        try {
-                            const { error } = await supabase
-                                .from('lessons')
-                                .delete()
-                                .eq('id', lessonId);
-                                
-                            if (error) {
-                                console.error('Error deleting lesson:', error);
-                                showStatus('Error deleting lesson', 'error');
-                            } else {
-                                await loadLessons();
-                                renderLessonsRange();
-                                refreshSummary();
-                                showStatus('Lesson deleted');
-                            }
-                        } catch (error) {
-                            console.error('Error deleting lesson:', error);
-                            showStatus('Error deleting lesson', 'error');
-                        }
-                    }
-                }
-                
-                // Export functions
-                function exportStudentsCSV() {
-                    try {
-                        const worksheet = XLSX.utils.json_to_sheet(currentData.students);
-                        const workbook = XLSX.utils.book_new();
-                        XLSX.utils.book_append_sheet(workbook, worksheet, "Students");
-                        XLSX.writeFile(workbook, "students.csv");
-                        showStatus('Students exported to CSV');
-                    } catch (error) {
-                        console.error('Error exporting CSV:', error);
-                        showStatus('Error exporting CSV', 'error');
-                    }
-                }
-                
-                function exportAttendanceExcel() {
-                    try {
-                        const worksheet = XLSX.utils.json_to_sheet(currentData.attendance);
-                        const workbook = XLSX.utils.book_new();
-                        XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance");
-                        XLSX.writeFile(workbook, "attendance.xlsx");
-                        showStatus('Attendance exported to Excel');
-                    } catch (error) {
-                        console.error('Error exporting Excel:', error);
-                        showStatus('Error exporting Excel', 'error');
-                    }
-                }
-                
-                function exportMeetingsRangePDF() {
-                    try {
-                        const { jsPDF } = window.jspdf;
-                        const doc = new jsPDF();
-                        
-                        // Add title with professional styling
-                        doc.setFontSize(20);
-                        doc.setTextColor(40, 40, 40);
-                        doc.text("MEETING MINUTES REPORT", 105, 20, { align: "center" });
-                        
-                        // Add date range
-                        const startDate = document.getElementById('mtStart').value;
-                        const endDate = document.getElementById('mtEnd').value;
-                        doc.setFontSize(12);
-                        doc.setTextColor(100, 100, 100);
-                        doc.text(`Date Range: ${startDate} to ${endDate}`, 105, 30, { align: "center" });
-                        
-                        // Filter meetings by date range
-                        const filteredMeetings = currentData.meetings.filter(meeting => {
-                            return (!startDate || meeting.date >= startDate) && (!endDate || meeting.date <= endDate);
-                        });
-                        
-                        let yPosition = 45;
-                        
-                        // Add each meeting with professional formatting
-                        filteredMeetings.forEach((meeting, index) => {
-                            if (yPosition > 250) {
-                                doc.addPage();
-                                yPosition = 20;
-                            }
-                            
-                            // Meeting header
-                            doc.setFontSize(14);
-                            doc.setTextColor(40, 40, 40);
-                            doc.text(`${meeting.date} - ${meeting.title}`, 14, yPosition);
-                            yPosition += 10;
-                            
-                            // Meeting details
-                            doc.setFontSize(10);
-                            doc.setTextColor(80, 80, 80);
-                            doc.text(`Time: ${meeting.start_time || 'N/A'} - ${meeting.end_time || 'N/A'}`, 14, yPosition);
-                            yPosition += 6;
-                            doc.text(`Location: ${meeting.location || 'N/A'}`, 14, yPosition);
-                            yPosition += 6;
-                            doc.text(`Chair: ${meeting.chair || 'N/A'}`, 14, yPosition);
-                            yPosition += 6;
-                            
-                            const participants = Array.isArray(meeting.participants) ? 
-                                meeting.participants.join(', ') : meeting.participants;
-                            const splitParticipants = doc.splitTextToSize(`Participants: ${participants || 'N/A'}`, 180);
-                            doc.text(splitParticipants, 14, yPosition);
-                            yPosition += splitParticipants.length * 6 + 8;
-                            
-                            // Add agenda if available
-                            if (meeting.agenda) {
-                                doc.setFontSize(12);
-                                doc.setTextColor(40, 40, 40);
-                                doc.text("Agenda:", 14, yPosition);
-                                yPosition += 8;
-                                
-                                doc.setFontSize(10);
-                                doc.setTextColor(80, 80, 80);
-                                const splitAgenda = doc.splitTextToSize(meeting.agenda, 180);
-                                doc.text(splitAgenda, 20, yPosition);
-                                yPosition += splitAgenda.length * 6 + 8;
-                            }
-                            
-                            // Add decisions if available
-                            if (meeting.decisions) {
-                                doc.setFontSize(12);
-                                doc.setTextColor(40, 40, 40);
-                                doc.text("Decisions:", 14, yPosition);
-                                yPosition += 8;
-                                
-                                doc.setFontSize(10);
-                                doc.setTextColor(80, 80, 80);
-                                const splitDecisions = doc.splitTextToSize(meeting.decisions, 180);
-                                doc.text(splitDecisions, 20, yPosition);
-                                yPosition += splitDecisions.length * 6 + 8;
-                            }
-                            
-                            // Add action items if available
-                            if (meeting.actions && meeting.actions.length > 0) {
-                                doc.setFontSize(12);
-                                doc.setTextColor(40, 40, 40);
-                                doc.text("Action Items:", 14, yPosition);
-                                yPosition += 8;
-                                
-                                doc.setFontSize(10);
-                                meeting.actions.forEach(action => {
-                                    if (yPosition > 250) {
-                                        doc.addPage();
-                                        yPosition = 20;
-                                    }
-                                    
-                                    const actionText = `• ${action.text} (Owner: ${action.owner || 'N/A'}, Due: ${action.due || 'N/A'}, Status: ${action.status || 'N/A'})`;
-                                    const splitAction = doc.splitTextToSize(actionText, 170);
-                                    doc.text(splitAction, 20, yPosition);
-                                    yPosition += splitAction.length * 6 + 4;
-                                });
-                            }
-                            
-                            yPosition += 10;
-                            
-                            // Add separator line
-                            doc.setDrawColor(200, 200, 200);
-                            doc.line(14, yPosition, 196, yPosition);
-                            yPosition += 15;
-                        });
-                        
-                        // Add footer
-                        const totalPages = doc.internal.getNumberOfPages();
-                        for (let i = 1; i <= totalPages; i++) {
-                            doc.setPage(i);
-                            doc.setFontSize(8);
-                            doc.setTextColor(150, 150, 150);
-                            doc.text(`Page ${i} of ${totalPages}`, 105, 285, { align: "center" });
-                            doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
-                        }
-                        
-                        doc.save("meeting_minutes_report.pdf");
-                        showStatus('Meeting minutes exported to PDF');
-                    } catch (error) {
-                        console.error('Error exporting PDF:', error);
-                        showStatus('Error exporting PDF', 'error');
-                    }
-                }
-                
-                function exportLessonsPDF() {
-                    try {
-                        const { jsPDF } = window.jspdf;
-                        const doc = new jsPDF();
-                        
-                        // Add title with professional styling
-                        doc.setFontSize(20);
-                        doc.setTextColor(40, 40, 40);
-                        doc.text("LESSON PLANS REPORT", 105, 20, { align: "center" });
-                        
-                        // Add date range
-                        const startDate = document.getElementById('lsStart').value;
-                        const endDate = document.getElementById('lsEnd').value;
-                        doc.setFontSize(12);
-                        doc.setTextColor(100, 100, 100);
-                        doc.text(`Date Range: ${startDate} to ${endDate}`, 105, 30, { align: "center" });
-                        
-                        // Filter lessons by date range
-                        const filteredLessons = currentData.lessons.filter(lesson => {
-                            return (!startDate || lesson.date >= startDate) && (!endDate || lesson.date <= endDate);
-                        });
-                        
-                        let yPosition = 45;
-                        
-                        // Add each lesson with professional formatting
-                        filteredLessons.forEach((lesson, index) => {
-                            if (yPosition > 250) {
-                                doc.addPage();
-                                yPosition = 20;
-                            }
-                            
-                            // Lesson header
-                            doc.setFontSize(14);
-                            doc.setTextColor(40, 40, 40);
-                            doc.text(`${lesson.date} - ${lesson.student} - ${lesson.subject}`, 14, yPosition);
-                            yPosition += 8;
-                            
-                            doc.setFontSize(12);
-                            doc.text(`Topic: ${lesson.topic || 'N/A'}`, 14, yPosition);
-                            yPosition += 8;
-                            
-                            // Add objectives if available
-                            if (lesson.objectives) {
-                                doc.setFontSize(12);
-                                doc.setTextColor(40, 40, 40);
-                                doc.text("Objectives:", 14, yPosition);
-                                yPosition += 8;
-                                
-                                doc.setFontSize(10);
-                                doc.setTextColor(80, 80, 80);
-                                const splitObjectives = doc.splitTextToSize(lesson.objectives, 180);
-                                doc.text(splitObjectives, 20, yPosition);
-                                yPosition += splitObjectives.length * 6 + 8;
-                            }
-                            
-                            // Add materials if available
-                            if (lesson.materials) {
-                                doc.setFontSize(12);
-                                doc.setTextColor(40, 40, 40);
-                                doc.text("Materials:", 14, yPosition);
-                                yPosition += 8;
-                                
-                                doc.setFontSize(10);
-                                doc.setTextColor(80, 80, 80);
-                                const splitMaterials = doc.splitTextToSize(lesson.materials, 180);
-                                doc.text(splitMaterials, 20, yPosition);
-                                yPosition += splitMaterials.length * 6 + 8;
-                            }
-                            
-                            // Add activities if available
-                            if (lesson.activities) {
-                                doc.setFontSize(12);
-                                doc.setTextColor(40, 40, 40);
-                                doc.text("Activities:", 14, yPosition);
-                                yPosition += 8;
-                                
-                                doc.setFontSize(10);
-                                doc.setTextColor(80, 80, 80);
-                                const splitActivities = doc.splitTextToSize(lesson.activities, 180);
-                                doc.text(splitActivities, 20, yPosition);
-                                yPosition += splitActivities.length * 6 + 8;
-                            }
-                            
-                            // Add homework if available
-                            if (lesson.homework) {
-                                doc.setFontSize(12);
-                                doc.setTextColor(40, 40, 40);
-                                doc.text("Homework:", 14, yPosition);
-                                yPosition += 8;
-                                
-                                doc.setFontSize(10);
-                                doc.setTextColor(80, 80, 80);
-                                const splitHomework = doc.splitTextToSize(lesson.homework, 180);
-                                doc.text(splitHomework, 20, yPosition);
-                                yPosition += splitHomework.length * 6 + 8;
-                            }
-                            
-                            yPosition += 10;
-                            
-                            // Add separator line
-                            doc.setDrawColor(200, 200, 200);
-                            doc.line(14, yPosition, 196, yPosition);
-                            yPosition += 15;
-                        });
-                        
-                        // Add footer
-                        const totalPages = doc.internal.getNumberOfPages();
-                        for (let i = 1; i <= totalPages; i++) {
-                            doc.setPage(i);
-                            doc.setFontSize(8);
-                            doc.setTextColor(150, 150, 150);
-                            doc.text(`Page ${i} of ${totalPages}`, 105, 285, { align: "center" });
-                            doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
-                        }
-                        
-                        doc.save("lesson_plans_report.pdf");
-                        showStatus('Lesson plans exported to PDF');
-                    } catch (error) {
-                        console.error('Error exporting PDF:', error);
-                        showStatus('Error exporting PDF', 'error');
-                    }
-                }
-                
-                function exportSingleMeetingPDF(index) {
-                    try {
-                        const meeting = currentData.meetings[index];
-                        const { jsPDF } = window.jspdf;
-                        const doc = new jsPDF();
-                        
-                        // Add title with professional styling
-                        doc.setFontSize(20);
-                        doc.setTextColor(40, 40, 40);
-                        doc.text("MEETING MINUTES", 105, 20, { align: "center" });
-                        
-                        let yPosition = 35;
-                        
-                        // Meeting details
-                        doc.setFontSize(12);
-                        doc.setTextColor(80, 80, 80);
-                        doc.text(`Date: ${meeting.date || 'N/A'}`, 20, yPosition);
-                        yPosition += 8;
-                        doc.text(`Time: ${meeting.start_time || 'N/A'} - ${meeting.end_time || 'N/A'}`, 20, yPosition);
-                        yPosition += 8;
-                        doc.text(`Title: ${meeting.title || 'N/A'}`, 20, yPosition);
-                        yPosition += 8;
-                        doc.text(`Location: ${meeting.location || 'N/A'}`, 20, yPosition);
-                        yPosition += 8;
-                        doc.text(`Chair: ${meeting.chair || 'N/A'}`, 20, yPosition);
-                        yPosition += 8;
-                        
-                        const participants = Array.isArray(meeting.participants) ? 
-                            meeting.participants.join(', ') : meeting.participants;
-                        const splitParticipants = doc.splitTextToSize(`Participants: ${participants || 'N/A'}`, 170);
-                        doc.text(splitParticipants, 20, yPosition);
-                        yPosition += splitParticipants.length * 6 + 12;
-                        
-                        // Add agenda if available
-                        if (meeting.agenda) {
-                            doc.setFontSize(14);
-                            doc.setTextColor(40, 40, 40);
-                            doc.text("Agenda:", 20, yPosition);
-                            yPosition += 10;
-                            
-                            doc.setFontSize(10);
-                            doc.setTextColor(80, 80, 80);
-                            const splitAgenda = doc.splitTextToSize(meeting.agenda, 170);
-                            doc.text(splitAgenda, 25, yPosition);
-                            yPosition += splitAgenda.length * 6 + 12;
-                        }
-                        
-                        // Add decisions if available
-                        if (meeting.decisions) {
-                            doc.setFontSize(14);
-                            doc.setTextColor(40, 40, 40);
-                            doc.text("Decisions:", 20, yPosition);
-                            yPosition += 10;
-                            
-                            doc.setFontSize(10);
-                            doc.setTextColor(80, 80, 80);
-                            const splitDecisions = doc.splitTextToSize(meeting.decisions, 170);
-                            doc.text(splitDecisions, 25, yPosition);
-                            yPosition += splitDecisions.length * 6 + 12;
-                        }
-                        
-                        // Add action items if available
-                        if (meeting.actions && meeting.actions.length > 0) {
-                            doc.setFontSize(14);
-                            doc.setTextColor(40, 40, 40);
-                            doc.text("Action Items:", 20, yPosition);
-                            yPosition += 10;
-                            
-                            doc.setFontSize(10);
-                            doc.setTextColor(80, 80, 80);
-                            meeting.actions.forEach(action => {
-                                if (yPosition > 250) {
-                                    doc.addPage();
-                                    yPosition = 20;
-                                }
-                                
-                                const actionText = `• ${action.text} (Owner: ${action.owner || 'N/A'}, Due: ${action.due || 'N/A'}, Status: ${action.status || 'N/A'})`;
-                                const splitAction = doc.splitTextToSize(actionText, 170);
-                                doc.text(splitAction, 25, yPosition);
-                                yPosition += splitAction.length * 6 + 6;
-                            });
-                        }
-                        
-                        // Add footer
-                        const totalPages = doc.internal.getNumberOfPages();
-                        for (let i = 1; i <= totalPages; i++) {
-                            doc.setPage(i);
-                            doc.setFontSize(8);
-                            doc.setTextColor(150, 150, 150);
-                            doc.text(`Page ${i} of ${totalPages}`, 105, 285, { align: "center" });
-                            doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
-                        }
-                        
-                        doc.save(`meeting_minutes_${meeting.date}.pdf`);
-                        showStatus('Meeting minutes exported to PDF');
-                    } catch (error) {
-                        console.error('Error exporting PDF:', error);
-                        showStatus('Error exporting PDF', 'error');
-                    }
-                }
-                
-                // Initialize the app
-                document.addEventListener('DOMContentLoaded', () => {
-                    setupAuth();
-                    
-                    // Set up form handlers
-                    document.getElementById('studentForm').addEventListener('submit', async (e) => {
-                        e.preventDefault();
-                        
-                        const studentData = {
-                            name: document.getElementById('stuName').value.trim(),
-                            age: parseInt(document.getElementById('stuAge').value) || 0,
-                            grade: document.getElementById('stuGrade').value.trim(),
-                            level: document.getElementById('stuLevel').value.trim()
-                        };
-                        
-                        if (!studentData.name) {
-                            alert('Please enter a student name');
-                            return;
-                        }
-                        
-                        if (editingStudent !== null) {
-                            // Update existing student
-                            currentData.students[editingStudent] = studentData;
-                        } else {
-                            // Add new student
-                            currentData.students.push(studentData);
-                        }
-                        
-                        if (await saveStudents()) {
-                            showStatus('Student saved successfully');
-                            cancelEdit('student');
-                            renderStudents();
-                            refreshSummary();
-                        }
-                    });
-                    
-                    // Set up meeting form handler
-                    document.getElementById('meetingForm').addEventListener('submit', async (e) => {
-                        e.preventDefault();
-                        
-                        if (!document.getElementById('mtDate').value || !document.getElementById('mtTitle').value) {
-                            alert('Please enter date and title');
-                            return;
-                        }
-                        
-                        if (await saveMeetings()) {
-                            showStatus('Meeting saved successfully');
-                            actionItems = [];
-                            renderActionItems();
-                            renderMeetingsRange();
-                            refreshSummary();
-                            document.getElementById('meetingForm').reset();
-                            document.getElementById('cancelMeeting').style.display = 'none';
-                            editingMeeting = null;
-                        }
-                    });
-                    
-                    // Set up lesson form handler
-                    document.getElementById('lessonForm').addEventListener('submit', async (e) => {
-                        e.preventDefault();
-                        
-                        if (!document.getElementById('lsDate').value || !document.getElementById('lsStudent').value || 
-                            !document.getElementById('lsSubject').value || !document.getElementById('lsTopic').value) {
-                            alert('Please enter date, student, subject, and topic');
-                            return;
-                        }
-                        
-                        if (await saveLessons()) {
-                            showStatus('Lesson saved successfully');
-                            renderLessonsRange();
-                            refreshSummary();
-                            document.getElementById('lessonForm').reset();
-                            document.getElementById('cancelLesson').style.display = 'none';
-                            editingLesson = null;
-                        }
-                    });
-                    
-                    // Set today's dates
-                    const today = new Date().toISOString().split('T')[0];
-                    document.getElementById('attDate').value = today;
-                    document.getElementById('lsDate').value = today;
-                    document.getElementById('mtDate').value = today;
-                    
-                    // Make functions global for HTML onclick attributes
-                    window.navigate = navigate;
-                    window.logout = logout;
-                    window.editStudent = editStudent;
-                    window.deleteStudent = deleteStudent;
-                    window.cancelEdit = cancelEdit;
-                    window.renderStudents = renderStudents;
-                    window.addActionItem = addActionItem;
-                    window.removeActionItem = removeActionItem;
-                    window.loadAttendanceForDate = loadAttendanceForDate;
-                    window.saveAttendance = saveAttendance;
-                    window.markAll = markAll;
-                    window.loadAttendanceRange = loadAttendanceRange;
-                    window.exportAttendanceExcel = exportAttendanceExcel;
-                    window.loadMeetingsRange = renderMeetingsRange;
-                    window.exportMeetingsRangePDF = exportMeetingsRangePDF;
-                    window.loadLessonsRange = renderLessonsRange;
-                    window.exportLessonsPDF = exportLessonsPDF;
-                    window.exportStudentsCSV = exportStudentsCSV;
-                    window.exportSingleMeetingPDF = exportSingleMeetingPDF;
-                    window.editMeeting = editMeeting;
-                    window.deleteMeeting = deleteMeeting;
-                    window.editLesson = editLesson;
-                    window.deleteLesson = deleteLesson;
-                });
-            </script>
-        </body>
-        </html>
+/* ------------------------------
+   Full portal JavaScript — Pro
+   ------------------------------ */
+/* helpers */
+const $ = id => document.getElementById(id);
+function esc(s){ if(s===undefined||s===null) return ''; return String(s).replace(/[&<>"']/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[ch])); }
+function today(){ return new Date().toISOString().slice(0,10); }
 
+// Supabase configuration
+const SUPABASE_URL = "https://sasodvdokwybanovtuwl.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhc29kdmRva3d5YmFub3Z0dXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNzMzNTAsImV4cCI6MjA3MDc0OTM1MH0.sUJx73vkjPlKo9m8De6dUNGMcdWjb1vh8hnsMBVMgRQ";
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Tables
+const TABLES = {
+  STUDENTS: 'students',
+  ATTENDANCE: 'attendance',
+  MEETINGS: 'meetings',
+  LESSONS: 'lessons',
+  USERS: 'users'
+};
+
+/* auth logic */
+async function registerUser() {
+  const username = $('regUser').value.trim();
+  const password = $('regPass').value.trim();
+  
+  if (!username || !password) {
+    alert('Enter username and password');
+    return;
+  }
+
+  try {
+    // Check if user already exists
+    const { data: existingUsers, error: checkError } = await supabase
+      .from(TABLES.USERS)
+      .select('username')
+      .eq('username', username);
+
+    if (checkError && checkError.code !== 'PGRST116') {
+      throw checkError;
+    }
+
+    if (existingUsers && existingUsers.length > 0) {
+      alert('Username already exists');
+      return;
+    }
+
+    // Create new user
+    const { data, error } = await supabase
+      .from(TABLES.USERS)
+      .insert([{ username, password }]);
+
+    if (error) throw error;
+
+    // Login the user
+    localStorage.setItem('loggedInUser', username);
+    openApp(username);
+  } catch (error) {
+    console.error('Registration error:', error);
+    alert('Registration failed: ' + error.message);
+  }
+}
+
+async function loginUser() {
+  const username = $('loginUser').value.trim();
+  const password = $('loginPass').value.trim();
+  
+  if (!username || !password) {
+    alert('Enter username and password');
+    return;
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from(TABLES.USERS)
+      .select('*')
+      .eq('username', username)
+      .eq('password', password)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        alert('Invalid credentials');
+      } else {
+        alert('Login failed: ' + error.message);
+      }
+      return;
+    }
+
+    localStorage.setItem('loggedInUser', username);
+    openApp(username);
+  } catch (error) {
+    console.error('Login error:', error);
+    alert('Login failed: ' + error.message);
+  }
+}
+
+/* open app after auth */
+async function openApp(user) {
+  $('authScreen').style.display = 'none';
+  document.querySelector('.app').style.display = 'flex';
+  $('currentUser').innerText = user;
+  
+  // Set default dates
+  $('attDate').value = today(); 
+  $('lsDate').value = today(); 
+  $('mtDate').value = today();
+  
+  // Show default section
+  navigate('dashboard');
+  
+  // Populate selects/tables
+  await refreshAll();
+  
+  // Update clock
+  $('currentTime').innerText = new Date().toLocaleString();
+  setInterval(() => {
+    $('currentTime').innerText = new Date().toLocaleString();
+  }, 60 * 1000);
+}
+
+/* navigation */
+function hideAll() {
+  ['dashboard', 'students', 'attendance', 'meetings', 'lessons'].forEach(s => $(s).classList.add('hidden'));
+}
+
+function navigate(section) {
+  hideAll();
+  $(section).classList.remove('hidden');
+  if (section === 'students') renderStudents();
+  if (section === 'attendance') renderAttendanceForDate();
+  if (section === 'meetings') renderMeetingsRange();
+  if (section === 'lessons') {
+    populateStudentSelect();
+    renderLessonsRange();
+  }
+}
+
+/* logout */
+function logout() {
+  localStorage.removeItem('loggedInUser');
+  location.reload();
+}
+
+/* DB helpers - Supabase version */
+async function getAllStudents() {
+  const { data, error } = await supabase
+    .from(TABLES.STUDENTS)
+    .select('*')
+    .order('name');
+  
+  if (error) {
+    console.error('Error fetching students:', error);
+    return [];
+  }
+  
+  return data || [];
+}
+
+async function getAllAttendance() {
+  const { data, error } = await supabase
+    .from(TABLES.ATTENDANCE)
+    .select('*')
+    .order('date');
+  
+  if (error) {
+    console.error('Error fetching attendance:', error);
+    return {};
+  }
+  
+  // Convert to the same format as localStorage
+  const attendance = {};
+  data.forEach(record => {
+    if (!attendance[record.date]) {
+      attendance[record.date] = [];
+    }
+    attendance[record.date].push({
+      student: record.student,
+      status: record.status
+    });
+  });
+  
+  return attendance;
+}
+
+async function getAllMeetings() {
+  const { data, error } = await supabase
+    .from(TABLES.MEETINGS)
+    .select('*')
+    .order('date', { ascending: false });
+  
+  if (error) {
+    console.error('Error fetching meetings:', error);
+    return [];
+  }
+  
+  return data || [];
+}
+
+async function getAllLessons() {
+  const { data, error } = await supabase
+    .from(TABLES.LESSONS)
+    .select('*')
+    .order('date', { ascending: false });
+  
+  if (error) {
+    console.error('Error fetching lessons:', error);
+    return [];
+  }
+  
+  return data || [];
+}
+
+async function saveStudent(student, isEdit = false, id = null) {
+  try {
+    if (isEdit) {
+      const { error } = await supabase
+        .from(TABLES.STUDENTS)
+        .update({
+          name: student.name,
+          age: student.age,
+          grade: student.grade,
+          level: student.level
+        })
+        .eq('id', id);
+        
+      if (error) throw error;
+    } else {
+      const { error } = await supabase
+        .from(TABLES.STUDENTS)
+        .insert([student]);
+        
+      if (error) throw error;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error saving student:', error);
+    alert('Error saving student: ' + error.message);
+    return false;
+  }
+}
+
+async function saveAttendance(date, attendanceRecords) {
+  try {
+    // First, delete existing records for this date
+    await supabase
+      .from(TABLES.ATTENDANCE)
+      .delete()
+      .eq('date', date);
+    
+    // Then insert new records
+    const records = attendanceRecords.map(record => ({
+      date,
+      student: record.student,
+      status: record.status
+    }));
+    
+    const { error } = await supabase
+      .from(TABLES.ATTENDANCE)
+      .insert(records);
+      
+    if (error) throw error;
+    
+    return true;
+  } catch (error) {
+    console.error('Error saving attendance:', error);
+    alert('Error saving attendance: ' + error.message);
+    return false;
+  }
+}
+
+async function saveMeeting(meeting, isEdit = false, id = null) {
+  try {
+    if (isEdit) {
+      const { error } = await supabase
+        .from(TABLES.MEETINGS)
+        .update({
+          date: meeting.date,
+          start_time: meeting.startTime,
+          end_time: meeting.endTime,
+          title: meeting.title,
+          location: meeting.location,
+          participants: meeting.participants,
+          agenda: meeting.agenda,
+          decisions: meeting.decisions,
+          actions: meeting.actions
+        })
+        .eq('id', id);
+        
+      if (error) throw error;
+    } else {
+      const { error } = await supabase
+        .from(TABLES.MEETINGS)
+        .insert([{
+          date: meeting.date,
+          start_time: meeting.startTime,
+          end_time: meeting.endTime,
+          title: meeting.title,
+          location: meeting.location,
+          participants: meeting.participants,
+          agenda: meeting.agenda,
+          decisions: meeting.decisions,
+          actions: meeting.actions
+        }]);
+        
+      if (error) throw error;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error saving meeting:', error);
+    alert('Error saving meeting: ' + error.message);
+    return false;
+  }
+}
+
+async function saveLesson(lesson, isEdit = false, id = null) {
+  try {
+    if (isEdit) {
+      const { error } = await supabase
+        .from(TABLES.LESSONS)
+        .update({
+          date: lesson.date,
+          student: lesson.student,
+          subject: lesson.subject,
+          topic: lesson.topic,
+          objectives: lesson.objectives,
+          materials: lesson.materials,
+          activities: lesson.activities,
+          homework: lesson.homework
+        })
+        .eq('id', id);
+        
+      if (error) throw error;
+    } else {
+      const { error } = await supabase
+        .from(TABLES.LESSONS)
+        .insert([lesson]);
+        
+      if (error) throw error;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error saving lesson:', error);
+    alert('Error saving lesson: ' + error.message);
+    return false;
+  }
+}
+
+/* refresh summary */
+async function refreshSummary() {
+  const students = await getAllStudents();
+  const attendance = await getAllAttendance();
+  const meetings = await getAllMeetings();
+  const lessons = await getAllLessons();
+  
+  $('totalStudents').innerText = students.length;
+  $('attendanceDays').innerText = Object.keys(attendance).length;
+  $('meetingsCount').innerText = meetings.length;
+  $('lessonsCount').innerText = lessons.length;
+}
+
+/* -------------------------
+   Students
+   ------------------------- */
+let editingStudent = null;
+let editingStudentId = null;
+
+async function bindStudentForm() {
+  $('studentForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const student = {
+      name: $('stuName').value.trim(),
+      age: parseInt($('stuAge').value || '0', 10),
+      grade: $('stuGrade').value.trim(),
+      level: $('stuLevel').value.trim()
+    };
+    
+    if (!student.name) {
+      alert('Enter student name');
+      return;
+    }
+    
+    const success = await saveStudent(student, editingStudent !== null, editingStudentId);
+    
+    if (success) {
+      cancelEdit('student');
+      renderStudents();
+      populateStudentSelect();
+      refreshSummary();
+    }
+  });
+}
+
+async function renderStudents() {
+  const students = await getAllStudents();
+  const tbody = $('studentsTable').querySelector('tbody');
+  tbody.innerHTML = '';
+  
+  const q = ($('studentSearch').value || '').trim().toLowerCase();
+  
+  students.forEach((s, i) => {
+    if (q && !(s.name.toLowerCase().includes(q) || (s.grade || '').toLowerCase().includes(q))) return;
+    
+    tbody.insertAdjacentHTML('beforeend', `<tr>
+      <td>${esc(s.name)}</td><td>${s.age}</td><td>${esc(s.grade)}</td><td>${esc(s.level)}</td>
+      <td>
+        <button class="action-btn edit" onclick="editStudent(${i}, '${s.id}')">Edit</button>
+        <button class="action-btn del" onclick="deleteStudent('${s.id}')">Delete</button>
+      </td>
+    </tr>`);
+  });
+}
+
+async function editStudent(index, id) {
+  const students = await getAllStudents();
+  const s = students[index];
+  
+  if (!s) return;
+  
+  $('stuName').value = s.name;
+  $('stuAge').value = s.age;
+  $('stuGrade').value = s.grade;
+  $('stuLevel').value = s.level;
+  
+  editingStudent = index;
+  editingStudentId = id;
+  $('studentEditingBadge').classList.remove('hidden');
+  $('cancelStudent').style.display = 'inline-block';
+}
+
+async function deleteStudent(id) {
+  if (!confirm('Delete this student?')) return;
+  
+  try {
+    // Delete student
+    const { error: studentError } = await supabase
+      .from(TABLES.STUDENTS)
+      .delete()
+      .eq('id', id);
+      
+    if (studentError) throw studentError;
+    
+    // Remove attendance records for this student
+    await supabase
+      .from(TABLES.ATTENDANCE)
+      .delete()
+      .eq('student', (await getAllStudents()).find(s => s.id === id)?.name);
+    
+    renderStudents();
+    populateStudentSelect();
+    refreshSummary();
+  } catch (error) {
+    console.error('Error deleting student:', error);
+    alert('Error deleting student: ' + error.message);
+  }
+}
+
+function cancelEdit(type) {
+  if (type === 'student') {
+    editingStudent = null;
+    editingStudentId = null;
+    $('studentForm').reset();
+    $('studentEditingBadge').classList.add('hidden');
+    $('cancelStudent').style.display = 'none';
+  }
+  if (type === 'meeting') {
+    editingMeeting = null;
+    editingMeetingId = null;
+    $('meetingForm').reset();
+    actionItems = [];
+    renderActionItems();
+    $('cancelMeeting').style.display = 'none';
+  }
+  if (type === 'lesson') {
+    editingLesson = null;
+    editingLessonId = null;
+    $('lessonForm').reset();
+    $('cancelLesson').style.display = 'none';
+  }
+}
+
+function exportStudentsCSV() {
+  getAllStudents().then(students => {
+    if (!students.length) {
+      alert('No students to export');
+      return;
+    }
+    
+    const rows = [['Name','Age','Grade','Level'], ...students.map(s => [s.name, s.age, s.grade, s.level])];
+    const csv = rows.map(r => r.map(c => `"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], {type: 'text/csv'}), url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'students.csv'; a.click(); URL.revokeObjectURL(url);
+  });
+}
+
+/* -------------------------
+   Attendance
+   ------------------------- */
+async function loadAttendanceForDate() {
+  const date = $('attDate').value;
+  const tbody = $('attendanceTable').querySelector('tbody');
+  tbody.innerHTML = '';
+  
+  if (!date) {
+    tbody.innerHTML = '<tr><td colspan="3">Pick a date</td></tr>';
+    return;
+  }
+  
+  const students = await getAllStudents();
+  
+  if (!students.length) {
+    tbody.innerHTML = '<tr><td colspan="3">No students — add students first</td></tr>';
+    return;
+  }
+  
+  const attendance = await getAllAttendance();
+  const day = attendance[date] || [];
+  
+  students.forEach((s, idx) => {
+    const rec = day.find(r => r.student === s.name);
+    const status = rec ? rec.status : 'Present';
+    
+    tbody.insertAdjacentHTML('beforeend', `<tr>
+      <td>${date}</td>
+      <td>${esc(s.name)}</td>
+      <td>
+        <select data-idx="${idx}" data-name="${esc(s.name)}" style="min-width:140px">
+          <option value="Present" ${status==='Present'?'selected':''}>Present</option>
+          <option value="Absent" ${status==='Absent'?'selected':''}>Absent</option>
+          <option value="Holiday" ${status==='Holiday'?'selected':''}>Holiday</option>
+        </select>
+      </td>
+    </tr>`);
+  });
+}
+
+function markAll(val) {
+  document.querySelectorAll('#attendanceTable select').forEach(s => s.value = val);
+}
+
+async function saveAttendance() {
+  const date = $('attDate').value;
+  
+  if (!date) {
+    alert('Pick a date first');
+    return;
+  }
+  
+  const selects = Array.from(document.querySelectorAll('#attendanceTable select'));
+  
+  if (selects.length === 0) {
+    alert('Load students first');
+    return;
+  }
+  
+  const attendanceRecords = selects.map(sel => ({
+    student: sel.dataset.name,
+    status: sel.value
+  }));
+  
+  const success = await saveAttendance(date, attendanceRecords);
+  
+  if (success) {
+    alert('Attendance saved');
+    refreshSummary();
+  }
+}
+
+async function loadAttendanceRange() {
+  const start = $('attStart').value, end = $('attEnd').value;
+  const tbody = $('attendanceTable').querySelector('tbody');
+  tbody.innerHTML = '';
+  
+  const attendance = await getAllAttendance();
+  let any = false;
+  
+  Object.keys(attendance).sort().forEach(date => {
+    if((!start || date >= start) && (!end || date <= end)){
+      attendance[date].forEach(r => {
+        any = true;
+        tbody.insertAdjacentHTML('beforeend', `<tr><td>${date}</td><td>${esc(r.student)}</td><td>${r.status}</td></tr>`);
+      });
+    }
+  });
+  
+  if(!any) {
+    tbody.innerHTML = '<tr><td colspan="3">No records in selected range.</td></tr>';
+  }
+}
+
+function exportAttendanceExcel() {
+  getAllAttendance().then(attendance => {
+    const start = $('attStart').value, end = $('attEnd').value;
+    const rows = [];
+    
+    Object.keys(attendance).sort().forEach(date => {
+      if((!start || date >= start) && (!end || date <= end)){
+        attendance[date].forEach(r => rows.push({ Date: date, Student: r.student, Status: r.status }));
+      }
+    });
+    
+    if(!rows.length) {
+      alert('No attendance records to export in selected range');
+      return;
+    }
+    
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Attendance');
+    XLSX.writeFile(wb, 'Attendance.xlsx');
+  });
+}
+
+/* -------------------------
+   Meetings — Pro
+   ------------------------- */
+let editingMeeting = null;
+let editingMeetingId = null;
+let actionItems = [];
+
+async function bindMeetingForm() {
+  $('meetingForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const selected = Array.from($('mtParticipants').selectedOptions).map(o => o.value).filter(Boolean);
+    const free = $('mtParticipantsFree').value.split(',').map(s => s.trim()).filter(Boolean);
+    
+    const meeting = {
+      date: $('mtDate').value,
+      startTime: $('mtStartTime').value,
+      endTime: $('mtEndTime').value,
+      title: $('mtTitle').value.trim(),
+      location: $('mtLocation').value.trim(),
+      participants: [...new Set([...selected, ...free])],
+      agenda: $('mtAgenda').value.trim(),
+      decisions: $('mtDecisions').value.trim(),
+      actions: actionItems.slice()
+    };
+    
+    if (!meeting.date || !meeting.title) {
+      alert('Date and title required');
+      return;
+    }
+    
+    const success = await saveMeeting(meeting, editingMeeting !== null, editingMeetingId);
+    
+    if (success) {
+      cancelEdit('meeting');
+      renderMeetingsRange();
+      refreshSummary();
+    }
+  });
+}
+
+function addActionItem() {
+  const t = $('aiText').value.trim();
+  const o = $('aiOwner').value.trim();
+  const due = $('aiDue').value;
+  const st = $('aiStatus').value;
+  
+  if (!t) {
+    alert('Action item needs description');
+    return;
+  }
+  
+  actionItems.push({text: t, owner: o, due: due, status: st});
+  $('aiText').value = '';
+  $('aiOwner').value = '';
+  $('aiDue').value = '';
+  $('aiStatus').value = 'Open';
+  renderActionItems();
+}
+
+function removeActionItem(idx) {
+  actionItems.splice(idx, 1);
+  renderActionItems();
+}
+
+function renderActionItems() {
+  const tbody = $('actionsTable').querySelector('tbody');
+  tbody.innerHTML = '';
+  
+  actionItems.forEach((a, i) => {
+    tbody.insertAdjacentHTML('beforeend', `<tr>
+      <td>${i+1}</td>
+      <td>${esc(a.text)}</td>
+      <td>${esc(a.owner)}</td>
+      <td>${esc(a.due)}</td>
+      <td>${esc(a.status)}</td>
+      <td><button class="action-btn del" onclick="removeActionItem(${i})">Remove</button></td>
+    </tr>`);
+  });
+}
+
+async function renderMeetingsRange() {
+  populateParticipantSelect();
+  
+  const start = $('mtStart').value, end = $('mtEnd').value;
+  const tbody = $('meetingsTable').querySelector('tbody');
+  tbody.innerHTML = '';
+  
+  const meetings = await getAllMeetings();
+  
+  meetings.forEach((m, i) => {
+    if((!start || m.date >= start) && (!end || m.date <= end)){
+      tbody.insertAdjacentHTML('beforeend', `<tr>
+        <td>${m.date} ${m.start_time ? ('• ' + m.start_time) : ''}</td>
+        <td>${esc(m.title)}</td>
+        <td>${esc((m.participants || []).join(', '))}</td>
+        <td>
+          <button class="action-btn edit" onclick="editMeeting(${i}, '${m.id}')">Edit</button>
+          <button class="action-btn del" onclick="deleteMeeting('${m.id}')">Delete</button>
+          <button class="action-btn link" onclick="exportSingleMeetingPDF(${i})">PDF</button>
+        </td>
+      </tr>`);
+    }
+  });
+}
+
+async function populateParticipantSelect() {
+  const mtSel = $('mtParticipants');
+  mtSel.innerHTML = '';
+  
+  const students = await getAllStudents();
+  
+  students.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s.name;
+    o.textContent = s.name;
+    mtSel.appendChild(o);
+  });
+}
+
+async function editMeeting(index, id) {
+  const meetings = await getAllMeetings();
+  const m = meetings[index];
+  
+  if (!m) return;
+  
+  $('mtDate').value = m.date;
+  $('mtStartTime').value = m.start_time || '';
+  $('mtEndTime').value = m.end_time || '';
+  $('mtTitle').value = m.title;
+  $('mtLocation').value = m.location || '';
+  $('mtAgenda').value = m.agenda || '';
+  $('mtDecisions').value = m.decisions || '';
+  $('mtParticipantsFree').value = '';
+  
+  Array.from($('mtParticipants').options).forEach(opt => {
+    opt.selected = (m.participants || []).includes(opt.value);
+  });
+  
+  actionItems = (m.actions || []).slice();
+  renderActionItems();
+  
+  editingMeeting = index;
+  editingMeetingId = id;
+  $('cancelMeeting').style.display = 'inline-block';
+}
+
+async function deleteMeeting(id) {
+  if (!confirm('Delete this meeting?')) return;
+  
+  try {
+    const { error } = await supabase
+      .from(TABLES.MEETINGS)
+      .delete()
+      .eq('id', id);
+      
+    if (error) throw error;
+    
+    renderMeetingsRange();
+    refreshSummary();
+  } catch (error) {
+    console.error('Error deleting meeting:', error);
+    alert('Error deleting meeting: ' + error.message);
+  }
+}
+
+/* PDF helpers */
+function hdr(doc, title) {
+  doc.setFillColor(6,40,61);
+  doc.rect(0,0,210,20,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(13);
+  doc.text('GEMS Milandhoo School', 14, 13);
+  doc.setFontSize(11);
+  doc.text(title, 196, 13, {align:'right'});
+  doc.setTextColor(0,0,0);
+}
+
+function ftr(doc) {
+  const pageCount = doc.internal.getNumberOfPages();
+  for(let i = 1; i <= pageCount; i++){
+    doc.setPage(i);
+    doc.setFontSize(9);
+    doc.setTextColor(120);
+    doc.text(`Page ${i} / ${pageCount}`, 196, 290, {align:'right'});
+    doc.text(new Date().toLocaleString(), 14, 290);
+  }
+}
+
+function kvGrid(doc, rows, x = 14, y = 28, colW = 46, valW = 140) {
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(10);
+  
+  rows.forEach(([k,v], idx) => {
+    const yy = y + idx * 8;
+    doc.setDrawColor(225);
+    doc.rect(x, yy-6, colW, 8);
+    doc.rect(x+colW, yy-6, valW, 8);
+    doc.text(String(k||'-'), x+2, yy);
+    doc.setFont('helvetica','normal');
+    doc.text(String(v||'-'), x+colW+2, yy, {maxWidth: valW-4});
+    doc.setFont('helvetica','bold');
+  });
+  
+  return y + rows.length * 8;
+}
+
+/* Single Meeting PDF */
+async function exportSingleMeetingPDF(index) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:'mm', format:'a4'});
+  
+  const meetings = await getAllMeetings();
+  const m = meetings[index];
+  
+  if (!m) {
+    alert('Meeting not found');
+    return;
+  }
+  
+  hdr(doc, 'Meeting Minutes');
+  
+  // Meta grid
+  let y = kvGrid(doc,[
+    ['Title', m.title],
+    ['Date', m.date],
+    ['Time', (m.start_time||'') + (m.end_time?(' — '+m.end_time):'')],
+    ['Location', m.location||'-'],
+    ['Participants', (m.participants||[]).join(', ')||'-']
+  ]);
+  
+  y += 6;
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(11);
+  doc.text('Agenda', 14, y);
+  y += 2;
+  doc.setDrawColor(220);
+  doc.rect(14, y+2, 182, 32);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.text(m.agenda||'-', 16, y+8, {maxWidth:178});
+  y += 40;
+  
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(11);
+  doc.text('Key Decisions', 14, y);
+  y += 2;
+  doc.setDrawColor(220);
+  doc.rect(14, y+2, 182, 32);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.text(m.decisions||'-', 16, y+8, {maxWidth:178});
+  y += 40;
+  
+  // Action items table
+  const actions = (m.actions||[]).map((a,i)=>({
+    '#': i+1,
+    Description: a.text||'-',
+    Owner: a.owner||'-',
+    Due: a.due||'-',
+    Status: a.status||'-'
+  }));
+  
+  if(actions.length){
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(11);
+    doc.text('Action Items', 14, y);
+    y += 4;
+    doc.autoTable({
+      startY: y,
+      head: [['#','Description','Owner','Due','Status']],
+      body: actions.map(a=>[a['#'], a.Description, a.Owner, a.Due, a.Status]),
+      styles: {fontSize:10, cellPadding:2},
+      headStyles:{fillColor:[6,40,61]},
+      theme:'striped',
+      margin:{left:14, right:14}
+    });
+    y = doc.lastAutoTable.finalY + 4;
+  }
+  
+  // Signature block
+  y += 10;
+  doc.setDrawColor(0);
+  doc.line(14, y, 94, y);
+  doc.text('Leading Teacher Signature ', 14, y+5);
+  ftr(doc);
+  doc.save(`Meeting_${m.date}_${(m.title||'').slice(0,24).replace(/[^a-z0-9]+/gi,'_')}.pdf`);
+}
+
+/* Range export */
+async function exportMeetingsRangePDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:'mm', format:'a4'});
+  
+  const start = $('mtStart').value, end = $('mtEnd').value;
+  const meetings = await getAllMeetings();
+  const items = meetings.filter(m => (!start || m.date >= start) && (!end || m.date <= end));
+  
+  if(!items.length) {
+    alert('No meetings in range');
+    return;
+  }
+  
+  items.forEach((m, idx) => {
+    if(idx > 0) doc.addPage();
+    hdr(doc, 'Meeting Minutes');
+    
+    let y = kvGrid(doc,[
+      ['Title', m.title],
+      ['Date', m.date],
+      ['Time', (m.start_time||'') + (m.end_time?(' — '+m.end_time):'')],
+      ['Location', m.location||'-'],
+      ['Participants', (m.participants||[]).join(', ')||'-']
+    ]);
+    
+    y += 6;
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(11);
+    doc.text('Agenda', 14, y);
+    y += 4;
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(10);
+    
+    const agendaY = doc.splitTextToSize(m.agenda||'-', 180);
+    doc.text(agendaY, 14, y);
+    y += Math.min(agendaY.length * 5, 40);
+    
+    y += 2;
+    doc.setFont('helvetica','bold');
+    doc.text('Key Decisions', 14, y);
+    y += 4;
+    doc.setFont('helvetica','normal');
+    
+    const decY = doc.splitTextToSize(m.decisions||'-', 180);
+    doc.text(decY, 14, y);
+    y += Math.min(decY.length * 5, 40);
+    
+    const actions = (m.actions||[]).map((a,i)=>({
+      '#': i+1,
+      Description:a.text||'-',
+      Owner:a.owner||'-',
+      Due:a.due||'-',
+      Status:a.status||'-'
+    }));
+    
+    if(actions.length){
+      y += 2;
+      doc.setFont('helvetica','bold');
+      doc.text('Action Items', 14, y);
+      y += 2;
+      doc.autoTable({
+        startY: y,
+        head: [['#','Description','Owner','Due','Status']],
+        body: actions.map(a=>[a['#'], a.Description, a.Owner, a.Due, a.Status]),
+        styles:{fontSize:10, cellPadding:2},
+        headStyles:{fillColor:[6,40,61]},
+        theme:'striped',
+        margin:{left:14, right:14}
+      });
+    }
+  });
+  
+  ftr(doc);
+  doc.save('Meeting_Minutes_Range.pdf');
+}
+
+/* -------------------------
+   Lessons
+   ------------------------- */
+let editingLesson = null;
+let editingLessonId = null;
+
+async function bindLessonForm() {
+  $('lessonForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const lesson = {
+      date: $('lsDate').value,
+      student: $('lsStudent').value.trim(),
+      subject: $('lsSubject').value.trim(),
+      topic: $('lsTopic').value.trim(),
+      objectives: $('lsObjectives').value.trim(),
+      materials: $('lsMaterials').value.trim(),
+      activities: $('lsActivities').value.trim(),
+      homework: $('lsHomework').value.trim()
+    };
+    
+    if(!lesson.date || !lesson.student || !lesson.subject || !lesson.topic) {
+      alert('Date, Student, Subject and Lesson Name required');
+      return;
+    }
+    
+    const success = await saveLesson(lesson, editingLesson !== null, editingLessonId);
+    
+    if (success) {
+      cancelEdit('lesson');
+      renderLessonsRange();
+      refreshSummary();
+    }
+  });
+}
+
+async function populateStudentSelect() {
+  const sel = $('lsStudent');
+  sel.innerHTML = '<option value="">-- choose student --</option>';
+  
+  const students = await getAllStudents();
+  
+  students.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.name;
+    opt.textContent = s.name;
+    sel.appendChild(opt);
+  });
+}
+
+async function renderLessonsRange() {
+  const start = $('lsStart').value, end = $('lsEnd').value;
+  const tbody = $('lessonsTable').querySelector('tbody');
+  tbody.innerHTML = '';
+  
+  const lessons = await getAllLessons();
+  
+  lessons.forEach((l, i) => {
+    if((!start || l.date >= start) && (!end || l.date <= end)){
+      tbody.insertAdjacentHTML('beforeend', `<tr>
+        <td>${l.date}</td><td>${esc(l.student)}</td><td>${esc(l.subject)}</td><td>${esc(l.topic)}</td>
+        <td>${esc(l.objectives)}</td><td>${esc(l.materials)}</td><td>${esc(l.activities)}</td><td>${esc(l.homework)}</td>
+        <td>
+          <button class="action-btn edit" onclick="editLesson(${i}, '${l.id}')">Edit</button>
+          <button class="action-btn del" onclick="deleteLesson('${l.id}')">Delete</button>
+        </td>
+      </tr>`);
+    }
+  });
+}
+
+async function editLesson(index, id) {
+  const lessons = await getAllLessons();
+  const l = lessons[index];
+  
+  if (!l) return;
+  
+  $('lsDate').value = l.date;
+  $('lsStudent').value = l.student;
+  $('lsSubject').value = l.subject;
+  $('lsTopic').value = l.topic;
+  $('lsObjectives').value = l.objectives;
+  $('lsMaterials').value = l.materials;
+  $('lsActivities').value = l.activities;
+  $('lsHomework').value = l.homework;
+  
+  editingLesson = index;
+  editingLessonId = id;
+  $('cancelLesson').style.display = 'inline-block';
+}
+
+async function deleteLesson(id) {
+  if (!confirm('Delete this lesson?')) return;
+  
+  try {
+    const { error } = await supabase
+      .from(TABLES.LESSONS)
+      .delete()
+      .eq('id', id);
+      
+    if (error) throw error;
+    
+    renderLessonsRange();
+    refreshSummary();
+  } catch (error) {
+    console.error('Error deleting lesson:', error);
+    alert('Error deleting lesson: ' + error.message);
+  }
+}
+
+function exportLessonsPDF() {
+  getAllLessons().then(lessons => {
+    const { jsPDF } = window.jspdf;
+    const start = $('lsStart').value, end = $('lsEnd').value;
+    const items = lessons.filter(l => (!start || l.date >= start) && (!end || l.date <= end));
+    
+    if(!items.length) {
+      alert('No lessons to export in range');
+      return;
+    }
+    
+    const doc = new jsPDF({unit:'mm', format:'a4'});
+    
+    items.forEach((l, idx) => {
+      if(idx > 0) doc.addPage();
+      drawLessonTemplate(doc, l);
+    });
+    
+    doc.save('Lesson_Plans.pdf');
+  });
+}
+
+function drawLessonTemplate(doc, l) {
+  hdr(doc, 'Lesson Plan');
+  const LM = 14, RM = 196;
+  let y = 28;
+  
+  // Basic info box
+  doc.rect(LM, y, RM-LM, 32);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.rect(LM, y, 52, 16);
+  doc.text('Subject', LM+4, y+11);
+  doc.rect(LM+52, y, RM-LM-52, 16);
+  doc.text(l.subject || '-', LM+56, y+11);
+  doc.rect(LM, y+16, 52, 16);
+  doc.text('Name of Lesson', LM+4, y+28);
+  doc.rect(LM+52, y+16, RM-LM-52, 16);
+  doc.text(l.topic || '-', LM+56, y+28);
+  y += 40;
+  
+  // Description & objectives box
+  const boxH = 150;
+  doc.rect(LM, y, RM-LM, boxH);
+  doc.rect(LM, y, 52, boxH/2);
+  doc.text('General Description', LM+4, y+10);
+  doc.rect(LM, y+boxH/2, 52, boxH/2);
+  doc.text('Objective(s)', LM+4, y+boxH/2+10);
+  
+  const RX = LM+52, RW = RM-RX;
+  doc.rect(RX, y, RW, boxH/2);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  
+  const descLines = doc.splitTextToSize(l.objectives || '-', RW-6);
+  let cy = y + 10;
+  descLines.forEach(line => {
+    doc.text(line, RX+3, cy);
+    cy += 5;
+    if(cy > 280){
+      doc.addPage();
+      cy = 20;
+    }
+  });
+  
+  doc.rect(RX, y+boxH/2, RW, boxH/2);
+  let ry = y+boxH/2 + 8;
+  doc.setFont('helvetica','bold');
+  doc.text('Materials:', RX+3, ry);
+  ry += 5;
+  doc.setFont('helvetica','normal');
+  ry = writeWrapped(doc, l.materials || '-', RX+3, ry, RW-6) + 4;
+  
+  doc.setFont('helvetica','bold');
+  doc.text('Activities:', RX+3, ry);
+  ry += 5;
+  doc.setFont('helvetica','normal');
+  ry = writeWrapped(doc, l.activities || '-', RX+3, ry, RW-6) + 4;
+  
+  doc.setFont('helvetica','bold');
+  doc.text('Homework:', RX+3, ry);
+  ry += 5;
+  doc.setFont('helvetica','normal');
+  writeWrapped(doc, l.homework || '-', RX+3, ry, RW-6);
+  
+  doc.setFontSize(10);
+  doc.setFont('helvetica','normal');
+  doc.text(`Date: ${l.date || '-'}`, LM, 285);
+  doc.text(`Student: ${l.student || '-'}`, 110, 285);
+  ftr(doc);
+}
+
+function writeWrapped(doc, text, x, y, maxW) {
+  const lines = doc.splitTextToSize(text, maxW);
+  let cy = y;
+  lines.forEach(line => {
+    doc.text(line, x, cy);
+    cy += 5;
+    if(cy > 280){
+      doc.addPage();
+      cy = 20;
+    }
+  });
+  return cy;
+}
+
+/* -------------------------
+   Initialization & binding
+   ------------------------- */
+async function refreshAll() {
+  await refreshSummary();
+  await renderStudents();
+  await populateStudentSelect();
+  await renderMeetingsRange();
+  await renderLessonsRange();
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Bind auth buttons
+  $('btnRegister').addEventListener('click', registerUser);
+  $('btnLogin').addEventListener('click', loginUser);
+  
+  // Bind form submissions
+  bindStudentForm();
+  bindMeetingForm();
+  bindLessonForm();
+  
+  // Set default dates
+  $('attDate').value = today();
+  $('lsDate').value = today();
+  $('mtDate').value = today();
+  
+  // Check if user is already logged in
+  const loggedUser = localStorage.getItem('loggedInUser');
+  
+  if (loggedUser) {
+    // Verify user exists in database
+    const { data, error } = await supabase
+      .from(TABLES.USERS)
+      .select('username')
+      .eq('username', loggedUser)
+      .single();
+      
+    if (error || !data) {
+      localStorage.removeItem('loggedInUser');
+      return;
+    }
+    
+    openApp(loggedUser);
+  }
+  
+  // Expose globals for inline buttons
+  window.navigate = navigate;
+  window.logout = logout;
+  window.loadAttendanceForDate = loadAttendanceForDate;
+  window.markAll = markAll;
+  window.saveAttendance = saveAttendance;
+  window.loadAttendanceRange = loadAttendanceRange;
+  window.exportAttendanceExcel = exportAttendanceExcel;
+  window.renderMeetingsRange = renderMeetingsRange;
+  window.editMeeting = editMeeting;
+  window.deleteMeeting = deleteMeeting;
+  window.exportMeetingsRangePDF = exportMeetingsRangePDF;
+  window.exportSingleMeetingPDF = exportSingleMeetingPDF;
+  window.renderLessonsRange = renderLessonsRange;
+  window.populateStudentSelect = populateStudentSelect;
+  window.editLesson = editLesson;
+  window.deleteLesson = deleteLesson;
+  window.exportLessonsPDF = exportLessonsPDF;
+  window.addActionItem = addActionItem;
+  window.removeActionItem = removeActionItem;
+});
+</script>
+  </body>
+</html>
+```

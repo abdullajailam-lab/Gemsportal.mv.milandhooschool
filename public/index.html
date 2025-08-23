@@ -4,12 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>GEMS Milandhoo School Portal — Pro</title>
+
     <!-- CDNs -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         :root{
             --sidebar-a:#06283d; --sidebar-b:#0aa3a3; --accent:#ffd166;
@@ -19,6 +21,7 @@
         }
         *{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial}
         html,body{height:100%;margin:0;background:var(--bg);color:var(--ink)}
+
         /* App shell */
         .app{display:flex;height:100vh;overflow:hidden}
         .sidebar{
@@ -31,14 +34,17 @@
         .nav{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
         .nav button{background:transparent;border:none;color:#e9fbfb;padding:12px;border-radius:10px;text-align:left;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .15s}
         .nav button:hover{background:rgba(255,255,255,0.06);transform:translateX(6px)}
+
         .main{flex:1;padding:20px;overflow:auto}
         .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
         .title{font-weight:800;font-size:20px;color:#072031}
         .header .note{color:var(--muted)}
+
         .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
         .card{background:var(--card);padding:14px;border-radius:var(--radius);box-shadow:var(--shadow);min-width:160px}
         .big{font-size:20px;font-weight:900;color:#052235}
         .small-note{font-size:13px;color:var(--muted)}
+
         /* panels & forms */
         .panel{background:#fff;padding:14px;border-radius:12px;box-shadow:var(--shadow);margin-bottom:14px}
         .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
@@ -51,24 +57,30 @@
         .small{padding:8px 10px;font-size:13px;border-radius:8px}
         .table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden}
         .table th,.table td{padding:10px;border:1px solid #eef4f8;text-align:left;font-size:13px}
+
         /* section accents */
         .section-att .panel{border-left:6px solid #000}
         .section-meet .panel{border-left:6px solid #000}
         .section-less .panel{border-left:6px solid #000}
+
         /* ensure inputs have black text */
         .section-att input, .section-att textarea, .section-att select,
         .section-meet input, .section-meet textarea, .section-meet select,
         .section-less input, .section-less textarea, .section-less select { color:#000;background:#fff;border:1px solid #c6d3df; }
+
         /* action buttons */
         .action-btn{padding:6px 10px;border-radius:8px;color:#fff;border:none;cursor:pointer}
         .edit{background:var(--success)}
         .del{background:var(--danger)}
         .link{background:#5b76ff}
+
         .hidden{display:none}
         .note{color:var(--muted);font-size:13px}
         @media (max-width:900px){ .sidebar{display:none} .app{flex-direction:column} }
+
         /* pill badges */
         .badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #cfe0ea;font-size:12px;color:#375a74;background:#f6fbfe}
+        
         /* Auth status messages */
         .auth-status {
             padding: 8px;
@@ -85,13 +97,16 @@
             background-color: rgba(239, 83, 80, 0.2);
             color: #ef5350;
         }
+        
         /* Loading indicator */
         .loading {display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; margin-left: 10px;}
         @keyframes spin { to { transform: rotate(360deg); } }
+        
         /* API Key Input - Hidden by default */
         .api-key-container {
             display: none;
         }
+
         /* PDF Box Styles */
         .pdf-box {
             border: 1px solid #ccc;
@@ -115,6 +130,18 @@
             border-bottom: 1px solid #ddd;
             padding-bottom: 3px;
         }
+        
+        /* Fix for login/register buttons */
+        #btnLogin, #btnRegister {
+            transition: all 0.2s ease;
+        }
+        #btnLogin:hover, #btnRegister:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        #btnLogin:active, #btnRegister:active {
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
@@ -122,6 +149,7 @@
     <div id="authScreen" style="position:fixed;inset:0;background:linear-gradient(180deg,#071a2b,#0a8b8b);display:flex;align-items:center;justify-content:center;z-index:999">
         <div style="width:480px;background:rgba(255,255,255,0.06);padding:28px;border-radius:14px;color:#fff;box-shadow:0 16px 40px rgba(0,0,0,.5)">
             <h2 style="margin:0 0 8px 0;text-align:center">Welcome to GEMS Milandhoo School Portal</h2>
+            
             <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap">
                 <div style="flex:1;min-width:220px">
                     <h3 style="margin:0 0 8px 0">Login</h3>
@@ -142,6 +170,7 @@
             <p style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.8)">All data is securely stored and shared with other teachers.</p>
         </div>
     </div>
+
     <!-- APP -->
     <div class="app" id="appRoot" style="display:none">
         <!-- Sidebar -->
@@ -155,6 +184,7 @@
                     <div class="small-note">School Portal</div>
                 </div>
             </div>
+
             <nav>
                 <ul class="nav">
                     <li><button onclick="navigate('dashboard')">🏠 Dashboard</button></li>
@@ -165,18 +195,21 @@
                     <li style="margin-top:12px"><button onclick="logout()" style="background:transparent;border:1px solid rgba(255,255,255,0.08);color:#fff;padding:10px;border-radius:8px">Logout</button></li>
                 </ul>
             </nav>
+
             <div style="margin-top:auto">
                 <div class="small-note">Logged in as</div>
                 <div id="currentUser" style="font-weight:800"></div>
                 <div id="saveStatus" class="small-note"></div>
             </div>
         </aside>
+
         <!-- Main -->
         <main class="main">
             <div class="header">
                 <div class="title">GEMS Milandhoo School Portal</div>
                 <div class="note" id="currentTime">--</div>
             </div>
+
             <!-- DASHBOARD -->
             <section id="dashboard" class="card">
                 <div style="display:flex;gap:12px;flex-wrap:wrap">
@@ -190,6 +223,7 @@
                     <p class="small-note">Use the sidebar to manage Students, Attendance, Meeting Minutes and Lesson Plans. All records are saved to the cloud and shared with all teachers.</p>
                 </div>
             </section>
+
             <!-- STUDENTS -->
             <section id="students" class="hidden">
                 <div class="panel">
@@ -208,6 +242,7 @@
                         </div>
                     </form>
                 </div>
+
                 <div class="panel">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
                         <div><strong>Students List</strong><div class="small-note">Search & manage students below</div></div>
@@ -222,6 +257,7 @@
                     </table>
                 </div>
             </section>
+
             <!-- ATTENDANCE -->
             <section id="attendance" class="hidden section-att">
                 <div class="panel">
@@ -235,6 +271,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="panel">
                     <div class="controls">
                         <label>Date <input id="attDate" type="date"></label>
@@ -248,6 +285,7 @@
                     </div>
                     <div class="small-note" style="margin-top:8px">Pick a date, click Load Students, mark statuses, then Save Attendance.</div>
                 </div>
+
                 <div class="panel">
                     <table class="table" id="attendanceTable">
                         <thead><tr><th>Date</th><th>Student</th><th>Status</th></tr></thead>
@@ -255,6 +293,7 @@
                     </table>
                 </div>
             </section>
+
             <!-- MEETINGS (Pro) -->
             <section id="meetings" class="hidden section-meet">
                 <div class="panel">
@@ -268,6 +307,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="panel">
                     <form id="meetingForm">
                         <div class="controls">
@@ -310,6 +350,7 @@
                         </div>
                     </form>
                 </div>
+
                 <div class="panel">
                     <table class="table" id="meetingsTable">
                         <thead><tr><th>Date</th><th>Title</th><th>Participants</th><th>Actions</th></tr></thead>
@@ -317,6 +358,7 @@
                     </table>
                 </div>
             </section>
+
             <!-- LESSONS -->
             <section id="lessons" class="hidden section-less">
                 <div class="panel">
@@ -330,6 +372,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="panel">
                     <form id="lessonForm">
                         <div class="controls">
@@ -338,13 +381,16 @@
                             <input id="lsSubject" placeholder="Subject / Course" required>
                             <input id="lsTopic" placeholder="Name of Lesson" required>
                         </div>
+
                         <div style="margin-top:10px">
                             <textarea id="lsObjectives" placeholder="Objectives / General description" style="width:100%;min-height:100px"></textarea>
                         </div>
+
                         <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap">
                             <textarea id="lsMaterials" placeholder="Materials" style="flex:1;min-width:260px"></textarea>
                             <textarea id="lsActivities" placeholder="Activities" style="flex:1;min-width:260px"></textarea>
                         </div>
+
                         <div style="margin-top:10px">
                             <textarea id="lsHomework" placeholder="Homework" style="width:100%;min-height:60px"></textarea>
                             <div style="margin-top:8px;display:flex;gap:8px">
@@ -354,6 +400,7 @@
                         </div>
                     </form>
                 </div>
+
                 <div class="panel">
                     <table class="table" id="lessonsTable">
                         <thead><tr><th>Date</th><th>Student</th><th>Subject</th><th>Lesson</th><th>Objectives</th><th>Materials</th><th>Activities</th><th>Homework</th><th>Actions</th></tr></thead>
@@ -363,12 +410,15 @@
             </section>
         </main>
     </div>
+
     <script>
         // Initialize Supabase with correct API key
         let SUPABASE_URL = "https://sasodvdokwybanovtuwl.supabase.co";
-        let SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhc29kdmRva3d5YmFub3Z0dXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNzMzNTAsImV4cCI6MjA3MDc0OTM1MH0.sUJx73vkjPlKo9m8De6dUNGMcdWjb1vh8hnsMBVMgRQ";
+        let SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6InNhc29kdmRva3d5YmFub3Z0dXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNzMzNTAsImV4cCI6MjA3MDc0OTM1MH0.sUJx73vkjPlKo9m8De6dUNGMcdWjb1vh8hnsMBVMgRQ";
+        
         // Create Supabase client
         let supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
         // Global state
         let currentUser = null;
         let currentData = {
@@ -377,22 +427,25 @@
             meetings: [],
             lessons: []
         };
+        
         let editingStudent = null;
         let editingMeeting = null;
         let editingLesson = null;
         let actionItems = [];
         let currentAttendanceDate = null;
+        
         /* -------------------------
            AUTHENTICATION
         ------------------------- */
         async function setupAuth() {
             // Check for existing session
             try {
-                const {  { session } } = await supabase.auth.getSession();
+                const { data: { session } } = await supabase.auth.getSession();
                 if (session) {
                     currentUser = session.user;
                     openApp();
                 }
+                
                 // Listen for auth changes
                 supabase.auth.onAuthStateChange(async (event, session) => {
                     if (event === 'SIGNED_IN' && session) {
@@ -408,34 +461,49 @@
                 document.getElementById('loginStatus').textContent = 'Error connecting to Supabase. Please check your API key.';
                 document.getElementById('loginStatus').className = 'auth-status auth-error';
             }
-            // Bind auth buttons - Fixed: Added proper event listeners
-            const loginBtn = document.getElementById('btnLogin');
-            const registerBtn = document.getElementById('btnRegister');
             
-            if (loginBtn) {
-                loginBtn.addEventListener('click', login);
-            }
+            // Bind auth buttons - FIXED: Added proper event listeners
+            document.getElementById('btnLogin').addEventListener('click', login);
+            document.getElementById('btnRegister').addEventListener('click', register);
             
-            if (registerBtn) {
-                registerBtn.addEventListener('click', register);
-            }
+            // Also allow form submission with Enter key
+            document.getElementById('loginEmail').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') login();
+            });
+            document.getElementById('loginPass').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') login();
+            });
+            document.getElementById('regName').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') register();
+            });
+            document.getElementById('regEmail').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') register();
+            });
+            document.getElementById('regPass').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') register();
+            });
         }
+        
         async function login() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPass').value;
             const status = document.getElementById('loginStatus');
+            
             if (!email || !password) {
                 status.textContent = 'Please enter email and password';
                 status.className = 'auth-status auth-error';
                 return;
             }
+            
             status.textContent = 'Logging in...';
             status.className = 'auth-status';
+            
             try {
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email,
                     password
                 });
+                
                 if (error) {
                     status.textContent = error.message;
                     status.className = 'auth-status auth-error';
@@ -450,44 +518,52 @@
                 console.error('Login error:', error);
             }
         }
+        
         async function register() {
             const name = document.getElementById('regName').value;
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPass').value;
             const status = document.getElementById('registerStatus');
+            
             if (!name || !email || !password) {
                 status.textContent = 'Please fill all fields';
                 status.className = 'auth-status auth-error';
                 return;
             }
+            
             if (password.length < 6) {
                 status.textContent = 'Password must be at least 6 characters';
                 status.className = 'auth-status auth-error';
                 return;
             }
+            
             status.textContent = 'Creating account...';
             status.className = 'auth-status';
+            
             try {
                 const { data, error } = await supabase.auth.signUp({
                     email,
                     password,
                     options: {
-                         {
+                        data: {
                             full_name: name
                         }
                     }
                 });
+                
                 if (error) {
                     status.textContent = error.message;
                     status.className = 'auth-status auth-error';
                 } else {
                     status.textContent = 'Account created! Please check your email for confirmation.';
                     status.className = 'auth-status auth-success';
+                    
                     // Auto login after registration
                     const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
                         email,
                         password
                     });
+                    
                     if (loginError) {
                         status.textContent = 'Account created but automatic login failed. Please login manually.';
                     } else {
@@ -500,12 +576,15 @@
                 console.error('Registration error:', error);
             }
         }
+        
         async function logout() {
             await supabase.auth.signOut();
         }
+        
         /* -------------------------
            DATA MANAGEMENT
         ------------------------- */
+        
         async function loadAllData() {
             await Promise.all([
                 loadStudents(),
@@ -515,12 +594,14 @@
             ]);
             refreshAll();
         }
+        
         async function loadStudents() {
             try {
                 const { data, error } = await supabase
                     .from('students')
                     .select('*')
                     .order('name');
+                    
                 if (error) {
                     console.error('Error loading students:', error);
                     showStatus('Error loading students', 'error');
@@ -534,6 +615,7 @@
                 showStatus('Error loading students', 'error');
             }
         }
+        
         async function saveStudents() {
             try {
                 // Delete all existing students first
@@ -541,13 +623,16 @@
                     .from('students')
                     .delete()
                     .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all records
+                    
                 if (deleteError) {
                     console.error('Error deleting students:', deleteError);
                 }
+                
                 // Insert all current students
                 const { error } = await supabase
                     .from('students')
                     .insert(currentData.students);
+                    
                 if (error) {
                     console.error('Error saving students:', error);
                     showStatus('Error saving students', 'error');
@@ -560,12 +645,14 @@
                 return false;
             }
         }
+        
         async function loadAttendance() {
             try {
                 const { data, error } = await supabase
                     .from('attendance')
                     .select('*')
                     .order('date', { ascending: false });
+                    
                 if (error) {
                     console.error('Error loading attendance:', error);
                     showStatus('Error loading attendance', 'error');
@@ -577,6 +664,7 @@
                 showStatus('Error loading attendance', 'error');
             }
         }
+        
         async function saveAttendance() {
             try {
                 // Get the current date
@@ -585,38 +673,46 @@
                     showStatus('Please select a date first', 'error');
                     return false;
                 }
+                
                 // Get all attendance records for this date
                 const attendanceRecords = [];
                 const rows = document.querySelectorAll('#attendanceTable tbody tr');
+                
                 rows.forEach(row => {
                     const studentName = row.cells[1].textContent;
                     const statusSelect = row.querySelector('select');
                     const status = statusSelect ? statusSelect.value : 'Absent';
+                    
                     attendanceRecords.push({
                         date,
                         student: studentName,
                         status
                     });
                 });
+                
                 // Delete existing records for this date
                 const { error: deleteError } = await supabase
                     .from('attendance')
                     .delete()
                     .eq('date', date);
+                    
                 if (deleteError) {
                     console.error('Error deleting attendance:', deleteError);
                 }
+                
                 // Insert new records
                 if (attendanceRecords.length > 0) {
                     const { error } = await supabase
                         .from('attendance')
                         .insert(attendanceRecords);
+                        
                     if (error) {
                         console.error('Error saving attendance:', error);
                         showStatus('Error saving attendance', 'error');
                         return false;
                     }
                 }
+                
                 // Reload attendance data
                 await loadAttendance();
                 showStatus('Attendance saved successfully');
@@ -627,12 +723,14 @@
                 return false;
             }
         }
+        
         async function loadMeetings() {
             try {
                 const { data, error } = await supabase
                     .from('meetings')
                     .select('*')
                     .order('date', { ascending: false });
+                    
                 if (error) {
                     console.error('Error loading meetings:', error);
                     showStatus('Error loading meetings', 'error');
@@ -644,6 +742,7 @@
                 showStatus('Error loading meetings', 'error');
             }
         }
+        
         async function saveMeetings() {
             try {
                 const meetingData = {
@@ -661,10 +760,12 @@
                     decisions: document.getElementById('mtDecisions').value.trim(),
                     actions: actionItems
                 };
+                
                 // Add selected participants from the multi-select
                 Array.from(document.getElementById('mtParticipants').selectedOptions).forEach(option => {
                     meetingData.participants.push(option.value);
                 });
+                
                 if (editingMeeting !== null) {
                     // Update existing meeting
                     const meetingId = currentData.meetings[editingMeeting].id;
@@ -672,6 +773,7 @@
                         .from('meetings')
                         .update(meetingData)
                         .eq('id', meetingId);
+                        
                     if (error) {
                         console.error('Error updating meeting:', error);
                         showStatus('Error updating meeting', 'error');
@@ -682,12 +784,14 @@
                     const { error } = await supabase
                         .from('meetings')
                         .insert([meetingData]);
+                        
                     if (error) {
                         console.error('Error saving meeting:', error);
                         showStatus('Error saving meeting', 'error');
                         return false;
                     }
                 }
+                
                 // Reload meetings data
                 await loadMeetings();
                 return true;
@@ -697,12 +801,14 @@
                 return false;
             }
         }
+        
         async function loadLessons() {
             try {
                 const { data, error } = await supabase
                     .from('lessons')
                     .select('*')
                     .order('date', { ascending: false });
+                    
                 if (error) {
                     console.error('Error loading lessons:', error);
                     showStatus('Error loading lessons', 'error');
@@ -714,6 +820,7 @@
                 showStatus('Error loading lessons', 'error');
             }
         }
+        
         async function saveLessons() {
             try {
                 const lessonData = {
@@ -726,6 +833,7 @@
                     activities: document.getElementById('lsActivities').value.trim(),
                     homework: document.getElementById('lsHomework').value.trim()
                 };
+                
                 if (editingLesson !== null) {
                     // Update existing lesson
                     const lessonId = currentData.lessons[editingLesson].id;
@@ -733,6 +841,7 @@
                         .from('lessons')
                         .update(lessonData)
                         .eq('id', lessonId);
+                        
                     if (error) {
                         console.error('Error updating lesson:', error);
                         showStatus('Error updating lesson', 'error');
@@ -743,12 +852,14 @@
                     const { error } = await supabase
                         .from('lessons')
                         .insert([lessonData]);
+                        
                     if (error) {
                         console.error('Error saving lesson:', error);
                         showStatus('Error saving lesson', 'error');
                         return false;
                     }
                 }
+                
                 // Reload lessons data
                 await loadLessons();
                 return true;
@@ -758,6 +869,7 @@
                 return false;
             }
         }
+        
         function setupRealtimeUpdates() {
             // Set up realtime subscriptions for each table
             const channels = [
@@ -767,18 +879,21 @@
                         () => loadStudents().then(renderStudents)
                     )
                     .subscribe(),
+                
                 supabase.channel('attendance-changes')
                     .on('postgres_changes', 
                         { event: '*', schema: 'public', table: 'attendance' }, 
                         () => loadAttendance()
                     )
                     .subscribe(),
+                
                 supabase.channel('meetings-changes')
                     .on('postgres_changes', 
                         { event: '*', schema: 'public', table: 'meetings' }, 
                         () => loadMeetings().then(renderMeetingsRange)
                     )
                     .subscribe(),
+                
                 supabase.channel('lessons-changes')
                     .on('postgres_changes', 
                         { event: '*', schema: 'public', table: 'lessons' }, 
@@ -787,45 +902,57 @@
                     .subscribe()
             ];
         }
+        
         /* -------------------------
            UI FUNCTIONS
         ------------------------- */
+        
         function openApp() {
             document.getElementById('authScreen').style.display = 'none';
             document.getElementById('appRoot').style.display = 'flex';
             document.getElementById('currentUser').textContent = currentUser.email;
+            
             // Set default dates
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('attDate').value = today;
             document.getElementById('lsDate').value = today;
             document.getElementById('mtDate').value = today;
+            
             // Load data and setup UI
             loadAllData();
             setupRealtimeUpdates();
+            
             // Show dashboard by default
             navigate('dashboard');
+            
             // Update clock
             updateClock();
             setInterval(updateClock, 60000);
         }
+        
         function updateClock() {
             document.getElementById('currentTime').textContent = new Date().toLocaleString();
         }
+        
         function showStatus(message, type = 'info') {
             const statusEl = document.getElementById('saveStatus');
             statusEl.textContent = message;
             statusEl.style.color = type === 'error' ? 'var(--danger)' : 'var(--muted)';
+            
             setTimeout(() => {
                 statusEl.textContent = '';
             }, 3000);
         }
+        
         function navigate(section) {
             // Hide all sections
             document.querySelectorAll('main > section').forEach(sec => {
                 sec.classList.add('hidden');
             });
+            
             // Show the selected section
             document.getElementById(section).classList.remove('hidden');
+            
             // Load section-specific data
             if (section === 'students') renderStudents();
             if (section === 'attendance') renderAttendanceForDate();
@@ -835,6 +962,7 @@
                 renderLessonsRange();
             }
         }
+        
         function refreshAll() {
             refreshSummary();
             renderStudents();
@@ -842,24 +970,31 @@
             renderMeetingsRange();
             renderLessonsRange();
         }
+        
         function refreshSummary() {
             document.getElementById('totalStudents').textContent = currentData.students.length;
+            
             // Count unique attendance dates
             const uniqueDates = new Set(currentData.attendance.map(a => a.date));
             document.getElementById('attendanceDays').textContent = uniqueDates.size;
+            
             document.getElementById('meetingsCount').textContent = currentData.meetings.length;
             document.getElementById('lessonsCount').textContent = currentData.lessons.length;
         }
+        
         function renderStudents() {
             const tbody = document.getElementById('studentsTable').querySelector('tbody');
             tbody.innerHTML = '';
+            
             const searchTerm = (document.getElementById('studentSearch').value || '').toLowerCase();
+            
             currentData.students.forEach((student, index) => {
                 if (searchTerm && 
                     !student.name.toLowerCase().includes(searchTerm) && 
                     !(student.grade || '').toLowerCase().includes(searchTerm)) {
                     return;
                 }
+                
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${escapeHtml(student.name)}</td>
@@ -874,9 +1009,11 @@
                 tbody.appendChild(row);
             });
         }
+        
         function populateStudentSelect() {
             const select = document.getElementById('lsStudent');
             select.innerHTML = '<option value="">-- choose student --</option>';
+            
             currentData.students.forEach((student, index) => {
                 const option = document.createElement('option');
                 option.value = student.name;
@@ -884,9 +1021,11 @@
                 select.appendChild(option);
             });
         }
+        
         function populateParticipantSelect() {
             const select = document.getElementById('mtParticipants');
             select.innerHTML = '';
+            
             currentData.students.forEach((student, index) => {
                 const option = document.createElement('option');
                 option.value = student.name;
@@ -894,33 +1033,41 @@
                 select.appendChild(option);
             });
         }
+        
         async function loadAttendanceForDate() {
             const date = document.getElementById('attDate').value;
             if (!date) {
                 showStatus('Please select a date first', 'error');
                 return;
             }
+            
             currentAttendanceDate = date;
             renderAttendanceForDate();
             showStatus(`Loaded attendance for ${date}`);
         }
+        
         function renderAttendanceForDate() {
             const tbody = document.getElementById('attendanceTable').querySelector('tbody');
             tbody.innerHTML = '';
+            
             if (!currentAttendanceDate) {
                 currentAttendanceDate = document.getElementById('attDate').value;
             }
+            
             // Get attendance for the selected date
             const dateAttendance = currentData.attendance.filter(a => a.date === currentAttendanceDate);
+            
             // Create a map of student->status for this date
             const statusMap = {};
             dateAttendance.forEach(a => {
                 statusMap[a.student] = a.status;
             });
+            
             // Render each student with their status
             currentData.students.forEach(student => {
                 const row = document.createElement('tr');
                 const status = statusMap[student.name] || 'Absent';
+                
                 row.innerHTML = `
                     <td>${currentAttendanceDate}</td>
                     <td>${escapeHtml(student.name)}</td>
@@ -935,10 +1082,12 @@
                 tbody.appendChild(row);
             });
         }
+        
         function updateAttendanceStatus(studentName, status) {
             // This will be saved when the user clicks "Save Attendance"
             showStatus(`Marked ${studentName} as ${status}`);
         }
+        
         function markAll(status) {
             const selects = document.querySelectorAll('#attendanceTable select');
             selects.forEach(select => {
@@ -946,13 +1095,16 @@
             });
             showStatus(`Marked all students as ${status}`);
         }
+        
         async function loadAttendanceRange() {
             const startDate = document.getElementById('attStart').value;
             const endDate = document.getElementById('attEnd').value;
+            
             if (!startDate || !endDate) {
                 showStatus('Please select both start and end dates', 'error');
                 return;
             }
+            
             try {
                 const { data, error } = await supabase
                     .from('attendance')
@@ -960,6 +1112,7 @@
                     .gte('date', startDate)
                     .lte('date', endDate)
                     .order('date', { ascending: false });
+                    
                 if (error) {
                     console.error('Error loading attendance range:', error);
                     showStatus('Error loading attendance range', 'error');
@@ -967,6 +1120,7 @@
                     // Display the results in the table
                     const tbody = document.getElementById('attendanceTable').querySelector('tbody');
                     tbody.innerHTML = '';
+                    
                     data.forEach(record => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
@@ -976,6 +1130,7 @@
                         `;
                         tbody.appendChild(row);
                     });
+                    
                     showStatus(`Loaded ${data.length} attendance records from ${startDate} to ${endDate}`);
                 }
             } catch (error) {
@@ -983,16 +1138,19 @@
                 showStatus('Error loading attendance range', 'error');
             }
         }
+        
         function editStudent(index) {
             const student = currentData.students[index];
             document.getElementById('stuName').value = student.name || '';
             document.getElementById('stuAge').value = student.age || '';
             document.getElementById('stuGrade').value = student.grade || '';
             document.getElementById('stuLevel').value = student.level || '';
+            
             editingStudent = index;
             document.getElementById('studentEditingBadge').classList.remove('hidden');
             document.getElementById('cancelStudent').style.display = 'inline-block';
         }
+        
         function deleteStudent(index) {
             if (confirm('Are you sure you want to delete this student?')) {
                 currentData.students.splice(index, 1);
@@ -1003,6 +1161,7 @@
                 });
             }
         }
+        
         function cancelEdit(type) {
             if (type === 'student') {
                 editingStudent = null;
@@ -1021,39 +1180,48 @@
                 document.getElementById('cancelLesson').style.display = 'none';
             }
         }
+        
         function escapeHtml(text) {
             if (text === null || text === undefined) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
+        
         // Meeting minutes functions
         function addActionItem() {
             const text = document.getElementById('aiText').value;
             const owner = document.getElementById('aiOwner').value;
             const due = document.getElementById('aiDue').value;
             const status = document.getElementById('aiStatus').value;
+            
             if (!text) {
                 showStatus('Please enter action item description', 'error');
                 return;
             }
+            
             actionItems.push({
                 text,
                 owner,
                 due,
                 status
             });
+            
             renderActionItems();
+            
             // Clear the form
             document.getElementById('aiText').value = '';
             document.getElementById('aiOwner').value = '';
             document.getElementById('aiDue').value = '';
             document.getElementById('aiStatus').value = 'Open';
+            
             showStatus('Action item added');
         }
+        
         function renderActionItems() {
             const tbody = document.getElementById('actionsTable').querySelector('tbody');
             tbody.innerHTML = '';
+            
             actionItems.forEach((item, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -1069,20 +1237,25 @@
                 tbody.appendChild(row);
             });
         }
+        
         function removeActionItem(index) {
             actionItems.splice(index, 1);
             renderActionItems();
             showStatus('Action item removed');
         }
+        
         function renderMeetingsRange() {
             const tbody = document.getElementById('meetingsTable').querySelector('tbody');
             tbody.innerHTML = '';
+            
             const startDate = document.getElementById('mtStart').value;
             const endDate = document.getElementById('mtEnd').value;
+            
             currentData.meetings.forEach((meeting, index) => {
                 if ((startDate && meeting.date < startDate) || (endDate && meeting.date > endDate)) {
                     return;
                 }
+                
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${meeting.date}</td>
@@ -1097,6 +1270,7 @@
                 tbody.appendChild(row);
             });
         }
+        
         function editMeeting(index) {
             const meeting = currentData.meetings[index];
             document.getElementById('mtDate').value = meeting.date || '';
@@ -1107,26 +1281,32 @@
             document.getElementById('mtChair').value = meeting.chair || '';
             document.getElementById('mtAgenda').value = meeting.agenda || '';
             document.getElementById('mtDecisions').value = meeting.decisions || '';
+            
             // Handle participants
             if (Array.isArray(meeting.participants)) {
                 document.getElementById('mtParticipantsFree').value = meeting.participants.join(', ');
             } else {
                 document.getElementById('mtParticipantsFree').value = meeting.participants || '';
             }
+            
             // Set action items
             actionItems = meeting.actions || [];
             renderActionItems();
+            
             editingMeeting = index;
             document.getElementById('cancelMeeting').style.display = 'inline-block';
         }
+        
         async function deleteMeeting(index) {
             if (confirm('Are you sure you want to delete this meeting?')) {
                 const meetingId = currentData.meetings[index].id;
+                
                 try {
                     const { error } = await supabase
                         .from('meetings')
                         .delete()
                         .eq('id', meetingId);
+                        
                     if (error) {
                         console.error('Error deleting meeting:', error);
                         showStatus('Error deleting meeting', 'error');
@@ -1142,15 +1322,19 @@
                 }
             }
         }
+        
         function renderLessonsRange() {
             const tbody = document.getElementById('lessonsTable').querySelector('tbody');
             tbody.innerHTML = '';
+            
             const startDate = document.getElementById('lsStart').value;
             const endDate = document.getElementById('lsEnd').value;
+            
             currentData.lessons.forEach((lesson, index) => {
                 if ((startDate && lesson.date < startDate) || (endDate && lesson.date > endDate)) {
                     return;
                 }
+                
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${lesson.date}</td>
@@ -1169,6 +1353,7 @@
                 tbody.appendChild(row);
             });
         }
+        
         function editLesson(index) {
             const lesson = currentData.lessons[index];
             document.getElementById('lsDate').value = lesson.date || '';
@@ -1179,17 +1364,21 @@
             document.getElementById('lsMaterials').value = lesson.materials || '';
             document.getElementById('lsActivities').value = lesson.activities || '';
             document.getElementById('lsHomework').value = lesson.homework || '';
+            
             editingLesson = index;
             document.getElementById('cancelLesson').style.display = 'inline-block';
         }
+        
         async function deleteLesson(index) {
             if (confirm('Are you sure you want to delete this lesson?')) {
                 const lessonId = currentData.lessons[index].id;
+                
                 try {
                     const { error } = await supabase
                         .from('lessons')
                         .delete()
                         .eq('id', lessonId);
+                        
                     if (error) {
                         console.error('Error deleting lesson:', error);
                         showStatus('Error deleting lesson', 'error');
@@ -1205,6 +1394,7 @@
                 }
             }
         }
+        
         // Export functions
         function exportStudentsCSV() {
             try {
@@ -1218,6 +1408,7 @@
                 showStatus('Error exporting CSV', 'error');
             }
         }
+        
         function exportAttendanceExcel() {
             try {
                 const worksheet = XLSX.utils.json_to_sheet(currentData.attendance);
@@ -1230,36 +1421,44 @@
                 showStatus('Error exporting Excel', 'error');
             }
         }
+        
         function exportMeetingsRangePDF() {
             try {
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
+                
                 // Add title with professional styling
                 doc.setFontSize(20);
                 doc.setTextColor(40, 40, 40);
                 doc.text("MEETING MINUTES REPORT", 105, 20, { align: "center" });
+                
                 // Add date range
                 const startDate = document.getElementById('mtStart').value;
                 const endDate = document.getElementById('mtEnd').value;
                 doc.setFontSize(12);
                 doc.setTextColor(100, 100, 100);
                 doc.text(`Date Range: ${startDate} to ${endDate}`, 105, 30, { align: "center" });
+                
                 // Filter meetings by date range
                 const filteredMeetings = currentData.meetings.filter(meeting => {
                     return (!startDate || meeting.date >= startDate) && (!endDate || meeting.date <= endDate);
                 });
+                
                 let yPosition = 45;
+                
                 // Add each meeting with professional formatting
                 filteredMeetings.forEach((meeting, index) => {
                     if (yPosition > 250) {
                         doc.addPage();
                         yPosition = 20;
                     }
+                    
                     // Meeting header
                     doc.setFontSize(14);
                     doc.setTextColor(40, 40, 40);
                     doc.text(`${meeting.date} - ${meeting.title}`, 14, yPosition);
                     yPosition += 10;
+                    
                     // Meeting details
                     doc.setFontSize(10);
                     doc.setTextColor(80, 80, 80);
@@ -1269,59 +1468,70 @@
                     yPosition += 6;
                     doc.text(`Chair: ${meeting.chair || 'N/A'}`, 14, yPosition);
                     yPosition += 6;
+                    
                     const participants = Array.isArray(meeting.participants) ? 
                         meeting.participants.join(', ') : meeting.participants;
                     const splitParticipants = doc.splitTextToSize(`Participants: ${participants || 'N/A'}`, 180);
                     doc.text(splitParticipants, 14, yPosition);
                     yPosition += splitParticipants.length * 6 + 8;
+                    
                     // Add agenda if available
                     if (meeting.agenda) {
                         doc.setFontSize(12);
                         doc.setTextColor(40, 40, 40);
                         doc.text("Agenda:", 14, yPosition);
                         yPosition += 8;
+                        
                         doc.setFontSize(10);
                         doc.setTextColor(80, 80, 80);
                         const splitAgenda = doc.splitTextToSize(meeting.agenda, 180);
                         doc.text(splitAgenda, 20, yPosition);
                         yPosition += splitAgenda.length * 6 + 8;
                     }
+                    
                     // Add decisions if available
                     if (meeting.decisions) {
                         doc.setFontSize(12);
                         doc.setTextColor(40, 40, 40);
                         doc.text("Decisions:", 14, yPosition);
                         yPosition += 8;
+                        
                         doc.setFontSize(10);
                         doc.setTextColor(80, 80, 80);
                         const splitDecisions = doc.splitTextToSize(meeting.decisions, 180);
                         doc.text(splitDecisions, 20, yPosition);
                         yPosition += splitDecisions.length * 6 + 8;
                     }
+                    
                     // Add action items if available
                     if (meeting.actions && meeting.actions.length > 0) {
                         doc.setFontSize(12);
                         doc.setTextColor(40, 40, 40);
                         doc.text("Action Items:", 14, yPosition);
                         yPosition += 8;
+                        
                         doc.setFontSize(10);
                         meeting.actions.forEach(action => {
                             if (yPosition > 250) {
                                 doc.addPage();
                                 yPosition = 20;
                             }
+                            
                             const actionText = `• ${action.text} (Owner: ${action.owner || 'N/A'}, Due: ${action.due || 'N/A'}, Status: ${action.status || 'N/A'})`;
                             const splitAction = doc.splitTextToSize(actionText, 170);
                             doc.text(splitAction, 20, yPosition);
                             yPosition += splitAction.length * 6 + 4;
                         });
                     }
+                    
                     yPosition += 10;
+                    
                     // Add separator line
                     doc.setDrawColor(200, 200, 200);
                     doc.line(14, yPosition, 196, yPosition);
                     yPosition += 15;
                 });
+                
                 // Add footer
                 const totalPages = doc.internal.getNumberOfPages();
                 for (let i = 1; i <= totalPages; i++) {
@@ -1331,6 +1541,7 @@
                     doc.text(`Page ${i} of ${totalPages}`, 105, 285, { align: "center" });
                     doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
                 }
+                
                 doc.save("meeting_minutes_report.pdf");
                 showStatus('Meeting minutes exported to PDF');
             } catch (error) {
@@ -1338,93 +1549,112 @@
                 showStatus('Error exporting PDF', 'error');
             }
         }
+        
         function exportLessonsPDF() {
             try {
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
+                
                 // Add title with professional styling
                 doc.setFontSize(20);
                 doc.setTextColor(40, 40, 40);
                 doc.text("LESSON PLANS REPORT", 105, 20, { align: "center" });
+                
                 // Add date range
                 const startDate = document.getElementById('lsStart').value;
                 const endDate = document.getElementById('lsEnd').value;
                 doc.setFontSize(12);
                 doc.setTextColor(100, 100, 100);
                 doc.text(`Date Range: ${startDate} to ${endDate}`, 105, 30, { align: "center" });
+                
                 // Filter lessons by date range
                 const filteredLessons = currentData.lessons.filter(lesson => {
                     return (!startDate || lesson.date >= startDate) && (!endDate || lesson.date <= endDate);
                 });
+                
                 let yPosition = 45;
+                
                 // Add each lesson with professional formatting
                 filteredLessons.forEach((lesson, index) => {
                     if (yPosition > 250) {
                         doc.addPage();
                         yPosition = 20;
                     }
+                    
                     // Lesson header
                     doc.setFontSize(14);
                     doc.setTextColor(40, 40, 40);
                     doc.text(`${lesson.date} - ${lesson.student} - ${lesson.subject}`, 14, yPosition);
                     yPosition += 8;
+                    
                     doc.setFontSize(12);
                     doc.text(`Topic: ${lesson.topic || 'N/A'}`, 14, yPosition);
                     yPosition += 8;
+                    
                     // Add objectives if available
                     if (lesson.objectives) {
                         doc.setFontSize(12);
                         doc.setTextColor(40, 40, 40);
                         doc.text("Objectives:", 14, yPosition);
                         yPosition += 8;
+                        
                         doc.setFontSize(10);
                         doc.setTextColor(80, 80, 80);
                         const splitObjectives = doc.splitTextToSize(lesson.objectives, 180);
                         doc.text(splitObjectives, 20, yPosition);
                         yPosition += splitObjectives.length * 6 + 8;
                     }
+                    
                     // Add materials if available
                     if (lesson.materials) {
                         doc.setFontSize(12);
                         doc.setTextColor(40, 40, 40);
                         doc.text("Materials:", 14, yPosition);
                         yPosition += 8;
+                        
                         doc.setFontSize(10);
                         doc.setTextColor(80, 80, 80);
                         const splitMaterials = doc.splitTextToSize(lesson.materials, 180);
                         doc.text(splitMaterials, 20, yPosition);
                         yPosition += splitMaterials.length * 6 + 8;
                     }
+                    
                     // Add activities if available
                     if (lesson.activities) {
                         doc.setFontSize(12);
                         doc.setTextColor(40, 40, 40);
                         doc.text("Activities:", 14, yPosition);
                         yPosition += 8;
+                        
                         doc.setFontSize(10);
                         doc.setTextColor(80, 80, 80);
                         const splitActivities = doc.splitTextToSize(lesson.activities, 180);
                         doc.text(splitActivities, 20, yPosition);
                         yPosition += splitActivities.length * 6 + 8;
                     }
+                    
                     // Add homework if available
                     if (lesson.homework) {
                         doc.setFontSize(12);
                         doc.setTextColor(40, 40, 40);
                         doc.text("Homework:", 14, yPosition);
                         yPosition += 8;
+                        
                         doc.setFontSize(10);
                         doc.setTextColor(80, 80, 80);
                         const splitHomework = doc.splitTextToSize(lesson.homework, 180);
                         doc.text(splitHomework, 20, yPosition);
                         yPosition += splitHomework.length * 6 + 8;
                     }
+                    
                     yPosition += 10;
+                    
                     // Add separator line
                     doc.setDrawColor(200, 200, 200);
                     doc.line(14, yPosition, 196, yPosition);
                     yPosition += 15;
                 });
+                
                 // Add footer
                 const totalPages = doc.internal.getNumberOfPages();
                 for (let i = 1; i <= totalPages; i++) {
@@ -1434,6 +1664,7 @@
                     doc.text(`Page ${i} of ${totalPages}`, 105, 285, { align: "center" });
                     doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
                 }
+                
                 doc.save("lesson_plans_report.pdf");
                 showStatus('Lesson plans exported to PDF');
             } catch (error) {
@@ -1441,16 +1672,20 @@
                 showStatus('Error exporting PDF', 'error');
             }
         }
+        
         function exportSingleMeetingPDF(index) {
             try {
                 const meeting = currentData.meetings[index];
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
+                
                 // Add title with professional styling
                 doc.setFontSize(20);
                 doc.setTextColor(40, 40, 40);
                 doc.text("MEETING MINUTES", 105, 20, { align: "center" });
+                
                 let yPosition = 35;
+                
                 // Meeting details
                 doc.setFontSize(12);
                 doc.setTextColor(80, 80, 80);
@@ -1464,41 +1699,48 @@
                 yPosition += 8;
                 doc.text(`Chair: ${meeting.chair || 'N/A'}`, 20, yPosition);
                 yPosition += 8;
+                
                 const participants = Array.isArray(meeting.participants) ? 
                     meeting.participants.join(', ') : meeting.participants;
                 const splitParticipants = doc.splitTextToSize(`Participants: ${participants || 'N/A'}`, 170);
                 doc.text(splitParticipants, 20, yPosition);
                 yPosition += splitParticipants.length * 6 + 12;
+                
                 // Add agenda if available
                 if (meeting.agenda) {
                     doc.setFontSize(14);
                     doc.setTextColor(40, 40, 40);
                     doc.text("Agenda:", 20, yPosition);
                     yPosition += 10;
+                    
                     doc.setFontSize(10);
                     doc.setTextColor(80, 80, 80);
                     const splitAgenda = doc.splitTextToSize(meeting.agenda, 170);
                     doc.text(splitAgenda, 25, yPosition);
                     yPosition += splitAgenda.length * 6 + 12;
                 }
+                
                 // Add decisions if available
                 if (meeting.decisions) {
                     doc.setFontSize(14);
                     doc.setTextColor(40, 40, 40);
                     doc.text("Decisions:", 20, yPosition);
                     yPosition += 10;
+                    
                     doc.setFontSize(10);
                     doc.setTextColor(80, 80, 80);
                     const splitDecisions = doc.splitTextToSize(meeting.decisions, 170);
                     doc.text(splitDecisions, 25, yPosition);
                     yPosition += splitDecisions.length * 6 + 12;
                 }
+                
                 // Add action items if available
                 if (meeting.actions && meeting.actions.length > 0) {
                     doc.setFontSize(14);
                     doc.setTextColor(40, 40, 40);
                     doc.text("Action Items:", 20, yPosition);
                     yPosition += 10;
+                    
                     doc.setFontSize(10);
                     doc.setTextColor(80, 80, 80);
                     meeting.actions.forEach(action => {
@@ -1506,12 +1748,14 @@
                             doc.addPage();
                             yPosition = 20;
                         }
+                        
                         const actionText = `• ${action.text} (Owner: ${action.owner || 'N/A'}, Due: ${action.due || 'N/A'}, Status: ${action.status || 'N/A'})`;
                         const splitAction = doc.splitTextToSize(actionText, 170);
                         doc.text(splitAction, 25, yPosition);
                         yPosition += splitAction.length * 6 + 6;
                     });
                 }
+                
                 // Add footer
                 const totalPages = doc.internal.getNumberOfPages();
                 for (let i = 1; i <= totalPages; i++) {
@@ -1521,6 +1765,7 @@
                     doc.text(`Page ${i} of ${totalPages}`, 105, 285, { align: "center" });
                     doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
                 }
+                
                 doc.save(`meeting_minutes_${meeting.date}.pdf`);
                 showStatus('Meeting minutes exported to PDF');
             } catch (error) {
@@ -1528,22 +1773,27 @@
                 showStatus('Error exporting PDF', 'error');
             }
         }
+        
         // Initialize the app
         document.addEventListener('DOMContentLoaded', () => {
             setupAuth();
+            
             // Set up form handlers
             document.getElementById('studentForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
+                
                 const studentData = {
                     name: document.getElementById('stuName').value.trim(),
                     age: parseInt(document.getElementById('stuAge').value) || 0,
                     grade: document.getElementById('stuGrade').value.trim(),
                     level: document.getElementById('stuLevel').value.trim()
                 };
+                
                 if (!studentData.name) {
                     alert('Please enter a student name');
                     return;
                 }
+                
                 if (editingStudent !== null) {
                     // Update existing student
                     currentData.students[editingStudent] = studentData;
@@ -1551,6 +1801,7 @@
                     // Add new student
                     currentData.students.push(studentData);
                 }
+                
                 if (await saveStudents()) {
                     showStatus('Student saved successfully');
                     cancelEdit('student');
@@ -1558,13 +1809,16 @@
                     refreshSummary();
                 }
             });
+            
             // Set up meeting form handler
             document.getElementById('meetingForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
+                
                 if (!document.getElementById('mtDate').value || !document.getElementById('mtTitle').value) {
                     alert('Please enter date and title');
                     return;
                 }
+                
                 if (await saveMeetings()) {
                     showStatus('Meeting saved successfully');
                     actionItems = [];
@@ -1576,14 +1830,17 @@
                     editingMeeting = null;
                 }
             });
+            
             // Set up lesson form handler
             document.getElementById('lessonForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
+                
                 if (!document.getElementById('lsDate').value || !document.getElementById('lsStudent').value || 
                     !document.getElementById('lsSubject').value || !document.getElementById('lsTopic').value) {
                     alert('Please enter date, student, subject, and topic');
                     return;
                 }
+                
                 if (await saveLessons()) {
                     showStatus('Lesson saved successfully');
                     renderLessonsRange();
@@ -1593,11 +1850,13 @@
                     editingLesson = null;
                 }
             });
+            
             // Set today's dates
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('attDate').value = today;
             document.getElementById('lsDate').value = today;
             document.getElementById('mtDate').value = today;
+            
             // Make functions global for HTML onclick attributes
             window.navigate = navigate;
             window.logout = logout;

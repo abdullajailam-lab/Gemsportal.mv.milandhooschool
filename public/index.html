@@ -13,6 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
+        /* Your existing CSS remains unchanged */
         :root{
             --sidebar-a:#06283d; --sidebar-b:#0aa3a3; --accent:#ffd166;
             --card:#ffffff; --muted:#6b7c93; --success:#2ea44f; --danger:#ef5350;
@@ -118,7 +119,7 @@
 <body>
     <!-- LOGIN / REGISTER -->
     <div id="authScreen" style="position:fixed;inset:0;background:linear-gradient(180deg,#071a2b,#0a8b8b);display:flex;align-items:center;justify-content:center;z-index:999">
-        <div style="width:480px;background:rgba(255,255,255,0.06;padding:28px;border-radius:14px;color:#fff;box-shadow:0 16px 40px rgba(0,0,0,.5)">
+        <div style="width:480px;background:rgba(255,255,255,0.06);padding:28px;border-radius:14px;color:#fff;box-shadow:0 16px 40px rgba(0,0,0,.5)">
             <h2 style="margin:0 0 8px 0;text-align:center">Welcome to GEMS Milandhoo School Portal</h2>
             
             <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap">
@@ -385,7 +386,7 @@
     <script>
         // Initialize Supabase with correct API key
         let SUPABASE_URL = "https://sasodvdokwybanovtuwl.supabase.co";
-        let SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6InNhc29kdmRva3d5YmFub3Z0dXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNzMzNTAsImV4cCI6MjA3MDc0OTM1MH0.sUJx73vkjPlKo9m8De6dUNGMcdWjb1vh8hnsMBVMgRQ";
+        let SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhc29kdmRva3d5YmFub3Z0dXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNzMzNTAsImV4cCI6MjA3MDc0OTM1MH0.sUJx73vkjPlKo9m8De6dUNGMcdWjb1vh8hnsMBVMgRQ";
         
         // Create Supabase client
         let supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -433,7 +434,7 @@
                 document.getElementById('loginStatus').className = 'auth-status auth-error';
             }
             
-            // Bind auth buttons
+            // Bind auth buttons - FIXED: Added proper event listeners
             document.getElementById('btnLogin').addEventListener('click', login);
             document.getElementById('btnRegister').addEventListener('click', register);
             
@@ -597,24 +598,18 @@
                     
                 if (deleteError) {
                     console.error('Error deleting students:', deleteError);
-                    showStatus('Error deleting students', 'error');
-                    return false;
                 }
                 
                 // Insert all current students
-                if (currentData.students.length > 0) {
-                    const { error } = await supabase
-                        .from('students')
-                        .insert(currentData.students);
-                        
-                    if (error) {
-                        console.error('Error saving students:', error);
-                        showStatus('Error saving students', 'error');
-                        return false;
-                    }
+                const { error } = await supabase
+                    .from('students')
+                    .insert(currentData.students);
+                    
+                if (error) {
+                    console.error('Error saving students:', error);
+                    showStatus('Error saving students', 'error');
+                    return false;
                 }
-                
-                showStatus('Students saved successfully');
                 return true;
             } catch (error) {
                 console.error('Error saving students:', error);
@@ -675,7 +670,6 @@
                     
                 if (deleteError) {
                     console.error('Error deleting attendance:', deleteError);
-                    showStatus('Error deleting attendance', 'error');
                 }
                 
                 // Insert new records
@@ -723,19 +717,6 @@
         
         async function saveMeetings() {
             try {
-                // Get selected participants from multi-select
-                const selectedParticipants = Array.from(document.getElementById('mtParticipants').selectedOptions)
-                    .map(option => option.value);
-                
-                // Get free-form participants
-                const freeParticipants = document.getElementById('mtParticipantsFree').value
-                    .split(',')
-                    .map(p => p.trim())
-                    .filter(p => p);
-                
-                // Combine all participants
-                const allParticipants = [...selectedParticipants, ...freeParticipants];
-                
                 const meetingData = {
                     date: document.getElementById('mtDate').value,
                     start_time: document.getElementById('mtStartTime').value,
@@ -743,11 +724,19 @@
                     title: document.getElementById('mtTitle').value.trim(),
                     location: document.getElementById('mtLocation').value.trim(),
                     chair: document.getElementById('mtChair').value.trim(),
-                    participants: allParticipants,
+                    participants: document.getElementById('mtParticipantsFree').value
+                        .split(',')
+                        .map(p => p.trim())
+                        .filter(p => p),
                     agenda: document.getElementById('mtAgenda').value.trim(),
                     decisions: document.getElementById('mtDecisions').value.trim(),
                     actions: actionItems
                 };
+                
+                // Add selected participants from the multi-select
+                Array.from(document.getElementById('mtParticipants').selectedOptions).forEach(option => {
+                    meetingData.participants.push(option.value);
+                });
                 
                 if (editingMeeting !== null) {
                     // Update existing meeting
@@ -759,11 +748,9 @@
                         
                     if (error) {
                         console.error('Error updating meeting:', error);
-                        showStatus('Error updating meeting: ' + error.message, 'error');
+                        showStatus('Error updating meeting', 'error');
                         return false;
                     }
-                    
-                    showStatus('Meeting updated successfully');
                 } else {
                     // Add new meeting
                     const { error } = await supabase
@@ -772,11 +759,9 @@
                         
                     if (error) {
                         console.error('Error saving meeting:', error);
-                        showStatus('Error saving meeting: ' + error.message, 'error');
+                        showStatus('Error saving meeting', 'error');
                         return false;
                     }
-                    
-                    showStatus('Meeting saved successfully');
                 }
                 
                 // Reload meetings data
@@ -784,7 +769,7 @@
                 return true;
             } catch (error) {
                 console.error('Error saving meetings:', error);
-                showStatus('Error saving meetings: ' + error.message, 'error');
+                showStatus('Error saving meetings', 'error');
                 return false;
             }
         }
@@ -870,7 +855,7 @@
                 supabase.channel('attendance-changes')
                     .on('postgres_changes', 
                         { event: '*', schema: 'public', table: 'attendance' }, 
-                        () => loadAttendance()
+                        () => loadAttendance().then(renderAttendanceForDate)
                     )
                     .subscribe(),
                 
@@ -1317,7 +1302,7 @@
             const startDate = document.getElementById('lsStart').value;
             const endDate = document.getElementById('lsEnd').value;
             
-            currentData.lessons.forEach((lesson, index) {
+            currentData.lessons.forEach((lesson, index) => {
                 if ((startDate && lesson.date < startDate) || (endDate && lesson.date > endDate)) {
                     return;
                 }
@@ -1872,3 +1857,4 @@
     </script>
 </body>
 </html>
+

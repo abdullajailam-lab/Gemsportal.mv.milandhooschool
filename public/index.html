@@ -408,9 +408,17 @@
                 document.getElementById('loginStatus').textContent = 'Error connecting to Supabase. Please check your API key.';
                 document.getElementById('loginStatus').className = 'auth-status auth-error';
             }
-            // Bind auth buttons
-            document.getElementById('btnLogin').addEventListener('click', login);
-            document.getElementById('btnRegister').addEventListener('click', register);
+            // Bind auth buttons - Fixed: Added proper event listeners
+            const loginBtn = document.getElementById('btnLogin');
+            const registerBtn = document.getElementById('btnRegister');
+            
+            if (loginBtn) {
+                loginBtn.addEventListener('click', login);
+            }
+            
+            if (registerBtn) {
+                registerBtn.addEventListener('click', register);
+            }
         }
         async function login() {
             const email = document.getElementById('loginEmail').value;

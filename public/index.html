@@ -527,31 +527,81 @@
                 showStatus('Error loading students','error');
             }
         }
-        async function saveStudents() {
-            try {
-                // Delete all existing students first
-                const { error: deleteError } = await supabase
-                    .from('students')
-                    .delete()
-                    .neq('id','00000000-0000-0000-0000-000000000000'); //Delete all records
-                if (deleteError) {
-                    console.error('Error deleting students:', deleteError);
-                }
-                // Insert all current students
-                const { error } = await supabase
-                    .from('students')
-                    .insert(currentData.students);
-                if (error) {
-                    console.error('Error saving students:',error);
-                    showStatus('Error saving students','error');
-                    return false;
-                }
-                return true;
-            } catch (error) {
-                console.error('Error saving students:',error);
-                showStatus('Error saving students','error');
+        // In the saveStudents function, replace the entire function with this:
+async function saveStudents() {
+    try {
+        if (editingStudent !== null) {
+            // Update existing student
+            const studentId = currentData.students[editingStudent].id;
+            const studentData = {
+                name: document.getElementById('stuName').value.trim(),
+                age: parseInt(document.getElementById('stuAge').value) || 0,
+                grade: document.getElementById('stuGrade').value.trim(),
+                level: document.getElementById('stuLevel').value.trim()
+            };
+            
+            const { error } = await supabase
+                .from('students')
+                .update(studentData)
+                .eq('id', studentId);
+                
+            if (error) {
+                console.error('Error updating student:', error);
+                showStatus('Error updating student', 'error');
                 return false;
             }
+        } else {
+            // Add new student
+            const studentData = {
+                name: document.getElementById('stuName').value.trim(),
+                age: parseInt(document.getElementById('stuAge').value) || 0,
+                grade: document.getElementById('stuGrade').value.trim(),
+                level: document.getElementById('stuLevel').value.trim()
+            };
+            
+            const { error } = await supabase
+                .from('students')
+                .insert([studentData]);
+                
+            if (error) {
+                console.error('Error saving student:', error);
+                showStatus('Error saving student', 'error');
+                return false;
+            }
+        }
+        
+        // Reload students data
+        await loadStudents();
+        return true;
+    } catch (error) {
+        console.error('Error saving students:', error);
+        showStatus('Error saving students', 'error');
+        return false;
+    }
+}
+
+// In the student form submit handler, replace the entire handler with this:
+document.getElementById('studentForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const studentData = {
+        name: document.getElementById('stuName').value.trim(),
+        age: parseInt(document.getElementById('stuAge').value) || 0,
+        grade: document.getElementById('stuGrade').value.trim(),
+        level: document.getElementById('stuLevel').value.trim()
+    };
+    
+    if (!studentData.name) {
+        alert('Please enter a student name');
+        return;
+    }
+    
+    if (await saveStudents()) {
+        showStatus('Student saved successfully');
+        cancelEdit('student');
+        renderStudents();
+        refreshSummary();
+    }
+});
         }
         async function loadAttendance() {
             try {
@@ -1875,3 +1925,4 @@
     </script>
 </body>
 </html>
+

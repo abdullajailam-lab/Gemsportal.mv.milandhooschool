@@ -241,7 +241,6 @@
                 </div>
             </section>
             <!-- MEETINGS (Pro) -->
- 
             <section id="meetings" class="hidden section-meet">
                 <div class="panel">
                     <div style="display:flex;justify-content:space-between;align-items:center">
@@ -325,7 +324,7 @@
                             <input id="lsTopic" placeholder="Name of Lesson"required>
                         </div>
                         <div style="margin-top:10px">
-                            <textarea id="lsObjectivess" placeholder="Objectivess / General description" style="width:100%;min-height:100px"></textarea>
+                            <textarea id="lsObjectives" placeholder="Objectives / General description" style="width:100%;min-height:100px"></textarea>
                         </div>
                         <div style="margin-top:10px;display-flex;gap:12px;flex-wrap:wrap">
                             <textarea id="lsMaterials" placeholder="Materials" style="flex:1;min-width:260px"></textarea>
@@ -342,7 +341,7 @@
                 </div>
                 <div class="panel">
                     <table class="table" id="lessonsTable">
-                        <thead><tr><th>Date</th><th>Student</th><th>Subject</th><th>Lesson</th><th>Objectives</th><th>Materials</th><th>Activities</th><th>Homework</th><th>Actions</th></tr></thead>
+                        <thead><tr><th>Date</th><th>Student</th><th>Subject</th><th>Lesson</th><th>Actions</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
@@ -450,7 +449,7 @@
             const password = document.getElementById('regPass').value;
             const status = document.getElementById('registerStatus');
             if (!name || !email || !password) {
-                status.textContent = 'Please fill all fieldss';
+                status.textContent = 'Please fill all fields';
                 status.className = 'auth-status auth-error';
                 return;
             }
@@ -498,7 +497,7 @@
             await supabase.auth.signOut();
         }
         /* -------------------------
-           DATA MANAGEMENTMENT
+           DATA MANAGEMENT
         ------------------------- */
         async function loadAllData() {
             await Promise.all([
@@ -934,14 +933,14 @@
         }
         function updateAttendanceStatus(studentName,status) {
             // This will be saved when the user clicks "Save Attendance"
-            showStatus(`Marked${studentName}as${status}`);
+            showStatus(`Marked ${studentName} as ${status}`);
         }
         function markAll(status) {
             const selects = document.querySelectorAll('#attendanceTable select');
             selects.forEach(select => {
                 select.value = status;
             });
-            showStatus(`Marked all students as${status}`);
+            showStatus(`Marked all students as ${status}`);
         }
         async function loadAttendanceRange() {
             const startDate = document.getElementById('attStart').value;
@@ -973,7 +972,7 @@
                         `;
                         tbody.appendChild(row);
                     });
-                    showStatus(`Loaded${data.length}attendance records from${startDate}to${endDate}`);
+                    showStatus(`Loaded ${data.length} attendance records from ${startDate} to ${endDate}`);
                 }
             } catch (error) {
                 console.error('Error loading attendance range:',error);
@@ -987,7 +986,7 @@
             document.getElementById('stuGrade').value = student.grade || '';
             document.getElementById('stuLevel').value = student.level || '';
             editingStudent = index;
-            document.getElementById('studentEditingingBadge').classList.remove('hidden');
+            document.getElementById('studentEditingBadge').classList.remove('hidden');
             document.getElementById('cancelStudent').style.display = 'inline-block';
         }
         function deleteStudent(index) {
@@ -1004,7 +1003,7 @@
             if (type === 'student') {
                 editingStudent = null;
                 document.getElementById('studentForm').reset();
-                document.getElementById('studentEditingingBadge').classList.add('hidden');
+                document.getElementById('studentEditingBadge').classList.add('hidden');
                 document.getElementById('cancelStudent').style.display = 'none';
             } else if (type === 'meeting') {
                 editingMeeting = null;
@@ -1024,7 +1023,7 @@
             div.textContent = text;
             return div.innerHTML;
         }
-        // Meeting minuteses functions
+        // Meeting minutes functions
         function addActionItem() {
             const text = document.getElementById('aiText').value;
             const owner = document.getElementById('aiOwner').value;
@@ -1154,10 +1153,6 @@
                     <td>${escapeHtml(lesson.student)}</td>
                     <td>${escapeHtml(lesson.subject)}</td>
                     <td>${escapeHtml(lesson.topic)}</td>
-                    <td>${escapeHtml(lesson.objectives?.substring(0,50) || '')}...</td>
-                    <td>${escapeHtml(lesson.materials?.substring(0,30) || '')}...</td>
-                    <td>${escapeHtml(lesson.activities?.substring(0,30) || '')}...</td>
-                    <td>${escapeHtml(lesson.homework?.substring(0,30) || '')}...</td>
                     <td>
                         <button class="action-btn edit"onclick="editLesson(${index})">Edit</button>
                         <button class="action-btn del"onclick="deleteLesson(${index})">Delete</button>
@@ -1248,10 +1243,10 @@
                 const endDate = document.getElementById('mtEnd').value;
                 doc.setFontSize(11);
                 doc.setTextColor(100, 100, 100);
-                doc.text(`Date Range:${startDate||'Start'}—${endDate||'End'}`,pageWidth / 2,36,{align:"center"});
+                doc.text(`Date Range: ${startDate||'Start'} — ${endDate||'End'}`,pageWidth / 2,36,{align:"center"});
 
                 const filteredMeetings = currentData.meetings.filter(meeting => {
-                    return (!startDate || meeting.date >= startDate)&&(!endDate || meeting.date <=endDate);
+                    return (!startDate || meeting.date >= startDate)&&(!endDate || meeting.date<=endDate);
                 });
 
                 if (filteredMeetings.length === 0) {
@@ -1259,7 +1254,7 @@
                     doc.setTextColor(150, 150, 150);
                     doc.text("No meetings found for the selected date range.",pageWidth / 2,50,{align:"center"});
                     doc.save("meeting_minutes_report.pdf");
-                    showStatus('Meeting minuteses exported to PDF');
+                    showStatus('Meeting minutes exported to PDF');
                     return;
                 }
 
@@ -1277,108 +1272,144 @@
                         yPosition = 40;
                     }
 
-                    // Table: Meeting Info
-                    const infoRows = [
-                        ["Meeting Title:",meeting.title],
-                        ["MINUTES","Meeting Date","Meeting Time"],
-                        [meeting.date,meeting.start_time||'',meeting.end_time||''],
-                        ["Meeting Location:",meeting.location||''],
-                        ["Meeting called by:",meeting.chair||''],
-                        ["Type of meeting:",meeting.type||''],
-                        ["Facilitator:",meeting.facilitator||''],
-                        ["Note taker:",meeting.note_taker||''],
-                        ["Timekeeper:",meeting.timekeeper||''],
-                        ["Attendees:",meeting.attendees||'']
+                    // Meeting details table
+                    const meetingDetails = [
+                        ["Meeting Title", meeting.title || ""],
+                        ["Date", meeting.date || ""],
+                        ["Time", `${meeting.start_time || ""} - ${meeting.end_time || ""}`],
+                        ["Location", meeting.location || ""],
+                        ["Chairperson", meeting.chair || ""]
                     ];
 
-                    // Draw table
+                    // Draw meeting details table
                     doc.autoTable({
-                        startY:yPosition,
-                        head: [infoRows[0]],
-                        body: infoRows.slice(1),
-                        theme: 'plain',
+                        startY: yPosition,
+                        head: [["Meeting Details", ""]],
+                        body: meetingDetails,
+                        theme: 'grid',
                         styles: {
-                            cellPadding: 3,
+                            cellPadding: 4,
                             fontSize: 10,
                         },
                         headStyles: {
-                            fillColor: [230, 230, 230],
-                            textColor: 0,
+                            fillColor: [10, 40, 60],
+                            textColor: 255,
                             fontStyle: 'bold',
                         },
                         bodyStyles: {
                             valign: 'top',
                         },
                         columnStyles: {
-                            0: { cellWidth: 40 },
-                            1: { cellWidth: 100 },
-                            2: { cellWidth: 100 },
+                            0: { cellWidth: 40, fontStyle: 'bold' },
+                            1: { cellWidth: 'auto' }
                         },
                     });
-                    yPosition += 15;
+                    yPosition = doc.lastAutoTable.finalY + 10;
 
-                    // Minutes Table
-                    const minutesRows = [
-                        ["Minutes",""],
-                        ["Present:",""],
-                        ["Apologies:",""],
-                        ["Agenda Item","Action"]
-                    ];
-
-                    // Add present attendees
-                    if (Array.isArray(meeting.attendees)) {
-                        meeting.attendees.forEach((name, idx) => {
-                            if (idx % 2 === 0) {
-                                minutesRows.push(["<name>",name]);
-                            } else {
-                                minutesRows.push(["<name>",name]);
-                            }
+                    // Participants section
+                    const participants = Array.isArray(meeting.participants) ? meeting.participants : [];
+                    const participantRows = participants.map(p => [p]);
+                    
+                    if (participantRows.length > 0) {
+                        doc.autoTable({
+                            startY: yPosition,
+                            head: [["Participants"]],
+                            body: participantRows,
+                            theme: 'grid',
+                            styles: {
+                                cellPadding: 4,
+                                fontSize: 10,
+                            },
+                            headStyles: {
+                                fillColor: [10, 40, 60],
+                                textColor: 255,
+                                fontStyle: 'bold',
+                            },
                         });
+                        yPosition = doc.lastAutoTable.finalY + 10;
                     }
 
-                    // Add apologies
-                    if (meeting.apologies) {
-                        meeting.apologies.forEach(name => {
-                            minutesRows.push(["<name>",name]);
-                        });
+                    // Agenda section
+                    if (meeting.agenda) {
+                        doc.setFontSize(12);
+                        doc.setFont("helvetica", "bold");
+                        doc.text("Agenda:", 14, yPosition);
+                        yPosition += 6;
+                        
+                        doc.setFontSize(10);
+                        doc.setFont("helvetica", "normal");
+                        const agendaLines = doc.splitTextToSize(meeting.agenda, pageWidth - 28);
+                        doc.text(agendaLines, 14, yPosition);
+                        yPosition += (agendaLines.length * 5) + 8;
                     }
 
-                    // Add agenda items
-                    if (meeting.agenda_items) {
-                        meeting.agenda_items.forEach(item => {
-                            minutesRows.push([`<topic>`,`<discussion/comments>`]);
-                        });
+                    // Decisions section
+                    if (meeting.decisions) {
+                        doc.setFontSize(12);
+                        doc.setFont("helvetica", "bold");
+                        doc.text("Key Decisions:", 14, yPosition);
+                        yPosition += 6;
+                        
+                        doc.setFontSize(10);
+                        doc.setFont("helvetica", "normal");
+                        const decisionLines = doc.splitTextToSize(meeting.decisions, pageWidth - 28);
+                        doc.text(decisionLines, 14, yPosition);
+                        yPosition += (decisionLines.length * 5) + 8;
                     }
 
-                    // Draw minutes table
-                    doc.autoTable({
-                        startY: yPosition,
-                        head: [minutesRows[0]],
-                        body: minutesRows.slice(1),
-                        theme: 'plain',
-                        styles: {
-                            cellPadding: 3,
-                        },
-                        headStyles: {
-                            fillColor: [230, 230, 230],
-                            textColor: 0,
-                            fontStyle: 'bold',
-                        },
-                        bodyStyles: {
-                            valign: 'top',
-                        },
-                        columnStyles: {
-                            0: { cellWidth: 40 },
-                            1: { cellWidth: 100 },
-                            
-                        },
-                    });
-                    yPosition += 15;
+                    // Action items table
+                    if (meeting.actions && meeting.actions.length > 0) {
+                        const actionItemsData = meeting.actions.map((item, idx) => [
+                            idx + 1,
+                            item.text || "",
+                            item.owner || "",
+                            item.due || "",
+                            item.status || ""
+                        ]);
 
-                    // Footer
-                    doc.setDrawColor(200, 200, 200);
-                    doc.line(14, yPosition, 196, yPosition);
+                        doc.autoTable({
+                            startY: yPosition,
+                            head: [["#", "Action Item", "Owner", "Due Date", "Status"]],
+                            body: actionItemsData,
+                            theme: 'grid',
+                            styles: {
+                                cellPadding: 3,
+                                fontSize: 9,
+                            },
+                            headStyles: {
+                                fillColor: [10, 40, 60],
+                                textColor: 255,
+                                fontStyle: 'bold',
+                            },
+                            columnStyles: {
+                                0: { cellWidth: 10 },
+                                1: { cellWidth: 60 },
+                                2: { cellWidth: 30 },
+                                3: { cellWidth: 25 },
+                                4: { cellWidth: 20 }
+                            },
+                        });
+                        yPosition = doc.lastAutoTable.finalY + 15;
+                    }
+
+                    // Signature section
+                    doc.setFontSize(10);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Prepared by:", 14, yPosition);
+                    doc.text("Approved by:", pageWidth - 60, yPosition);
+                    
+                    yPosition += 20;
+                    doc.setDrawColor(0, 0, 0);
+                    doc.line(14, yPosition, 80, yPosition); // Prepared by line
+                    doc.line(pageWidth - 60, yPosition, pageWidth - 14, yPosition); // Approved by line
+                    
                     yPosition += 10;
+                    doc.setFontSize(8);
+                    doc.setFont("helvetica", "normal");
+                    doc.text("Name & Signature", 14, yPosition);
+                    doc.text("Leading Teacher", pageWidth - 60, yPosition);
+
+                    yPosition += 20;
                 });
 
                 // Footer with page numbers
@@ -1387,8 +1418,8 @@
                     doc.setPage(i);
                     doc.setFontSize(9);
                     doc.setTextColor(120, 120, 120);
-                    doc.text(`Generated on:${new Date().toLocaleDateString()}`,14,290);
-                    doc.text(`Page${i} of${totalPages}`,196,290,{align:"right"});
+                    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 290);
+                    doc.text(`Page ${i} of ${totalPages}`, pageWidth - 14, 290, {align: "right"});
                 }
 
                 doc.save("meeting_minutes_report.pdf");
@@ -1413,13 +1444,13 @@
                 doc.setFontSize(18);
                 doc.setTextColor(30, 30, 30);
                 doc.setFont("helvetica","normal");
-                doc.text("Lesson Plan",pageWidth / 2,30,{align:"center"});
+                doc.text("Lesson Plan Report",pageWidth / 2,30,{align:"center"});
 
                 const startDate = document.getElementById('lsStart').value;
                 const endDate = document.getElementById('lsEnd').value;
                 doc.setFontSize(11);
                 doc.setTextColor(100, 100, 100);
-                doc.text(`Date Range:${startDate||'Start'}—${endDate||'End'}`,pageWidth / 2,36,{align:"center"});
+                doc.text(`Date Range: ${startDate||'Start'} — ${endDate||'End'}`,pageWidth / 2,36,{align:"center"});
 
                 const filteredLessons = currentData.lessons.filter(lesson => {
                     return (!startDate || lesson.date >= startDate)&&(!endDate || lesson.date<=endDate);
@@ -1448,92 +1479,123 @@
                         yPosition = 40;
                     }
 
-                    // Table: Lesson Info
-                    const infoRows = [
-                        ["Class:",lesson.student],
-                        ["Date:",lesson.date],
-                        ["Topic:",lesson.topic]
+                    // Lesson details table
+                    const lessonDetails = [
+                        ["Student", lesson.student || ""],
+                        ["Date", lesson.date || ""],
+                        ["Subject", lesson.subject || ""],
+                        ["Topic", lesson.topic || ""]
                     ];
 
-                    // Draw info table
+                    // Draw lesson details table
                     doc.autoTable({
                         startY: yPosition,
-                        head: [infoRows[0]],
-                        body: infoRows.slice(1),
-                        theme: 'plain',
+                        head: [["Lesson Details", ""]],
+                        body: lessonDetails,
+                        theme: 'grid',
                         styles: {
-                            cellPadding: 3,
+                            cellPadding: 4,
                             fontSize: 10,
                         },
                         headStyles: {
-                            fillColor: [230, 230, 230],
-                            textColor: 0,
+                            fillColor: [10, 40, 60],
+                            textColor: 255,
                             fontStyle: 'bold',
                         },
                         bodyStyles: {
                             valign: 'top',
                         },
                         columnStyles: {
-                            0: { cellWidth: 40 },
-                            1: { cellWidth: 100 },
+                            0: { cellWidth: 30, fontStyle: 'bold' },
+                            1: { cellWidth: 'auto' }
                         },
                     });
-                    yPosition += 15;
+                    yPosition = doc.lastAutoTable.finalY + 10;
 
-                    // Section: Learning Objectives
-                    doc.setFontSize(12);
-                    doc.setTextColor(30, 30, 30);
-                    doc.text("Learning Objectives",14,yPosition);
-                    yPosition += 10;
-                    doc.setFont("helvetica","normal");
-                    doc.setTextColor(50, 50, 50);
-                    doc.text(lesson.objectivess || "",14,yPosition);
-                    yPosition += 10;
+                    // Objectives section
+                    if (lesson.objectives) {
+                        doc.setFontSize(12);
+                        doc.setFont("helvetica", "bold");
+                        doc.text("Learning Objectives:", 14, yPosition);
+                        yPosition += 6;
+                        
+                        doc.setFontSize(10);
+                        doc.setFont("helvetica", "normal");
+                        const objectiveLines = doc.splitTextToSize(lesson.objectives, pageWidth - 28);
+                        doc.text(objectiveLines, 14, yPosition);
+                        yPosition += (objectiveLines.length * 5) + 8;
+                    }
 
-                    // Section: Instructional Material
-                    doc.setFontSize(12);
-                    doc.setTextColor(30, 30, 30);
-                    doc.text("Instructional Material",14,yPosition);
-                    yPosition += 10;
-                    doc.setFont("helvetica","normal");
-                    doc.setTextColor(50, 50, 50);
-                    doc.text(lesson.materials || "",14,yPosition);
-                    yPosition += 10;
+                    // Materials section
+                    if (lesson.materials) {
+                        doc.setFontSize(12);
+                        doc.setFont("helvetica", "bold");
+                        doc.text("Materials/Resources:", 14, yPosition);
+                        yPosition += 6;
+                        
+                        doc.setFontSize(10);
+                        doc.setFont("helvetica", "normal");
+                        const materialLines = doc.splitTextToSize(lesson.materials, pageWidth - 28);
+                        doc.text(materialLines, 14, yPosition);
+                        yPosition += (materialLines.length * 5) + 8;
+                    }
 
-                    // Section: Assessment
-                    doc.setFontSize(12);
-                    doc.setTextColor(30, 30, 30);
-                    doc.text("Assessment",14,yPosition);
-                    yPosition += 10;
-                    doc.setFont("helvetica","normal");
-                    doc.setTextColor(50, 50, 50);
-                    doc.text(lesson.assessment || "",14,yPosition);
-                    yPosition += 10;
+                    // Activities section
+                    if (lesson.activities) {
+                        doc.setFontSize(12);
+                        doc.setFont("helvetica", "bold");
+                        doc.text("Activities:", 14, yPosition);
+                        yPosition += 6;
+                        
+                        doc.setFontSize(10);
+                        doc.setFont("helvetica", "normal");
+                        const activityLines = doc.splitTextToSize(lesson.activities, pageWidth - 28);
+                        doc.text(activityLines, 14, yPosition);
+                        yPosition += (activityLines.length * 5) + 8;
+                    }
 
-                    // Section: Lesson Activities
-                    doc.setFontSize(12);
-                    doc.setTextColor(30, 30, 30);
-                    doc.text("Lesson Activities",14,yPosition);
-                    yPosition += 10;
-                    doc.setFont("helvetica","normal");
-                    doc.setTextColor(50, 50, 50);
-                    doc.text(lesson.activities || "",14,yPosition);
-                    yPosition += 10;
+                    // Homework section
+                    if (lesson.homework) {
+                        doc.setFontSize(12);
+                        doc.setFont("helvetica", "bold");
+                        doc.text("Homework/Assessment:", 14, yPosition);
+                        yPosition += 6;
+                        
+                        doc.setFontSize(10);
+                        doc.setFont("helvetica", "normal");
+                        const homeworkLines = doc.splitTextToSize(lesson.homework, pageWidth - 28);
+                        doc.text(homeworkLines, 14, yPosition);
+                        yPosition += (homeworkLines.length * 5) + 15;
+                    }
 
-                    // Footer
-                    doc.setDrawColor(200, 200, 200);
-                    doc.line(14, yPosition, 196, yPosition);
+                    // Signature section
+                    doc.setFontSize(10);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Prepared by:", 14, yPosition);
+                    doc.text("Approved by:", pageWidth - 60, yPosition);
+                    
+                    yPosition += 20;
+                    doc.setDrawColor(0, 0, 0);
+                    doc.line(14, yPosition, 80, yPosition); // Prepared by line
+                    doc.line(pageWidth - 60, yPosition, pageWidth - 14, yPosition); // Approved by line
+                    
                     yPosition += 10;
+                    doc.setFontSize(8);
+                    doc.setFont("helvetica", "normal");
+                    doc.text("Teacher's Name & Signature", 14, yPosition);
+                    doc.text("Leading Teacher", pageWidth - 60, yPosition);
+
+                    yPosition += 20;
                 });
 
-                // Footer with page number
+                // Footer with page numbers
                 const totalPages = doc.internal.getNumberOfPages();
                 for (let i = 1; i <= totalPages; i++) {
                     doc.setPage(i);
                     doc.setFontSize(9);
                     doc.setTextColor(120, 120, 120);
-                    doc.text(`Generated on:${new Date().toLocaleDateString()}`,14,290);
-                    doc.text(`Page${i} of${totalPages}`,196,290,{align:"right"});
+                    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 290);
+                    doc.text(`Page ${i} of ${totalPages}`, pageWidth - 14, 290, {align: "right"});
                 }
 
                 doc.save("lesson_plans_report.pdf");
@@ -1561,108 +1623,142 @@
                 doc.setFont("helvetica","normal");
                 doc.text("Meeting Minutes",pageWidth / 2,30,{align:"center"});
 
-                // Table: Meeting Info
-                const infoRows = [
-                    ["Meeting Title:",meeting.title],
-                    ["MINUTES","Meeting Date","Meeting Time"],
-                    [meeting.date,meeting.start_time||'',meeting.end_time||''],
-                    ["Meeting Location:",meeting.location||''],
-                    ["Meeting called by:",meeting.chair||''],
-                    ["Type of meeting:",meeting.type||''],
-                    ["Facilitator:",meeting.facilitator||''],
-                    ["Note taker:",meeting.note_taker||''],
-                    ["Timekeeper:",meeting.timekeeper||''],
-                    ["Attendees:",meeting.attendees||'']
+                // Meeting details table
+                const meetingDetails = [
+                    ["Meeting Title", meeting.title || ""],
+                    ["Date", meeting.date || ""],
+                    ["Time", `${meeting.start_time || ""} - ${meeting.end_time || ""}`],
+                    ["Location", meeting.location || ""],
+                    ["Chairperson", meeting.chair || ""]
                 ];
 
+                // Draw meeting details table
                 doc.autoTable({
                     startY: yPosition,
-                    head: [infoRows[0]],
-                    body: infoRows.slice(1),
-                    theme: 'plain',
+                    head: [["Meeting Details", ""]],
+                    body: meetingDetails,
+                    theme: 'grid',
                     styles: {
-                        cellPadding: 3,
+                        cellPadding: 4,
                         fontSize: 10,
                     },
                     headStyles: {
-                        fillColor: [230, 230, 230],
-                        textColor: 0,
+                        fillColor: [10, 40, 60],
+                        textColor: 255,
                         fontStyle: 'bold',
                     },
                     bodyStyles: {
                         valign: 'top',
                     },
                     columnStyles: {
-                        0: { cellWidth: 40 },
-                        1: { cellWidth: 100 },
-                        2: { cellWidth: 100 },
-                        
+                        0: { cellWidth: 40, fontStyle: 'bold' },
+                        1: { cellWidth: 'auto' }
                     },
+                });
+                yPosition = doc.lastAutoTable.finalY + 10;
+
+                // Participants section
+                const participants = Array.isArray(meeting.participants) ? meeting.participants : [];
+                const participantRows = participants.map(p => [p]);
+                
+                if (participantRows.length > 0) {
+                    doc.autoTable({
+                        startY: yPosition,
+                        head: [["Participants"]],
+                        body: participantRows,
+                        theme: 'grid',
+                        styles: {
+                            cellPadding: 4,
+                            fontSize: 10,
+                        },
+                        headStyles: {
+                            fillColor: [10, 40, 60],
+                            textColor: 255,
+                            fontStyle: 'bold',
+                        },
+                    });
+                    yPosition = doc.lastAutoTable.finalY + 10;
+                }
+
+                // Agenda section
+                if (meeting.agenda) {
+                    doc.setFontSize(12);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Agenda:", 14, yPosition);
+                    yPosition += 6;
                     
-                });
-                yPosition += 15;
-
-                // Minutes Table
-                const minutesRows = [
-                    ["Minutes",""],
-                    ["Present:",""],
-                    ["Apologies:",""],
-                    ["Agenda Item","Action"]
-                ];
-
-                // Add present attendees
-                if (Array.isArray(meeting.attendees)) {
-                    meeting.attendees.forEach((name, idx) => {
-                        if (idx % 2 === 0) {
-                            minutesRows.push(["<name>",name]);
-                        } else {
-                            minutesRows.push(["<name>",name]);
-                        }
-                    });
+                    doc.setFontSize(10);
+                    doc.setFont("helvetica", "normal");
+                    const agendaLines = doc.splitTextToSize(meeting.agenda, pageWidth - 28);
+                    doc.text(agendaLines, 14, yPosition);
+                    yPosition += (agendaLines.length * 5) + 8;
                 }
 
-                // Add apologies
-                if (meeting.apologies) {
-                    meeting.apologies.forEach(name => {
-                        minutesRows.push(["<name>",name]);
-                    });
+                // Decisions section
+                if (meeting.decisions) {
+                    doc.setFontSize(12);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Key Decisions:", 14, yPosition);
+                    yPosition += 6;
+                    
+                    doc.setFontSize(10);
+                    doc.setFont("helvetica", "normal");
+                    const decisionLines = doc.splitTextToSize(meeting.decisions, pageWidth - 28);
+                    doc.text(decisionLines, 14, yPosition);
+                    yPosition += (decisionLines.length * 5) + 8;
                 }
 
-                // Add agenda items
-                if (meeting.agenda_items) {
-                    meeting.agenda_items.forEach(item => {
-                        minutesRows.push([`<topic>`,`<discussion/comments>`]);
+                // Action items table
+                if (meeting.actions && meeting.actions.length > 0) {
+                    const actionItemsData = meeting.actions.map((item, idx) => [
+                        idx + 1,
+                        item.text || "",
+                        item.owner || "",
+                        item.due || "",
+                        item.status || ""
+                    ]);
+
+                    doc.autoTable({
+                        startY: yPosition,
+                        head: [["#", "Action Item", "Owner", "Due Date", "Status"]],
+                        body: actionItemsData,
+                        theme: 'grid',
+                        styles: {
+                            cellPadding: 3,
+                            fontSize: 9,
+                        },
+                        headStyles: {
+                            fillColor: [10, 40, 60],
+                            textColor: 255,
+                            fontStyle: 'bold',
+                        },
+                        columnStyles: {
+                            0: { cellWidth: 10 },
+                            1: { cellWidth: 60 },
+                            2: { cellWidth: 30 },
+                            3: { cellWidth: 25 },
+                            4: { cellWidth: 20 }
+                        },
                     });
+                    yPosition = doc.lastAutoTable.finalY + 15;
                 }
 
-                // Draw minutes table
-                doc.autoTable({
-                    startY: yPosition,
-                    head: [minutesRows[0]],
-                    body: minutesRows.slice(1),
-                    theme: 'plain',
-                    styles: {
-                        cellPadding: 3,
-                    },
-                    headStyles: {
-                        fillColor: [230, 230, 230],
-                        textColor: 0,
-                        fontStyle: 'bold',
-                    },
-                    bodyStyles: {
-                        valign: 'top',
-                    },
-                    columnStyles: {
-                        0: { cellWidth: 40 },
-                        1: { cellWidth: 100 },                        
-                    },
-                });
-                yPosition += 15;
-
-                // Footer
-                doc.setDrawColor(200, 200, 200);
-                doc.line(14, yPosition, 196, yPosition);
+                // Signature section
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "bold");
+                doc.text("Prepared by:", 14, yPosition);
+                doc.text("Approved by:", pageWidth - 60, yPosition);
+                
+                yPosition += 20;
+                doc.setDrawColor(0, 0, 0);
+                doc.line(14, yPosition, 80, yPosition); // Prepared by line
+                doc.line(pageWidth - 60, yPosition, pageWidth - 14, yPosition); // Approved by line
+                
                 yPosition += 10;
+                doc.setFontSize(8);
+                doc.setFont("helvetica", "normal");
+                doc.text("Name & Signature", 14, yPosition);
+                doc.text("Leading Teacher", pageWidth - 60, yPosition);
 
                 // Footer with page number
                 const totalPages = doc.internal.getNumberOfPages();
@@ -1670,8 +1766,8 @@
                     doc.setPage(i);
                     doc.setFontSize(9);
                     doc.setTextColor(120, 120, 120);
-                    doc.text(`Generated on:${new Date().toLocaleDateString()}`,14,290);
-                    doc.text(`Page${i} of${totalPages}`,196,290,{align:"right"});
+                    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 290);
+                    doc.text(`Page ${i} of ${totalPages}`, pageWidth - 14, 290, {align: "right"});
                 }
 
                 doc.save(`meeting_${meeting.date}.pdf`);
@@ -1689,7 +1785,6 @@
                 e.preventDefault();
                 const studentData = {
                     name: document.getElementById('stuName').value.trim(),
- 
                     age: parseInt(document.getElementById('stuAge').value) || 0,
                     grade: document.getElementById('stuGrade').value.trim(),
                     level: document.getElementById('stuLevel').value.trim()
@@ -1780,4 +1875,3 @@
     </script>
 </body>
 </html>
-

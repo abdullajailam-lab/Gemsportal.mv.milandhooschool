@@ -407,7 +407,7 @@
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPass').value;
             const status = document.getElementById('loginStatus');
-            if (!email || !password) return (status.textContent = 'Email and password required');
+            if (!email || !password) return (status.textContent = 'Enter email and password');
 
             status.textContent = 'Logging in...';
             const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -436,9 +436,10 @@
                 status.textContent = error.message;
                 status.className = 'auth-status auth-error';
             } else {
-                status.textContent = 'Account created! Logging in...';
+                status.textContent = 'Account created!';
+                status.className = 'auth-status auth-success';
                 const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
-                if (loginError) status.textContent = 'Account created but login failed.';
+                if (loginError) alert('Login failed after registration');
                 else currentUser = data.user;
             }
         }
@@ -451,7 +452,12 @@
            DATA MANAGEMENT
         ------------------------- */
         async function loadAllData() {
-            await Promise.all([loadStudents(), loadAttendance(), loadMeetings(), loadLessons()]);
+            await Promise.all([
+                loadStudents(),
+                loadAttendance(),
+                loadMeetings(),
+                loadLessons()
+            ]);
             refreshAll();
         }
 
@@ -490,7 +496,7 @@
 
         async function saveAttendance() {
             const date = document.getElementById('attDate').value;
-            if (!date) return showStatus('Select date', 'error');
+            if (!date) return showStatus('Select a date', 'error');
 
             const records = Array.from(document.querySelectorAll('#attendanceTable tbody tr')).map(row => ({
                 date,

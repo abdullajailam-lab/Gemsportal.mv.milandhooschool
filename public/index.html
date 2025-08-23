@@ -366,7 +366,7 @@
     <script>
         // Initialize Supabase with correct API key
         let SUPABASE_URL = "https://sasodvdokwybanovtuwl.supabase.co";
-        let SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhc29kdmRva3d5YmFub3Z0dXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNzMzNTAsImV4cCI6MjA3MDc0OTM1MH0.sUJx73vkjPlKo9m8De6dUNGMcdWjb1vh8hnsMBVMgRQ";
+        let SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6InNhc29kdmRva3d5YmFub3Z0dXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNzMzNTAsImV4cCI6MjA3MDc0OTM1MH0.sUJxNzMvkjPlKo9m8De6dUNGMcdWjb1vh8hnsMBVMgRQ";
         // Create Supabase client
         let supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         // Global state
@@ -400,6 +400,9 @@
                         openApp();
                     } else if (event === 'SIGNED_OUT') {
                         currentUser = null;
+                        // Show auth screen when signed out
+                        document.getElementById('appRoot').style.display = 'none';
+                        document.getElementById('authScreen').style.display = 'flex';
                     }
                 });
             } catch (error) {
@@ -508,7 +511,31 @@
             }
         }
         async function logout() {
-            await supabase.auth.signOut();
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) {
+                    console.error('Error signing out:', error);
+                } else {
+                    // Hide the app and show the login screen
+                    document.getElementById('appRoot').style.display = 'none';
+                    document.getElementById('authScreen').style.display = 'flex';
+                    
+                    // Clear any form data
+                    document.getElementById('loginEmail').value = '';
+                    document.getElementById('loginPass').value = '';
+                    document.getElementById('regName').value = '';
+                    document.getElementById('regEmail').value = '';
+                    document.getElementById('regPass').value = '';
+                    
+                    // Clear status messages
+                    document.getElementById('loginStatus').textContent = '';
+                    document.getElementById('registerStatus').textContent = '';
+                    
+                    currentUser = null;
+                }
+            } catch (error) {
+                console.error('Error during logout:', error);
+            }
         }
         /* -------------------------
            DATA MANAGEMENT
@@ -1575,344 +1602,16 @@
                     if (lesson.materials) {
                         doc.setFontSize(12);
                         doc.setFont("helvetica", "bold");
-                        doc.text("Materials/Resources:", 14, yPosition);
-                        yPosition += 6;
-                        
-                        doc.setFontSize(10);
-                        doc.setFont("helvetica", "normal");
-                        const materialLines = doc.splitTextToSize(lesson.materials, pageWidth - 28);
-                        doc.text(materialLines, 14, yPosition);
-                        yPosition += (materialLines.length * 5) + 8;
-                    }
-
-                    // Activities section
-                    if (lesson.activities) {
-                        doc.setFontSize(12);
-                        doc.setFont("helvetica", "bold");
-                        doc.text("Activities:", 14, yPosition);
-                        yPosition += 6;
-                        
-                        doc.setFontSize(10);
-                        doc.setFont("helvetica", "normal");
-                        const activityLines = doc.splitTextToSize(lesson.activities, pageWidth - 28);
-                        doc.text(activityLines, 14, yPosition);
-                        yPosition += (activityLines.length * 5) + 8;
-                    }
-
-                    // Homework section
-                    if (lesson.homework) {
-                        doc.setFontSize(12);
-                        doc.setFont("helvetica", "bold");
-                        doc.text("Homework/Assessment:", 14, yPosition);
-                        yPosition += 6;
-                        
-                        doc.setFontSize(10);
-                        doc.setFont("helvetica", "normal");
-                        const homeworkLines = doc.splitTextToSize(lesson.homework, pageWidth - 28);
-                        doc.text(homeworkLines, 14, yPosition);
-                        yPosition += (homeworkLines.length * 5) + 15;
-                    }
-
-                    // Signature section
-                    doc.setFontSize(10);
-                    doc.setFont("helvetica", "bold");
-                    doc.text("Prepared by:", 14, yPosition);
-                    doc.text("Approved by:", pageWidth - 60, yPosition);
-                    
-                    yPosition += 20;
-                    doc.setDrawColor(0, 0, 0);
-                    doc.line(14, yPosition, 80, yPosition); // Prepared by line
-                    doc.line(pageWidth - 60, yPosition, pageWidth - 14, yPosition); // Approved by line
-                    
-                    yPosition += 10;
-                    doc.setFontSize(8);
-                    doc.setFont("helvetica", "normal");
-                    doc.text("Teacher's Name & Signature", 14, yPosition);
-                    doc.text("Leading Teacher", pageWidth - 60, yPosition);
-
-                    yPosition += 20;
-                });
-
-                // Footer with page numbers
-                const totalPages = doc.internal.getNumberOfPages();
-                for (let i = 1; i <= totalPages; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(9);
-                    doc.setTextColor(120, 120, 120);
-                    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 290);
-                    doc.text(`Page ${i} of ${totalPages}`, pageWidth - 14, 290, {align: "right"});
-                }
-
-                doc.save("lesson_plans_report.pdf");
-                showStatus('Lesson plans exported to PDF');
-            } catch (error) {
-                console.error('Error exporting PDF:',error);
-                showStatus('Error exporting PDF','error');
-            }
-        }
-        function exportSingleMeetingPDF(index) {
-            try {
-                const meeting = currentData.meetings[index];
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                const pageWidth = doc.internal.pageSize.getWidth();
-                let yPosition = 40;
-
-                // Header
-                doc.setFontSize(22);
-                doc.setTextColor(10, 40, 60);
-                doc.setFont("helvetica","bold");
-                doc.text("GEMS Milandhoo School",pageWidth / 2,20,{align:"center"});
-                doc.setFontSize(18);
-                doc.setTextColor(30, 30, 30);
-                doc.setFont("helvetica","normal");
-                doc.text("Meeting Minutes",pageWidth / 2,30,{align:"center"});
-
-                // Meeting details table
-                const meetingDetails = [
-                    ["Meeting Title", meeting.title || ""],
-                    ["Date", meeting.date || ""],
-                    ["Time", `${meeting.start_time || ""} - ${meeting.end_time || ""}`],
-                    ["Location", meeting.location || ""],
-                    ["Chairperson", meeting.chair || ""]
-                ];
-
-                // Draw meeting details table
-                doc.autoTable({
-                    startY: yPosition,
-                    head: [["Meeting Details", ""]],
-                    body: meetingDetails,
-                    theme: 'grid',
-                    styles: {
-                        cellPadding: 4,
-                        fontSize: 10,
-                    },
-                    headStyles: {
-                        fillColor: [10, 40, 60],
-                        textColor: 255,
-                        fontStyle: 'bold',
-                    },
-                    bodyStyles: {
-                        valign: 'top',
-                    },
-                    columnStyles: {
-                        0: { cellWidth: 40, fontStyle: 'bold' },
-                        1: { cellWidth: 'auto' }
-                    },
-                });
-                yPosition = doc.lastAutoTable.finalY + 10;
-
-                // Participants section
-                const participants = Array.isArray(meeting.participants) ? meeting.participants : [];
-                const participantRows = participants.map(p => [p]);
-                
-                if (participantRows.length > 0) {
-                    doc.autoTable({
-                        startY: yPosition,
-                        head: [["Participants"]],
-                        body: participantRows,
-                        theme: 'grid',
-                        styles: {
-                            cellPadding: 4,
-                            fontSize: 10,
-                        },
-                        headStyles: {
-                            fillColor: [10, 40, 60],
-                            textColor: 255,
-                            fontStyle: 'bold',
-                        },
-                    });
-                    yPosition = doc.lastAutoTable.finalY + 10;
-                }
-
-                // Agenda section
-                if (meeting.agenda) {
-                    doc.setFontSize(12);
-                    doc.setFont("helvetica", "bold");
-                    doc.text("Agenda:", 14, yPosition);
-                    yPosition += 6;
-                    
-                    doc.setFontSize(10);
-                    doc.setFont("helvetica", "normal");
-                    const agendaLines = doc.splitTextToSize(meeting.agenda, pageWidth - 28);
-                    doc.text(agendaLines, 14, yPosition);
-                    yPosition += (agendaLines.length * 5) + 8;
-                }
-
-                // Decisions section
-                if (meeting.decisions) {
-                    doc.setFontSize(12);
-                    doc.setFont("helvetica", "bold");
-                    doc.text("Key Decisions:", 14, yPosition);
-                    yPosition += 6;
-                    
-                    doc.setFontSize(10);
-                    doc.setFont("helvetica", "normal");
-                    const decisionLines = doc.splitTextToSize(meeting.decisions, pageWidth - 28);
-                    doc.text(decisionLines, 14, yPosition);
-                    yPosition += (decisionLines.length * 5) + 8;
-                }
-
-                // Action items table
-                if (meeting.actions && meeting.actions.length > 0) {
-                    const actionItemsData = meeting.actions.map((item, idx) => [
-                        idx + 1,
-                        item.text || "",
-                        item.owner || "",
-                        item.due || "",
-                        item.status || ""
-                    ]);
-
-                    doc.autoTable({
-                        startY: yPosition,
-                        head: [["#", "Action Item", "Owner", "Due Date", "Status"]],
-                        body: actionItemsData,
-                        theme: 'grid',
-                        styles: {
-                            cellPadding: 3,
-                            fontSize: 9,
-                            overflow: 'linebreak'
-                        },
-                        headStyles: {
-                            fillColor: [10, 40, 60],
-                            textColor: 255,
-                            fontStyle: 'bold',
-                        },
-                        columnStyles: {
-                            0: { cellWidth: 10 },
-                            1: { cellWidth: 60 },
-                            2: { cellWidth: 30 },
-                            3: { cellWidth: 25 },
-                            4: { cellWidth: 20 }
-                        },
-                    });
-                    yPosition = doc.lastAutoTable.finalY + 15;
-                }
-
-                // Signature section
-                doc.setFontSize(10);
-                doc.setFont("helvetica", "bold");
-                doc.text("Prepared by:", 14, yPosition);
-                doc.text("Approved by:", pageWidth - 60, yPosition);
-                
-                yPosition += 20;
-                doc.setDrawColor(0, 0, 0);
-                doc.line(14, yPosition, 80, yPosition); // Prepared by line
-                doc.line(pageWidth - 60, yPosition, pageWidth - 14, yPosition); // Approved by line
-                
-                yPosition += 10;
-                doc.setFontSize(8);
-                doc.setFont("helvetica", "normal");
-                doc.text("Name & Signature", 14, yPosition);
-                doc.text("Leading Teacher", pageWidth - 60, yPosition);
-
-                // Footer with page number
-                const totalPages = doc.internal.getNumberOfPages();
-                for (let i = 1; i <= totalPages; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(9);
-                    doc.setTextColor(120, 120, 120);
-                    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 290);
-                    doc.text(`Page ${i} of ${totalPages}`, pageWidth - 14, 290, {align: "right"});
-                }
-
-                doc.save(`meeting_${meeting.date}.pdf`);
-                showStatus('Meeting minutes exported to PDF');
-            } catch (error) {
-                console.error('Error exporting PDF:',error);
-                showStatus('Error exporting PDF','error');
-            }
-        }
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', () => {
-            setupAuth();
-            // Set up form handlers
-            document.getElementById('studentForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const studentData = {
-                    name: document.getElementById('stuName').value.trim(),
-                    age: parseInt(document.getElementById('stuAge').value) || 0,
-                    grade: document.getElementById('stuGrade').value.trim(),
-                    level: document.getElementById('stuLevel').value.trim()
-                };
-                
-                if (!studentData.name) {
-                    alert('Please enter a student name');
-                    return;
-                }
-                
-                if (await saveStudents()) {
-                    showStatus('Student saved successfully');
-                    cancelEdit('student');
-                    renderStudents();
-                    refreshSummary();
-                }
-            });
-            // Set up meeting form handler
-            document.getElementById('meetingForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                if (!document.getElementById('mtDate').value || !document.getElementById('mtTitle').value) {
-                    alert('Please enter date and title');
-                    return;
-                }
-                if (await saveMeetings()) {
-                    showStatus('Meeting saved successfully');
-                    actionItems = [];
-                    renderActionItems();
-                    renderMeetingsRange();
-                    refreshSummary();
-                    document.getElementById('meetingForm').reset();
-                    document.getElementById('cancelMeeting').style.display = 'none';
-                    editingMeeting = null;
-                }
-            });
-            // Set up lesson form handler
-            document.getElementById('lessonForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                if (!document.getElementById('lsDate').value || !document.getElementById('lsStudent').value || 
-                    !document.getElementById('lsSubject').value || !document.getElementById('lsTopic').value) {
-                    alert('Please enter date, student, subject, and topic');
-                    return;
-                }
-                if (await saveLessons()) {
-                    showStatus('Lesson saved successfully');
-                    renderLessonsRange();
-                    refreshSummary();
-                    document.getElementById('lessonForm').reset();
-                    document.getElementById('cancelLesson').style.display = 'none';
-                    editingLesson = null;
-                }
-            });
-            // Set today's dates
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('attDate').value = today;
-            document.getElementById('lsDate').value = today;
-            document.getElementById('mtDate').value = today;
-            // Make functions global for HTML onclick attributes
-            window.navigate = navigate;
-            window.logout = logout;
-            window.editStudent = editStudent;
-            window.deleteStudent = deleteStudent;
-            window.cancelEdit = cancelEdit;
-            window.renderStudents = renderStudents;
-            window.addActionItem = addActionItem;
-            window.removeActionItem = removeActionItem;
-            window.loadAttendanceForDate = loadAttendanceForDate;
-            window.saveAttendance = saveAttendance;
-            window.markAll = markAll;
-            window.loadAttendanceRange = loadAttendanceRange;
-            window.exportAttendanceExcel = exportAttendanceExcel;
-            window.loadMeetingsRange = renderMeetingsRange;
-            window.exportMeetingsRangePDF = exportMeetingsRangePDF;
-            window.loadLessonsRange = renderLessonsRange;
-            window.exportLessonsPDF = exportLessonsPDF;
-            window.exportStudentsCSV = exportStudentsCSV;
-            window.exportSingleMeetingPDF = exportSingleMeetingPDF;
-            window.editMeeting = editMeeting;
-            window.deleteMeeting = deleteMeeting;
-            window.editLesson = editLesson;
-            window.deleteLesson = deleteLesson;
-        });
-    </script>
-</body>
-</html>
+                        doc.text("Materials/Resources:", 14,
+                    // In your setupAuth function, update the auth state change listener:
+supabase.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+        currentUser = session.user;
+        openApp();
+    } else if (event === 'SIGNED_OUT') {
+        currentUser = null;
+        // Show auth screen when signed out
+        document.getElementById('appRoot').style.display = 'none';
+        document.getElementById('authScreen').style.display = 'flex';
+    }
+});

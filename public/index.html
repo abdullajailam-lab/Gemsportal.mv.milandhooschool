@@ -4,16 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>GEMS Milandhoo School Portal — Pro</title>
-
     <!-- CDNs -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <style>
-        /* Your existing CSS remains unchanged */
         :root{
             --sidebar-a:#06283d; --sidebar-b:#0aa3a3; --accent:#ffd166;
             --card:#ffffff; --muted:#6b7c93; --success:#2ea44f; --danger:#ef5350;
@@ -22,8 +19,6 @@
         }
         *{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial}
         html,body{height:100%;margin:0;background:var(--bg);color:var(--ink)}
-
-        /* App shell */
         .app{display:flex;height:100vh;overflow:hidden}
         .sidebar{
             width:280px;padding:22px;background:linear-gradient(180deg,var(--sidebar-a),var(--sidebar-b));
@@ -35,18 +30,14 @@
         .nav{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
         .nav button{background:transparent;border:none;color:#e9fbfb;padding:12px;border-radius:10px;text-align:left;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .15s}
         .nav button:hover{background:rgba(255,255,255,0.06);transform:translateX(6px)}
-
         .main{flex:1;padding:20px;overflow:auto}
         .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
         .title{font-weight:800;font-size:20px;color:#072031}
         .header .note{color:var(--muted)}
-
         .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
         .card{background:var(--card);padding:14px;border-radius:var(--radius);box-shadow:var(--shadow);min-width:160px}
         .big{font-size:20px;font-weight:900;color:#052235}
         .small-note{font-size:13px;color:var(--muted)}
-
-        /* panels & forms */
         .panel{background:#fff;padding:14px;border-radius:12px;box-shadow:var(--shadow);margin-bottom:14px}
         .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
         input[type="text"], input[type="date"], input[type="time"], input[type="number"], select, textarea{
@@ -58,31 +49,20 @@
         .small{padding:8px 10px;font-size:13px;border-radius:8px}
         .table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden}
         .table th,.table td{padding:10px;border:1px solid #eef4f8;text-align:left;font-size:13px}
-
-        /* section accents */
         .section-att .panel{border-left:6px solid #000}
         .section-meet .panel{border-left:6px solid #000}
         .section-less .panel{border-left:6px solid #000}
-
-        /* ensure inputs have black text */
         .section-att input, .section-att textarea, .section-att select,
         .section-meet input, .section-meet textarea, .section-meet select,
         .section-less input, .section-less textarea, .section-less select { color:#000;background:#fff;border:1px solid #c6d3df; }
-
-        /* action buttons */
         .action-btn{padding:6px 10px;border-radius:8px;color:#fff;border:none;cursor:pointer}
         .edit{background:var(--success)}
         .del{background:var(--danger)}
         .link{background:#5b76ff}
-
         .hidden{display:none}
         .note{color:var(--muted);font-size:13px}
         @media (max-width:900px){ .sidebar{display:none} .app{flex-direction:column} }
-
-        /* pill badges */
         .badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #cfe0ea;font-size:12px;color:#375a74;background:#f6fbfe}
-        
-        /* Auth status messages */
         .auth-status {
             padding: 8px;
             border-radius: 6px;
@@ -98,12 +78,8 @@
             background-color: rgba(239, 83, 80, 0.2);
             color: #ef5350;
         }
-        
-        /* Loading indicator */
         .loading {display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; margin-left: 10px;}
         @keyframes spin { to { transform: rotate(360deg); } }
-        
-        /* Fix for login/register buttons */
         #btnLogin, #btnRegister {
             transition: all 0.2s ease;
         }
@@ -121,7 +97,6 @@
     <div id="authScreen" style="position:fixed;inset:0;background:linear-gradient(180deg,#071a2b,#0a8b8b);display:flex;align-items:center;justify-content:center;z-index:999">
         <div style="width:480px;background:rgba(255,255,255,0.06);padding:28px;border-radius:14px;color:#fff;box-shadow:0 16px 40px rgba(0,0,0,.5)">
             <h2 style="margin:0 0 8px 0;text-align:center">Welcome to GEMS Milandhoo School Portal</h2>
-            
             <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap">
                 <div style="flex:1;min-width:220px">
                     <h3 style="margin:0 0 8px 0">Login</h3>
@@ -156,7 +131,6 @@
                     <div class="small-note">School Portal</div>
                 </div>
             </div>
-
             <nav>
                 <ul class="nav">
                     <li><button onclick="navigate('dashboard')">🏠 Dashboard</button></li>
@@ -167,7 +141,6 @@
                     <li style="margin-top:12px"><button onclick="logout()" style="background:transparent;border:1px solid rgba(255,255,255,0.08);color:#fff;padding:10px;border-radius:8px">Logout</button></li>
                 </ul>
             </nav>
-
             <div style="margin-top:auto">
                 <div class="small-note">Logged in as</div>
                 <div id="currentUser" style="font-weight:800"></div>
@@ -214,7 +187,6 @@
                         </div>
                     </form>
                 </div>
-
                 <div class="panel">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
                         <div><strong>Students List</strong><div class="small-note">Search & manage students below</div></div>
@@ -243,7 +215,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="panel">
                     <div class="controls">
                         <label>Date <input id="attDate" type="date"></label>
@@ -257,7 +228,6 @@
                     </div>
                     <div class="small-note" style="margin-top:8px">Pick a date, click Load Students, mark statuses, then Save Attendance.</div>
                 </div>
-
                 <div class="panel">
                     <table class="table" id="attendanceTable">
                         <thead><tr><th>Date</th><th>Student</th><th>Status</th></tr></thead>
@@ -279,7 +249,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="panel">
                     <form id="meetingForm">
                         <div class="controls">
@@ -322,7 +291,6 @@
                         </div>
                     </form>
                 </div>
-
                 <div class="panel">
                     <table class="table" id="meetingsTable">
                         <thead><tr><th>Date</th><th>Title</th><th>Participants</th><th>Actions</th></tr></thead>
@@ -344,7 +312,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="panel">
                     <form id="lessonForm">
                         <div class="controls">
@@ -353,16 +320,13 @@
                             <input id="lsSubject" placeholder="Subject / Course" required>
                             <input id="lsTopic" placeholder="Name of Lesson" required>
                         </div>
-
                         <div style="margin-top:10px">
                             <textarea id="lsObjectives" placeholder="Objectives / General description" style="width:100%;min-height:100px"></textarea>
                         </div>
-
                         <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap">
                             <textarea id="lsMaterials" placeholder="Materials" style="flex:1;min-width:260px"></textarea>
                             <textarea id="lsActivities" placeholder="Activities" style="flex:1;min-width:260px"></textarea>
                         </div>
-
                         <div style="margin-top:10px">
                             <textarea id="lsHomework" placeholder="Homework" style="width:100%;min-height:60px"></textarea>
                             <div style="margin-top:8px;display:flex;gap:8px">
@@ -372,7 +336,6 @@
                         </div>
                     </form>
                 </div>
-
                 <div class="panel">
                     <table class="table" id="lessonsTable">
                         <thead><tr><th>Date</th><th>Student</th><th>Subject</th><th>Lesson</th><th>Objectives</th><th>Materials</th><th>Activities</th><th>Homework</th><th>Actions</th></tr></thead>
@@ -384,13 +347,11 @@
     </div>
 
     <script>
-        // Initialize Supabase with correct API key
-        let SUPABASE_URL = "https://sasodvdokwybanovtuwl.supabase.co";
-        let SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhc29kdmRva3d5YmFub3Z0dXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNzMzNTAsImV4cCI6MjA3MDc0OTM1MH0.sUJx73vkjPlKo9m8De6dUNGMcdWjb1vh8hnsMBVMgRQ";
-        
-        // Create Supabase client
-        let supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        
+        // Initialize Supabase
+        const SUPABASE_URL = "https://sasodvdokwybanovtuwl.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhc29kdmRva3d5YmFub3Z0dXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNzMzNTAsImV4cCI6MjA3MDc0OTM1MH0.sUJx73vkjPlKo9m8De6dUNGMcdWjb1vh8hnsMBVMgRQ";
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         // Global state
         let currentUser = null;
         let currentData = {
@@ -399,164 +360,88 @@
             meetings: [],
             lessons: []
         };
-        
         let editingStudent = null;
         let editingMeeting = null;
         let editingLesson = null;
         let actionItems = [];
         let currentAttendanceDate = null;
-        
+
         /* -------------------------
            AUTHENTICATION
         ------------------------- */
         async function setupAuth() {
-            // Check for existing session
             try {
                 const { data: { session } } = await supabase.auth.getSession();
                 if (session) {
                     currentUser = session.user;
                     openApp();
                 }
-                
-                // Listen for auth changes
-                supabase.auth.onAuthStateChange(async (event, session) => {
+                supabase.auth.onAuthStateChange((event, session) => {
                     if (event === 'SIGNED_IN' && session) {
                         currentUser = session.user;
                         openApp();
                     } else if (event === 'SIGNED_OUT') {
-                        currentUser = null;
                         location.reload();
                     }
                 });
             } catch (error) {
-                console.error('Error setting up auth:', error);
-                document.getElementById('loginStatus').textContent = 'Error connecting to Supabase. Please check your API key.';
+                console.error('Auth setup failed:', error);
+                document.getElementById('loginStatus').textContent = 'Connection failed. Check Supabase.';
                 document.getElementById('loginStatus').className = 'auth-status auth-error';
             }
-            
-            // Bind auth buttons - FIXED: Added proper event listeners
+
             document.getElementById('btnLogin').addEventListener('click', login);
             document.getElementById('btnRegister').addEventListener('click', register);
-            
-            // Also allow form submission with Enter key
-            document.getElementById('loginEmail').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') login();
-            });
-            document.getElementById('loginPass').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') login();
-            });
-            document.getElementById('regName').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') register();
-            });
-            document.getElementById('regEmail').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') register();
-            });
-            document.getElementById('regPass').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') register();
-            });
         }
-        
+
         async function login() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPass').value;
             const status = document.getElementById('loginStatus');
-            
-            if (!email || !password) {
-                status.textContent = 'Please enter email and password';
-                status.className = 'auth-status auth-error';
-                return;
-            }
-            
+            if (!email || !password) return (status.textContent = 'Enter email and password');
+
             status.textContent = 'Logging in...';
-            status.className = 'auth-status';
-            
-            try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password
-                });
-                
-                if (error) {
-                    status.textContent = error.message;
-                    status.className = 'auth-status auth-error';
-                } else {
-                    status.textContent = 'Login successful!';
-                    status.className = 'auth-status auth-success';
-                    currentUser = data.user;
-                }
-            } catch (error) {
-                status.textContent = 'Login failed. Please try again.';
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) {
+                status.textContent = error.message;
                 status.className = 'auth-status auth-error';
-                console.error('Login error:', error);
+            } else {
+                status.textContent = 'Login successful!';
+                status.className = 'auth-status auth-success';
+                currentUser = data.user;
             }
         }
-        
+
         async function register() {
             const name = document.getElementById('regName').value;
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPass').value;
             const status = document.getElementById('registerStatus');
-            
-            if (!name || !email || !password) {
-                status.textContent = 'Please fill all fields';
-                status.className = 'auth-status auth-error';
-                return;
-            }
-            
-            if (password.length < 6) {
-                status.textContent = 'Password must be at least 6 characters';
-                status.className = 'auth-status auth-error';
-                return;
-            }
-            
+            if (!name || !email || !password) return (status.textContent = 'All fields required');
+
             status.textContent = 'Creating account...';
-            status.className = 'auth-status';
-            
-            try {
-                const { data, error } = await supabase.auth.signUp({
-                    email,
-                    password,
-                    options: {
-                        data: {
-                            full_name: name
-                        }
-                    }
-                });
-                
-                if (error) {
-                    status.textContent = error.message;
-                    status.className = 'auth-status auth-error';
-                } else {
-                    status.textContent = 'Account created! Please check your email for confirmation.';
-                    status.className = 'auth-status auth-success';
-                    
-                    // Auto login after registration
-                    const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
-                        email,
-                        password
-                    });
-                    
-                    if (loginError) {
-                        status.textContent = 'Account created but automatic login failed. Please login manually.';
-                    } else {
-                        currentUser = loginData.user;
-                    }
-                }
-            } catch (error) {
-                status.textContent = 'Registration failed. Please try again.';
+            const { data, error } = await supabase.auth.signUp({
+                email, password, options: {  { full_name: name } }
+            });
+            if (error) {
+                status.textContent = error.message;
                 status.className = 'auth-status auth-error';
-                console.error('Registration error:', error);
+            } else {
+                status.textContent = 'Account created!';
+                status.className = 'auth-status auth-success';
+                const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+                if (loginError) alert('Login failed after registration');
+                else currentUser = data.user;
             }
         }
-        
+
         async function logout() {
             await supabase.auth.signOut();
         }
-        
+
         /* -------------------------
            DATA MANAGEMENT
         ------------------------- */
-        
         async function loadAllData() {
             await Promise.all([
                 loadStudents(),
@@ -566,375 +451,206 @@
             ]);
             refreshAll();
         }
-        
+
         async function loadStudents() {
-            try {
-                const { data, error } = await supabase
-                    .from('students')
-                    .select('*')
-                    .order('name');
-                    
-                if (error) {
-                    console.error('Error loading students:', error);
-                    showStatus('Error loading students', 'error');
-                } else {
-                    currentData.students = data || [];
-                    populateStudentSelect();
-                    populateParticipantSelect();
-                }
-            } catch (error) {
-                console.error('Error loading students:', error);
-                showStatus('Error loading students', 'error');
+            const { data, error } = await supabase.from('students').select('*').order('name');
+            if (error) {
+                console.error('Load students error:', error);
+                showStatus(`Load error: ${error.message}`, 'error');
+            } else {
+                currentData.students = data || [];
+                populateStudentSelect();
+                populateParticipantSelect();
             }
         }
-        
+
         async function saveStudents() {
-            try {
-                // Delete all existing students first
-                const { error: deleteError } = await supabase
-                    .from('students')
-                    .delete()
-                    .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all records
-                    
-                if (deleteError) {
-                    console.error('Error deleting students:', deleteError);
-                }
-                
-                // Insert all current students
-                const { error } = await supabase
-                    .from('students')
-                    .insert(currentData.students);
-                    
-                if (error) {
-                    console.error('Error saving students:', error);
-                    showStatus('Error saving students', 'error');
-                    return false;
-                }
-                return true;
-            } catch (error) {
-                console.error('Error saving students:', error);
-                showStatus('Error saving students', 'error');
+            const studentsToSave = currentData.students.map(s => ({
+                ...s,
+                id: s.id || crypto.randomUUID()
+            }));
+
+            const { error } = await supabase
+                .from('students')
+                .upsert(studentsToSave, { onConflict: 'id' });
+
+            if (error) {
+                console.error('Save students error:', error);
+                showStatus(`Save failed: ${error.message}`, 'error');
                 return false;
             }
+
+            showStatus('Students saved!');
+            return true;
         }
-        
+
         async function loadAttendance() {
-            try {
-                const { data, error } = await supabase
-                    .from('attendance')
-                    .select('*')
-                    .order('date', { ascending: false });
-                    
-                if (error) {
-                    console.error('Error loading attendance:', error);
-                    showStatus('Error loading attendance', 'error');
-                } else {
-                    currentData.attendance = data || [];
-                }
-            } catch (error) {
-                console.error('Error loading attendance:', error);
-                showStatus('Error loading attendance', 'error');
+            const { data, error } = await supabase.from('attendance').select('*').order('date', { ascending: false });
+            if (error) {
+                console.error('Load attendance error:', error);
+                showStatus(`Load error: ${error.message}`, 'error');
+            } else {
+                currentData.attendance = data || [];
             }
         }
-        
+
         async function saveAttendance() {
-            try {
-                // Get the current date
-                const date = document.getElementById('attDate').value;
-                if (!date) {
-                    showStatus('Please select a date first', 'error');
-                    return false;
-                }
-                
-                // Get all attendance records for this date
-                const attendanceRecords = [];
-                const rows = document.querySelectorAll('#attendanceTable tbody tr');
-                
-                rows.forEach(row => {
-                    const studentName = row.cells[1].textContent;
-                    const statusSelect = row.querySelector('select');
-                    const status = statusSelect ? statusSelect.value : 'Absent';
-                    
-                    attendanceRecords.push({
-                        date,
-                        student: studentName,
-                        status
-                    });
-                });
-                
-                // Delete existing records for this date
-                const { error: deleteError } = await supabase
-                    .from('attendance')
-                    .delete()
-                    .eq('date', date);
-                    
-                if (deleteError) {
-                    console.error('Error deleting attendance:', deleteError);
-                }
-                
-                // Insert new records
-                if (attendanceRecords.length > 0) {
-                    const { error } = await supabase
-                        .from('attendance')
-                        .insert(attendanceRecords);
-                        
-                    if (error) {
-                        console.error('Error saving attendance:', error);
-                        showStatus('Error saving attendance', 'error');
-                        return false;
-                    }
-                }
-                
-                // Reload attendance data
-                await loadAttendance();
-                showStatus('Attendance saved successfully');
-                return true;
-            } catch (error) {
-                console.error('Error saving attendance:', error);
-                showStatus('Error saving attendance', 'error');
+            const date = document.getElementById('attDate').value;
+            if (!date) return showStatus('Select a date', 'error');
+
+            const records = Array.from(document.querySelectorAll('#attendanceTable tbody tr')).map(row => ({
+                date,
+                student: row.cells[1].textContent,
+                status: row.querySelector('select').value
+            }));
+
+            const { error } = await supabase
+                .from('attendance')
+                .upsert(records, { onConflict: 'date,student' });
+
+            if (error) {
+                console.error('Save attendance error:', error);
+                showStatus(`Save failed: ${error.message}`, 'error');
                 return false;
             }
+
+            await loadAttendance();
+            showStatus('Attendance saved!');
+            return true;
         }
-        
+
         async function loadMeetings() {
-            try {
-                const { data, error } = await supabase
-                    .from('meetings')
-                    .select('*')
-                    .order('date', { ascending: false });
-                    
-                if (error) {
-                    console.error('Error loading meetings:', error);
-                    showStatus('Error loading meetings', 'error');
-                } else {
-                    currentData.meetings = data || [];
-                }
-            } catch (error) {
-                console.error('Error loading meetings:', error);
-                showStatus('Error loading meetings', 'error');
+            const { data, error } = await supabase.from('meetings').select('*').order('date', { ascending: false });
+            if (error) {
+                console.error('Load meetings error:', error);
+                showStatus(`Load error: ${error.message}`, 'error');
+            } else {
+                currentData.meetings = data || [];
             }
         }
-        
+
         async function saveMeetings() {
-            try {
-                const meetingData = {
-                    date: document.getElementById('mtDate').value,
-                    start_time: document.getElementById('mtStartTime').value,
-                    end_time: document.getElementById('mtEndTime').value,
-                    title: document.getElementById('mtTitle').value.trim(),
-                    location: document.getElementById('mtLocation').value.trim(),
-                    chair: document.getElementById('mtChair').value.trim(),
-                    participants: document.getElementById('mtParticipantsFree').value
-                        .split(',')
-                        .map(p => p.trim())
-                        .filter(p => p),
-                    agenda: document.getElementById('mtAgenda').value.trim(),
-                    decisions: document.getElementById('mtDecisions').value.trim(),
-                    actions: actionItems
-                };
-                
-                // Add selected participants from the multi-select
-                Array.from(document.getElementById('mtParticipants').selectedOptions).forEach(option => {
-                    meetingData.participants.push(option.value);
-                });
-                
-                if (editingMeeting !== null) {
-                    // Update existing meeting
-                    const meetingId = currentData.meetings[editingMeeting].id;
-                    const { error } = await supabase
-                        .from('meetings')
-                        .update(meetingData)
-                        .eq('id', meetingId);
-                        
-                    if (error) {
-                        console.error('Error updating meeting:', error);
-                        showStatus('Error updating meeting', 'error');
-                        return false;
-                    }
-                } else {
-                    // Add new meeting
-                    const { error } = await supabase
-                        .from('meetings')
-                        .insert([meetingData]);
-                        
-                    if (error) {
-                        console.error('Error saving meeting:', error);
-                        showStatus('Error saving meeting', 'error');
-                        return false;
-                    }
-                }
-                
-                // Reload meetings data
-                await loadMeetings();
-                return true;
-            } catch (error) {
-                console.error('Error saving meetings:', error);
-                showStatus('Error saving meetings', 'error');
+            const meetingData = {
+                date: document.getElementById('mtDate').value,
+                start_time: document.getElementById('mtStartTime').value || null,
+                end_time: document.getElementById('mtEndTime').value || null,
+                title: document.getElementById('mtTitle').value.trim(),
+                location: document.getElementById('mtLocation').value.trim(),
+                chair: document.getElementById('mtChair').value.trim(),
+                agenda: document.getElementById('mtAgenda').value.trim(),
+                decisions: document.getElementById('mtDecisions').value.trim(),
+                actions: actionItems
+            };
+
+            const selected = Array.from(document.getElementById('mtParticipants').selectedOptions).map(o => o.value);
+            const freeText = document.getElementById('mtParticipantsFree').value.split(',').map(p => p.trim()).filter(Boolean);
+            meetingData.participants = [...new Set([...selected, ...freeText])];
+
+            const result = editingMeeting !== null
+                ? await supabase.from('meetings').update(meetingData).eq('id', currentData.meetings[editingMeeting].id)
+                : await supabase.from('meetings').insert([meetingData]);
+
+            if (result.error) {
+                console.error('Save meeting error:', result.error);
+                showStatus(`Save failed: ${result.error.message}`, 'error');
                 return false;
             }
+
+            await loadMeetings();
+            showStatus('Meeting saved!');
+            return true;
         }
-        
+
         async function loadLessons() {
-            try {
-                const { data, error } = await supabase
-                    .from('lessons')
-                    .select('*')
-                    .order('date', { ascending: false });
-                    
-                if (error) {
-                    console.error('Error loading lessons:', error);
-                    showStatus('Error loading lessons', 'error');
-                } else {
-                    currentData.lessons = data || [];
-                }
-            } catch (error) {
-                console.error('Error loading lessons:', error);
-                showStatus('Error loading lessons', 'error');
+            const { data, error } = await supabase.from('lessons').select('*').order('date', { ascending: false });
+            if (error) {
+                console.error('Load lessons error:', error);
+                showStatus(`Load error: ${error.message}`, 'error');
+            } else {
+                currentData.lessons = data || [];
             }
         }
-        
+
         async function saveLessons() {
-            try {
-                const lessonData = {
-                    date: document.getElementById('lsDate').value,
-                    student: document.getElementById('lsStudent').value,
-                    subject: document.getElementById('lsSubject').value.trim(),
-                    topic: document.getElementById('lsTopic').value.trim(),
-                    objectives: document.getElementById('lsObjectives').value.trim(),
-                    materials: document.getElementById('lsMaterials').value.trim(),
-                    activities: document.getElementById('lsActivities').value.trim(),
-                    homework: document.getElementById('lsHomework').value.trim()
-                };
-                
-                if (editingLesson !== null) {
-                    // Update existing lesson
-                    const lessonId = currentData.lessons[editingLesson].id;
-                    const { error } = await supabase
-                        .from('lessons')
-                        .update(lessonData)
-                        .eq('id', lessonId);
-                        
-                    if (error) {
-                        console.error('Error updating lesson:', error);
-                        showStatus('Error updating lesson', 'error');
-                        return false;
-                    }
-                } else {
-                    // Add new lesson
-                    const { error } = await supabase
-                        .from('lessons')
-                        .insert([lessonData]);
-                        
-                    if (error) {
-                        console.error('Error saving lesson:', error);
-                        showStatus('Error saving lesson', 'error');
-                        return false;
-                    }
-                }
-                
-                // Reload lessons data
-                await loadLessons();
-                return true;
-            } catch (error) {
-                console.error('Error saving lessons:', error);
-                showStatus('Error saving lessons', 'error');
+            const lessonData = {
+                date: document.getElementById('lsDate').value,
+                student: document.getElementById('lsStudent').value,
+                subject: document.getElementById('lsSubject').value.trim(),
+                topic: document.getElementById('lsTopic').value.trim(),
+                objectives: document.getElementById('lsObjectives').value.trim(),
+                materials: document.getElementById('lsMaterials').value.trim(),
+                activities: document.getElementById('lsActivities').value.trim(),
+                homework: document.getElementById('lsHomework').value.trim()
+            };
+
+            const result = editingLesson !== null
+                ? await supabase.from('lessons').update(lessonData).eq('id', currentData.lessons[editingLesson].id)
+                : await supabase.from('lessons').insert([lessonData]);
+
+            if (result.error) {
+                console.error('Save lesson error:', result.error);
+                showStatus(`Save failed: ${result.error.message}`, 'error');
                 return false;
             }
+
+            await loadLessons();
+            showStatus('Lesson saved!');
+            return true;
         }
-        
+
         function setupRealtimeUpdates() {
-            // Set up realtime subscriptions for each table
-            const channels = [
-                supabase.channel('students-changes')
-                    .on('postgres_changes', 
-                        { event: '*', schema: 'public', table: 'students' }, 
-                        () => loadStudents().then(renderStudents)
-                    )
-                    .subscribe(),
-                
-                supabase.channel('attendance-changes')
-                    .on('postgres_changes', 
-                        { event: '*', schema: 'public', table: 'attendance' }, 
-                        () => loadAttendance().then(renderAttendanceForDate)
-                    )
-                    .subscribe(),
-                
-                supabase.channel('meetings-changes')
-                    .on('postgres_changes', 
-                        { event: '*', schema: 'public', table: 'meetings' }, 
-                        () => loadMeetings().then(renderMeetingsRange)
-                    )
-                    .subscribe(),
-                
-                supabase.channel('lessons-changes')
-                    .on('postgres_changes', 
-                        { event: '*', schema: 'public', table: 'lessons' }, 
-                        () => loadLessons().then(renderLessonsRange)
-                    )
-                    .subscribe()
-            ];
+            ['students', 'attendance', 'meetings', 'lessons'].forEach(table => {
+                supabase.channel(`${table}-changes`)
+                    .on('postgres_changes', { event: '*', schema: 'public', table }, () => {
+                        if (table === 'students') loadStudents().then(renderStudents);
+                        if (table === 'attendance') loadAttendance();
+                        if (table === 'meetings') loadMeetings().then(renderMeetingsRange);
+                        if (table === 'lessons') loadLessons().then(renderLessonsRange);
+                    })
+                    .subscribe();
+            });
         }
-        
+
         /* -------------------------
            UI FUNCTIONS
         ------------------------- */
-        
         function openApp() {
             document.getElementById('authScreen').style.display = 'none';
             document.getElementById('appRoot').style.display = 'flex';
             document.getElementById('currentUser').textContent = currentUser.email;
-            
-            // Set default dates
+
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('attDate').value = today;
             document.getElementById('lsDate').value = today;
             document.getElementById('mtDate').value = today;
-            
-            // Load data and setup UI
+
             loadAllData();
             setupRealtimeUpdates();
-            
-            // Show dashboard by default
             navigate('dashboard');
-            
-            // Update clock
             updateClock();
             setInterval(updateClock, 60000);
         }
-        
+
         function updateClock() {
             document.getElementById('currentTime').textContent = new Date().toLocaleString();
         }
-        
+
         function showStatus(message, type = 'info') {
-            const statusEl = document.getElementById('saveStatus');
-            statusEl.textContent = message;
-            statusEl.style.color = type === 'error' ? 'var(--danger)' : 'var(--muted)';
-            
-            setTimeout(() => {
-                statusEl.textContent = '';
-            }, 3000);
+            const el = document.getElementById('saveStatus');
+            el.textContent = message;
+            el.style.color = type === 'error' ? 'var(--danger)' : 'var(--muted)';
+            setTimeout(() => el.textContent = '', 5000);
         }
-        
+
         function navigate(section) {
-            // Hide all sections
-            document.querySelectorAll('main > section').forEach(sec => {
-                sec.classList.add('hidden');
-            });
-            
-            // Show the selected section
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
             document.getElementById(section).classList.remove('hidden');
-            
-            // Load section-specific data
             if (section === 'students') renderStudents();
             if (section === 'attendance') renderAttendanceForDate();
             if (section === 'meetings') renderMeetingsRange();
-            if (section === 'lessons') {
-                populateStudentSelect();
-                renderLessonsRange();
-            }
+            if (section === 'lessons') { populateStudentSelect(); renderLessonsRange(); }
         }
-        
+
         function refreshAll() {
             refreshSummary();
             renderStudents();
@@ -942,204 +658,111 @@
             renderMeetingsRange();
             renderLessonsRange();
         }
-        
+
         function refreshSummary() {
             document.getElementById('totalStudents').textContent = currentData.students.length;
-            
-            // Count unique attendance dates
-            const uniqueDates = new Set(currentData.attendance.map(a => a.date));
-            document.getElementById('attendanceDays').textContent = uniqueDates.size;
-            
+            document.getElementById('attendanceDays').textContent = new Set(currentData.attendance.map(a => a.date)).size;
             document.getElementById('meetingsCount').textContent = currentData.meetings.length;
             document.getElementById('lessonsCount').textContent = currentData.lessons.length;
         }
-        
+
         function renderStudents() {
-            const tbody = document.getElementById('studentsTable').querySelector('tbody');
+            const tbody = document.querySelector('#studentsTable tbody');
             tbody.innerHTML = '';
-            
-            const searchTerm = (document.getElementById('studentSearch').value || '').toLowerCase();
-            
-            currentData.students.forEach((student, index) => {
-                if (searchTerm && 
-                    !student.name.toLowerCase().includes(searchTerm) && 
-                    !(student.grade || '').toLowerCase().includes(searchTerm)) {
-                    return;
-                }
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${escapeHtml(student.name)}</td>
-                    <td>${student.age || ''}</td>
-                    <td>${escapeHtml(student.grade || '')}</td>
-                    <td>${escapeHtml(student.level || '')}</td>
+            const search = (document.getElementById('studentSearch').value || '').toLowerCase();
+            currentData.students.filter(s => !search || s.name.toLowerCase().includes(search)).forEach((s, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${escapeHtml(s.name)}</td>
+                    <td>${s.age || ''}</td>
+                    <td>${escapeHtml(s.grade || '')}</td>
+                    <td>${escapeHtml(s.level || '')}</td>
                     <td>
-                        <button class="action-btn edit" onclick="editStudent(${index})">Edit</button>
-                        <button class="action-btn del" onclick="deleteStudent(${index})">Delete</button>
+                        <button class="action-btn edit" onclick="editStudent(${i})">Edit</button>
+                        <button class="action-btn del" onclick="deleteStudent(${i})">Delete</button>
                     </td>
                 `;
-                tbody.appendChild(row);
+                tbody.appendChild(tr);
             });
         }
-        
+
         function populateStudentSelect() {
-            const select = document.getElementById('lsStudent');
-            select.innerHTML = '<option value="">-- choose student --</option>';
-            
-            currentData.students.forEach((student, index) => {
-                const option = document.createElement('option');
-                option.value = student.name;
-                option.textContent = student.name;
-                select.appendChild(option);
+            const sel = document.getElementById('lsStudent');
+            sel.innerHTML = '<option value="">-- choose student --</option>';
+            currentData.students.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.name;
+                opt.textContent = s.name;
+                sel.appendChild(opt);
             });
         }
-        
+
         function populateParticipantSelect() {
-            const select = document.getElementById('mtParticipants');
-            select.innerHTML = '';
-            
-            currentData.students.forEach((student, index) => {
-                const option = document.createElement('option');
-                option.value = student.name;
-                option.textContent = student.name;
-                select.appendChild(option);
+            const sel = document.getElementById('mtParticipants');
+            sel.innerHTML = '';
+            currentData.students.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.name;
+                opt.textContent = s.name;
+                sel.appendChild(opt);
             });
         }
-        
-        async function loadAttendanceForDate() {
+
+        function loadAttendanceForDate() {
             const date = document.getElementById('attDate').value;
-            if (!date) {
-                showStatus('Please select a date first', 'error');
-                return;
-            }
-            
+            if (!date) return showStatus('Pick a date', 'error');
             currentAttendanceDate = date;
             renderAttendanceForDate();
-            showStatus(`Loaded attendance for ${date}`);
         }
-        
+
         function renderAttendanceForDate() {
-            const tbody = document.getElementById('attendanceTable').querySelector('tbody');
+            const tbody = document.querySelector('#attendanceTable tbody');
             tbody.innerHTML = '';
-            
-            if (!currentAttendanceDate) {
-                currentAttendanceDate = document.getElementById('attDate').value;
-            }
-            
-            // Get attendance for the selected date
-            const dateAttendance = currentData.attendance.filter(a => a.date === currentAttendanceDate);
-            
-            // Create a map of student->status for this date
-            const statusMap = {};
-            dateAttendance.forEach(a => {
-                statusMap[a.student] = a.status;
-            });
-            
-            // Render each student with their status
-            currentData.students.forEach(student => {
-                const row = document.createElement('tr');
-                const status = statusMap[student.name] || 'Absent';
-                
-                row.innerHTML = `
+            const map = Object.fromEntries(currentData.attendance.filter(a => a.date === currentAttendanceDate).map(a => [a.student, a.status]));
+            currentData.students.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
                     <td>${currentAttendanceDate}</td>
-                    <td>${escapeHtml(student.name)}</td>
-                    <td>
-                        <select onchange="updateAttendanceStatus('${student.name}', this.value)">
-                            <option value="Present" ${status === 'Present' ? 'selected' : ''}>Present</option>
-                            <option value="Absent" ${status === 'Absent' ? 'selected' : ''}>Absent</option>
-                            <option value="Holiday" ${status === 'Holiday' ? 'selected' : ''}>Holiday</option>
-                        </select>
-                    </td>
-                `;
-                tbody.appendChild(row);
+                    <td>${escapeHtml(s.name)}</td>
+                    <td><select><option value="Present" ${map[s.name] === 'Present' ? 'selected' : ''}>Present</option>
+                        <option value="Absent" ${!map[s.name] || map[s.name] === 'Absent' ? 'selected' : ''}>Absent</option>
+                        <option value="Holiday" ${map[s.name] === 'Holiday' ? 'selected' : ''}>Holiday</option></select></td>`;
+                tbody.appendChild(tr);
             });
         }
-        
-        function updateAttendanceStatus(studentName, status) {
-            // This will be saved when the user clicks "Save Attendance"
-            showStatus(`Marked ${studentName} as ${status}`);
-        }
-        
+
         function markAll(status) {
-            const selects = document.querySelectorAll('#attendanceTable select');
-            selects.forEach(select => {
-                select.value = status;
-            });
-            showStatus(`Marked all students as ${status}`);
+            document.querySelectorAll('#attendanceTable select').forEach(s => s.value = status);
+            showStatus(`All marked as ${status}`);
         }
-        
-        async function loadAttendanceRange() {
-            const startDate = document.getElementById('attStart').value;
-            const endDate = document.getElementById('attEnd').value;
-            
-            if (!startDate || !endDate) {
-                showStatus('Please select both start and end dates', 'error');
-                return;
-            }
-            
-            try {
-                const { data, error } = await supabase
-                    .from('attendance')
-                    .select('*')
-                    .gte('date', startDate)
-                    .lte('date', endDate)
-                    .order('date', { ascending: false });
-                    
-                if (error) {
-                    console.error('Error loading attendance range:', error);
-                    showStatus('Error loading attendance range', 'error');
-                } else {
-                    // Display the results in the table
-                    const tbody = document.getElementById('attendanceTable').querySelector('tbody');
-                    tbody.innerHTML = '';
-                    
-                    data.forEach(record => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${record.date}</td>
-                            <td>${escapeHtml(record.student)}</td>
-                            <td>${record.status}</td>
-                        `;
-                        tbody.appendChild(row);
-                    });
-                    
-                    showStatus(`Loaded ${data.length} attendance records from ${startDate} to ${endDate}`);
-                }
-            } catch (error) {
-                console.error('Error loading attendance range:', error);
-                showStatus('Error loading attendance range', 'error');
-            }
-        }
-        
-        function editStudent(index) {
-            const student = currentData.students[index];
-            document.getElementById('stuName').value = student.name || '';
-            document.getElementById('stuAge').value = student.age || '';
-            document.getElementById('stuGrade').value = student.grade || '';
-            document.getElementById('stuLevel').value = student.level || '';
-            
-            editingStudent = index;
-            document.getElementById('studentEditingBadge').classList.remove('hidden');
+
+        function editStudent(i) {
+            const s = currentData.students[i];
+            document.getElementById('stuName').value = s.name;
+            document.getElementById('stuAge').value = s.age || '';
+            document.getElementById('stuGrade').value = s.grade || '';
+            document.getElementById('stuLevel').value = s.level || '';
+            editingStudent = i;
             document.getElementById('cancelStudent').style.display = 'inline-block';
+            document.getElementById('studentEditingBadge').classList.remove('hidden');
         }
-        
-        function deleteStudent(index) {
-            if (confirm('Are you sure you want to delete this student?')) {
-                currentData.students.splice(index, 1);
-                saveStudents().then(() => {
-                    renderStudents();
-                    refreshSummary();
-                    showStatus('Student deleted');
-                });
+
+        async function deleteStudent(i) {
+            if (confirm('Delete this student?')) {
+                await supabase.from('students').delete().eq('id', currentData.students[i].id);
+                await loadStudents();
+                renderStudents();
+                refreshSummary();
+                showStatus('Student deleted');
             }
         }
-        
+
         function cancelEdit(type) {
             if (type === 'student') {
                 editingStudent = null;
                 document.getElementById('studentForm').reset();
-                document.getElementById('studentEditingBadge').classList.add('hidden');
                 document.getElementById('cancelStudent').style.display = 'none';
+                document.getElementById('studentEditingBadge').classList.add('hidden');
             } else if (type === 'meeting') {
                 editingMeeting = null;
                 document.getElementById('meetingForm').reset();
@@ -1152,684 +775,298 @@
                 document.getElementById('cancelLesson').style.display = 'none';
             }
         }
-        
+
         function escapeHtml(text) {
-            if (text === null || text === undefined) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
-        
-        // Meeting minutes functions
+
+        // MEETING FUNCTIONS
         function addActionItem() {
-            const text = document.getElementById('aiText').value;
-            const owner = document.getElementById('aiOwner').value;
-            const due = document.getElementById('aiDue').value;
-            const status = document.getElementById('aiStatus').value;
-            
-            if (!text) {
-                showStatus('Please enter action item description', 'error');
-                return;
-            }
-            
+            const text = document.getElementById('aiText').value.trim();
+            if (!text) return showStatus('Enter action item', 'error');
             actionItems.push({
                 text,
-                owner,
-                due,
-                status
+                owner: document.getElementById('aiOwner').value.trim(),
+                due: document.getElementById('aiDue').value,
+                status: document.getElementById('aiStatus').value
             });
-            
             renderActionItems();
-            
-            // Clear the form
             document.getElementById('aiText').value = '';
             document.getElementById('aiOwner').value = '';
             document.getElementById('aiDue').value = '';
-            document.getElementById('aiStatus').value = 'Open';
-            
-            showStatus('Action item added');
+            showStatus('Action added');
         }
-        
+
         function renderActionItems() {
-            const tbody = document.getElementById('actionsTable').querySelector('tbody');
+            const tbody = document.querySelector('#actionsTable tbody');
             tbody.innerHTML = '';
-            
-            actionItems.forEach((item, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${escapeHtml(item.text)}</td>
-                    <td>${escapeHtml(item.owner)}</td>
-                    <td>${escapeHtml(item.due)}</td>
-                    <td>${escapeHtml(item.status)}</td>
-                    <td>
-                        <button class="action-btn del" onclick="removeActionItem(${index})">Remove</button>
-                    </td>
+            actionItems.forEach((a, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${i+1}</td>
+                    <td>${escapeHtml(a.text)}</td>
+                    <td>${escapeHtml(a.owner)}</td>
+                    <td>${a.due}</td>
+                    <td>${a.status}</td>
+                    <td><button class="action-btn del" onclick="removeActionItem(${i})">Remove</button></td>
                 `;
-                tbody.appendChild(row);
+                tbody.appendChild(tr);
             });
         }
-        
-        function removeActionItem(index) {
-            actionItems.splice(index, 1);
+
+        function removeActionItem(i) {
+            actionItems.splice(i, 1);
             renderActionItems();
-            showStatus('Action item removed');
         }
-        
-        function renderMeetingsRange() {
-            const tbody = document.getElementById('meetingsTable').querySelector('tbody');
-            tbody.innerHTML = '';
-            
-            const startDate = document.getElementById('mtStart').value;
-            const endDate = document.getElementById('mtEnd').value;
-            
-            currentData.meetings.forEach((meeting, index) => {
-                if ((startDate && meeting.date < startDate) || (endDate && meeting.date > endDate)) {
-                    return;
-                }
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${meeting.date}</td>
-                    <td>${escapeHtml(meeting.title)}</td>
-                    <td>${escapeHtml(Array.isArray(meeting.participants) ? meeting.participants.join(', ') : meeting.participants)}</td>
-                    <td>
-                        <button class="action-btn edit" onclick="editMeeting(${index})">Edit</button>
-                        <button class="action-btn del" onclick="deleteMeeting(${index})">Delete</button>
-                        <button class="action-btn link" onclick="exportSingleMeetingPDF(${index})">PDF</button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-        
-        function editMeeting(index) {
-            const meeting = currentData.meetings[index];
-            document.getElementById('mtDate').value = meeting.date || '';
-            document.getElementById('mtStartTime').value = meeting.start_time || '';
-            document.getElementById('mtEndTime').value = meeting.end_time || '';
-            document.getElementById('mtTitle').value = meeting.title || '';
-            document.getElementById('mtLocation').value = meeting.location || '';
-            document.getElementById('mtChair').value = meeting.chair || '';
-            document.getElementById('mtAgenda').value = meeting.agenda || '';
-            document.getElementById('mtDecisions').value = meeting.decisions || '';
-            
-            // Handle participants
-            if (Array.isArray(meeting.participants)) {
-                document.getElementById('mtParticipantsFree').value = meeting.participants.join(', ');
-            } else {
-                document.getElementById('mtParticipantsFree').value = meeting.participants || '';
-            }
-            
-            // Set action items
-            actionItems = meeting.actions || [];
+
+        function editMeeting(i) {
+            const m = currentData.meetings[i];
+            document.getElementById('mtDate').value = m.date;
+            document.getElementById('mtStartTime').value = m.start_time || '';
+            document.getElementById('mtEndTime').value = m.end_time || '';
+            document.getElementById('mtTitle').value = m.title;
+            document.getElementById('mtLocation').value = m.location || '';
+            document.getElementById('mtChair').value = m.chair || '';
+            document.getElementById('mtAgenda').value = m.agenda || '';
+            document.getElementById('mtDecisions').value = m.decisions || '';
+            document.getElementById('mtParticipantsFree').value = Array.isArray(m.participants) ? m.participants.join(', ') : m.participants || '';
+            actionItems = m.actions || [];
             renderActionItems();
-            
-            editingMeeting = index;
+            editingMeeting = i;
             document.getElementById('cancelMeeting').style.display = 'inline-block';
         }
-        
-        async function deleteMeeting(index) {
-            if (confirm('Are you sure you want to delete this meeting?')) {
-                const meetingId = currentData.meetings[index].id;
-                
-                try {
-                    const { error } = await supabase
-                        .from('meetings')
-                        .delete()
-                        .eq('id', meetingId);
-                        
-                    if (error) {
-                        console.error('Error deleting meeting:', error);
-                        showStatus('Error deleting meeting', 'error');
-                    } else {
-                        await loadMeetings();
-                        renderMeetingsRange();
-                        refreshSummary();
-                        showStatus('Meeting deleted');
-                    }
-                } catch (error) {
-                    console.error('Error deleting meeting:', error);
-                    showStatus('Error deleting meeting', 'error');
+
+        async function deleteMeeting(i) {
+            if (confirm('Delete this meeting?')) {
+                const { error } = await supabase.from('meetings').delete().eq('id', currentData.meetings[i].id);
+                if (error) showStatus('Delete failed', 'error');
+                else {
+                    await loadMeetings();
+                    renderMeetingsRange();
+                    refreshSummary();
+                    showStatus('Meeting deleted');
                 }
             }
         }
-        
-        function renderLessonsRange() {
-            const tbody = document.getElementById('lessonsTable').querySelector('tbody');
+
+        function renderMeetingsRange() {
+            const tbody = document.querySelector('#meetingsTable tbody');
             tbody.innerHTML = '';
-            
-            const startDate = document.getElementById('lsStart').value;
-            const endDate = document.getElementById('lsEnd').value;
-            
-            currentData.lessons.forEach((lesson, index) => {
-                if ((startDate && lesson.date < startDate) || (endDate && lesson.date > endDate)) {
-                    return;
-                }
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${lesson.date}</td>
-                    <td>${escapeHtml(lesson.student)}</td>
-                    <td>${escapeHtml(lesson.subject)}</td>
-                    <td>${escapeHtml(lesson.topic)}</td>
-                    <td>${escapeHtml(lesson.objectives?.substring(0, 50) || '')}...</td>
-                    <td>${escapeHtml(lesson.materials?.substring(0, 30) || '')}...</td>
-                    <td>${escapeHtml(lesson.activities?.substring(0, 30) || '')}...</td>
-                    <td>${escapeHtml(lesson.homework?.substring(0, 30) || '')}...</td>
+            const start = document.getElementById('mtStart').value;
+            const end = document.getElementById('mtEnd').value;
+            currentData.meetings.forEach((m, i) => {
+                if ((start && m.date < start) || (end && m.date > end)) return;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${m.date}</td>
+                    <td>${escapeHtml(m.title)}</td>
+                    <td>${Array.isArray(m.participants) ? m.participants.join(', ') : m.participants || ''}</td>
                     <td>
-                        <button class="action-btn edit" onclick="editLesson(${index})">Edit</button>
-                        <button class="action-btn del" onclick="deleteLesson(${index})">Delete</button>
+                        <button class="action-btn edit" onclick="editMeeting(${i})">Edit</button>
+                        <button class="action-btn del" onclick="deleteMeeting(${i})">Delete</button>
+                        <button class="action-btn link" onclick="exportSingleMeetingPDF(${i})">PDF</button>
                     </td>
                 `;
-                tbody.appendChild(row);
+                tbody.appendChild(tr);
             });
         }
-        
-        function editLesson(index) {
-            const lesson = currentData.lessons[index];
-            document.getElementById('lsDate').value = lesson.date || '';
-            document.getElementById('lsStudent').value = lesson.student || '';
-            document.getElementById('lsSubject').value = lesson.subject || '';
-            document.getElementById('lsTopic').value = lesson.topic || '';
-            document.getElementById('lsObjectives').value = lesson.objectives || '';
-            document.getElementById('lsMaterials').value = lesson.materials || '';
-            document.getElementById('lsActivities').value = lesson.activities || '';
-            document.getElementById('lsHomework').value = lesson.homework || '';
-            
-            editingLesson = index;
+
+        // LESSON FUNCTIONS
+        function editLesson(i) {
+            const l = currentData.lessons[i];
+            document.getElementById('lsDate').value = l.date;
+            document.getElementById('lsStudent').value = l.student;
+            document.getElementById('lsSubject').value = l.subject;
+            document.getElementById('lsTopic').value = l.topic;
+            document.getElementById('lsObjectives').value = l.objectives || '';
+            document.getElementById('lsMaterials').value = l.materials || '';
+            document.getElementById('lsActivities').value = l.activities || '';
+            document.getElementById('lsHomework').value = l.homework || '';
+            editingLesson = i;
             document.getElementById('cancelLesson').style.display = 'inline-block';
         }
-        
-        async function deleteLesson(index) {
-            if (confirm('Are you sure you want to delete this lesson?')) {
-                const lessonId = currentData.lessons[index].id;
-                
-                try {
-                    const { error } = await supabase
-                        .from('lessons')
-                        .delete()
-                        .eq('id', lessonId);
-                        
-                    if (error) {
-                        console.error('Error deleting lesson:', error);
-                        showStatus('Error deleting lesson', 'error');
-                    } else {
-                        await loadLessons();
-                        renderLessonsRange();
-                        refreshSummary();
-                        showStatus('Lesson deleted');
-                    }
-                } catch (error) {
-                    console.error('Error deleting lesson:', error);
-                    showStatus('Error deleting lesson', 'error');
+
+        async function deleteLesson(i) {
+            if (confirm('Delete this lesson?')) {
+                const { error } = await supabase.from('lessons').delete().eq('id', currentData.lessons[i].id);
+                if (error) showStatus('Delete failed', 'error');
+                else {
+                    await loadLessons();
+                    renderLessonsRange();
+                    refreshSummary();
+                    showStatus('Lesson deleted');
                 }
             }
         }
-        
-        // Export functions
+
+        function renderLessonsRange() {
+            const tbody = document.querySelector('#lessonsTable tbody');
+            tbody.innerHTML = '';
+            const start = document.getElementById('lsStart').value;
+            const end = document.getElementById('lsEnd').value;
+            currentData.lessons.forEach((l, i) => {
+                if ((start && l.date < start) || (end && l.date > end)) return;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${l.date}</td>
+                    <td>${escapeHtml(l.student)}</td>
+                    <td>${escapeHtml(l.subject)}</td>
+                    <td>${escapeHtml(l.topic)}</td>
+                    <td>${escapeHtml(l.objectives?.substring(0,50) || '')}...</td>
+                    <td>${escapeHtml(l.materials?.substring(0,30) || '')}...</td>
+                    <td>${escapeHtml(l.activities?.substring(0,30) || '')}...</td>
+                    <td>${escapeHtml(l.homework?.substring(0,30) || '')}...</td>
+                    <td>
+                        <button class="action-btn edit" onclick="editLesson(${i})">Edit</button>
+                        <button class="action-btn del" onclick="deleteLesson(${i})">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // EXPORTS
         function exportStudentsCSV() {
-            try {
-                const worksheet = XLSX.utils.json_to_sheet(currentData.students);
-                const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook, worksheet, "Students");
-                XLSX.writeFile(workbook, "students.csv");
-                showStatus('Students exported to CSV');
-            } catch (error) {
-                console.error('Error exporting CSV:', error);
-                showStatus('Error exporting CSV', 'error');
-            }
+            const ws = XLSX.utils.json_to_sheet(currentData.students);
+            XLSX.writeFile(XLSX.utils.book_new().put({ Worksheets: { Students: ws } }), 'students.csv');
         }
-        
+
         function exportAttendanceExcel() {
-            try {
-                const worksheet = XLSX.utils.json_to_sheet(currentData.attendance);
-                const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance");
-                XLSX.writeFile(workbook, "attendance.xlsx");
-                showStatus('Attendance exported to Excel');
-            } catch (error) {
-                console.error('Error exporting Excel:', error);
-                showStatus('Error exporting Excel', 'error');
-            }
+            const ws = XLSX.utils.json_to_sheet(currentData.attendance);
+            XLSX.writeFile(XLSX.utils.book_new().put({ Worksheets: { Attendance: ws } }), 'attendance.xlsx');
         }
-        
+
         function exportMeetingsRangePDF() {
-            try {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                
-                // Add title with professional styling
-                doc.setFontSize(20);
-                doc.setTextColor(40, 40, 40);
-                doc.text("MEETING MINUTES REPORT", 105, 20, { align: "center" });
-                
-                // Add date range
-                const startDate = document.getElementById('mtStart').value;
-                const endDate = document.getElementById('mtEnd').value;
-                doc.setFontSize(12);
-                doc.setTextColor(100, 100, 100);
-                doc.text(`Date Range: ${startDate} to ${endDate}`, 105, 30, { align: "center" });
-                
-                // Filter meetings by date range
-                const filteredMeetings = currentData.meetings.filter(meeting => {
-                    return (!startDate || meeting.date >= startDate) && (!endDate || meeting.date <= endDate);
-                });
-                
-                let yPosition = 45;
-                
-                // Add each meeting with professional formatting
-                filteredMeetings.forEach((meeting, index) => {
-                    if (yPosition > 250) {
-                        doc.addPage();
-                        yPosition = 20;
-                    }
-                    
-                    // Meeting header
-                    doc.setFontSize(14);
-                    doc.setTextColor(40, 40, 40);
-                    doc.text(`${meeting.date} - ${meeting.title}`, 14, yPosition);
-                    yPosition += 10;
-                    
-                    // Meeting details
-                    doc.setFontSize(10);
-                    doc.setTextColor(80, 80, 80);
-                    doc.text(`Time: ${meeting.start_time || 'N/A'} - ${meeting.end_time || 'N/A'}`, 14, yPosition);
-                    yPosition += 6;
-                    doc.text(`Location: ${meeting.location || 'N/A'}`, 14, yPosition);
-                    yPosition += 6;
-                    doc.text(`Chair: ${meeting.chair || 'N/A'}`, 14, yPosition);
-                    yPosition += 6;
-                    
-                    const participants = Array.isArray(meeting.participants) ? 
-                        meeting.participants.join(', ') : meeting.participants;
-                    const splitParticipants = doc.splitTextToSize(`Participants: ${participants || 'N/A'}`, 180);
-                    doc.text(splitParticipants, 14, yPosition);
-                    yPosition += splitParticipants.length * 6 + 8;
-                    
-                    // Add agenda if available
-                    if (meeting.agenda) {
-                        doc.setFontSize(12);
-                        doc.setTextColor(40, 40, 40);
-                        doc.text("Agenda:", 14, yPosition);
-                        yPosition += 8;
-                        
-                        doc.setFontSize(10);
-                        doc.setTextColor(80, 80, 80);
-                        const splitAgenda = doc.splitTextToSize(meeting.agenda, 180);
-                        doc.text(splitAgenda, 20, yPosition);
-                        yPosition += splitAgenda.length * 6 + 8;
-                    }
-                    
-                    // Add decisions if available
-                    if (meeting.decisions) {
-                        doc.setFontSize(12);
-                        doc.setTextColor(40, 40, 40);
-                        doc.text("Decisions:", 14, yPosition);
-                        yPosition += 8;
-                        
-                        doc.setFontSize(10);
-                        doc.setTextColor(80, 80, 80);
-                        const splitDecisions = doc.splitTextToSize(meeting.decisions, 180);
-                        doc.text(splitDecisions, 20, yPosition);
-                        yPosition += splitDecisions.length * 6 + 8;
-                    }
-                    
-                    // Add action items if available
-                    if (meeting.actions && meeting.actions.length > 0) {
-                        doc.setFontSize(12);
-                        doc.setTextColor(40, 40, 40);
-                        doc.text("Action Items:", 14, yPosition);
-                        yPosition += 8;
-                        
-                        doc.setFontSize(10);
-                        meeting.actions.forEach(action => {
-                            if (yPosition > 250) {
-                                doc.addPage();
-                                yPosition = 20;
-                            }
-                            
-                            const actionText = `• ${action.text} (Owner: ${action.owner || 'N/A'}, Due: ${action.due || 'N/A'}, Status: ${action.status || 'N/A'})`;
-                            const splitAction = doc.splitTextToSize(actionText, 170);
-                            doc.text(splitAction, 20, yPosition);
-                            yPosition += splitAction.length * 6 + 4;
-                        });
-                    }
-                    
-                    yPosition += 10;
-                    
-                    // Add separator line
-                    doc.setDrawColor(200, 200, 200);
-                    doc.line(14, yPosition, 196, yPosition);
-                    yPosition += 15;
-                });
-                
-                // Add footer
-                const totalPages = doc.internal.getNumberOfPages();
-                for (let i = 1; i <= totalPages; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(8);
-                    doc.setTextColor(150, 150, 150);
-                    doc.text(`Page ${i} of ${totalPages}`, 105, 285, { align: "center" });
-                    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
-                }
-                
-                doc.save("meeting_minutes_report.pdf");
-                showStatus('Meeting minutes exported to PDF');
-            } catch (error) {
-                console.error('Error exporting PDF:', error);
-                showStatus('Error exporting PDF', 'error');
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFontSize(20); doc.text("MEETING MINUTES REPORT", 105, 20, { align: "center" });
+            const start = document.getElementById('mtStart').value;
+            const end = document.getElementById('mtEnd').value;
+            doc.setFontSize(12); doc.text(`Date Range: ${start} to ${end}`, 105, 30, { align: "center" });
+            let y = 45;
+            currentData.meetings.filter(m => (!start || m.date >= start) && (!end || m.date <= end)).forEach(m => {
+                if (y > 250) { doc.addPage(); y = 20; }
+                doc.setFontSize(14); doc.text(`${m.date} - ${m.title}`, 14, y); y += 10;
+                doc.setFontSize(10); doc.text(`Time: ${m.start_time || 'N/A'} - ${m.end_time || 'N/A'}`, 14, y); y += 6;
+                doc.text(`Location: ${m.location || 'N/A'}`, 14, y); y += 6;
+                doc.text(`Chair: ${m.chair || 'N/A'}`, 14, y); y += 6;
+                const parts = Array.isArray(m.participants) ? m.participants.join(', ') : m.participants || 'N/A';
+                const split = doc.splitTextToSize(`Participants: ${parts}`, 180);
+                doc.text(split, 14, y); y += split.length * 6 + 8;
+                if (m.agenda) { doc.setFontSize(12); doc.text("Agenda:", 14, y); y += 8; doc.setFontSize(10); const a = doc.splitTextToSize(m.agenda, 180); doc.text(a, 20, y); y += a.length * 6 + 8; }
+                if (m.decisions) { doc.setFontSize(12); doc.text("Decisions:", 14, y); y += 8; doc.setFontSize(10); const d = doc.splitTextToSize(m.decisions, 180); doc.text(d, 20, y); y += d.length * 6 + 8; }
+                if (m.actions?.length) { doc.setFontSize(12); doc.text("Action Items:", 14, y); y += 8; m.actions.forEach(a => { if (y > 250) { doc.addPage(); y = 20; } const t = `• ${a.text} (Owner: ${a.owner || 'N/A'}, Due: ${a.due || 'N/A'}, Status: ${a.status || 'N/A'})`; const s = doc.splitTextToSize(t, 170); doc.text(s, 20, y); y += s.length * 6 + 4; }); }
+                y += 10;
+            });
+            for (let i = 1; i <= doc.internal.getNumberOfPages(); i++) {
+                doc.setPage(i);
+                doc.setFontSize(8); doc.setTextColor(150, 150, 150);
+                doc.text(`Page ${i}`, 105, 285, { align: "center" });
+                doc.text(`Generated: ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
             }
+            doc.save("meetings.pdf");
         }
-        
+
         function exportLessonsPDF() {
-            try {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                
-                // Add title with professional styling
-                doc.setFontSize(20);
-                doc.setTextColor(40, 40, 40);
-                doc.text("LESSON PLANS REPORT", 105, 20, { align: "center" });
-                
-                // Add date range
-                const startDate = document.getElementById('lsStart').value;
-                const endDate = document.getElementById('lsEnd').value;
-                doc.setFontSize(12);
-                doc.setTextColor(100, 100, 100);
-                doc.text(`Date Range: ${startDate} to ${endDate}`, 105, 30, { align: "center" });
-                
-                // Filter lessons by date range
-                const filteredLessons = currentData.lessons.filter(lesson => {
-                    return (!startDate || lesson.date >= startDate) && (!endDate || lesson.date <= endDate);
-                });
-                
-                let yPosition = 45;
-                
-                // Add each lesson with professional formatting
-                filteredLessons.forEach((lesson, index) => {
-                    if (yPosition > 250) {
-                        doc.addPage();
-                        yPosition = 20;
-                    }
-                    
-                    // Lesson header
-                    doc.setFontSize(14);
-                    doc.setTextColor(40, 40, 40);
-                    doc.text(`${lesson.date} - ${lesson.student} - ${lesson.subject}`, 14, yPosition);
-                    yPosition += 8;
-                    
-                    doc.setFontSize(12);
-                    doc.text(`Topic: ${lesson.topic || 'N/A'}`, 14, yPosition);
-                    yPosition += 8;
-                    
-                    // Add objectives if available
-                    if (lesson.objectives) {
-                        doc.setFontSize(12);
-                        doc.setTextColor(40, 40, 40);
-                        doc.text("Objectives:", 14, yPosition);
-                        yPosition += 8;
-                        
-                        doc.setFontSize(10);
-                        doc.setTextColor(80, 80, 80);
-                        const splitObjectives = doc.splitTextToSize(lesson.objectives, 180);
-                        doc.text(splitObjectives, 20, yPosition);
-                        yPosition += splitObjectives.length * 6 + 8;
-                    }
-                    
-                    // Add materials if available
-                    if (lesson.materials) {
-                        doc.setFontSize(12);
-                        doc.setTextColor(40, 40, 40);
-                        doc.text("Materials:", 14, yPosition);
-                        yPosition += 8;
-                        
-                        doc.setFontSize(10);
-                        doc.setTextColor(80, 80, 80);
-                        const splitMaterials = doc.splitTextToSize(lesson.materials, 180);
-                        doc.text(splitMaterials, 20, yPosition);
-                        yPosition += splitMaterials.length * 6 + 8;
-                    }
-                    
-                    // Add activities if available
-                    if (lesson.activities) {
-                        doc.setFontSize(12);
-                        doc.setTextColor(40, 40, 40);
-                        doc.text("Activities:", 14, yPosition);
-                        yPosition += 8;
-                        
-                        doc.setFontSize(10);
-                        doc.setTextColor(80, 80, 80);
-                        const splitActivities = doc.splitTextToSize(lesson.activities, 180);
-                        doc.text(splitActivities, 20, yPosition);
-                        yPosition += splitActivities.length * 6 + 8;
-                    }
-                    
-                    // Add homework if available
-                    if (lesson.homework) {
-                        doc.setFontSize(12);
-                        doc.setTextColor(40, 40, 40);
-                        doc.text("Homework:", 14, yPosition);
-                        yPosition += 8;
-                        
-                        doc.setFontSize(10);
-                        doc.setTextColor(80, 80, 80);
-                        const splitHomework = doc.splitTextToSize(lesson.homework, 180);
-                        doc.text(splitHomework, 20, yPosition);
-                        yPosition += splitHomework.length * 6 + 8;
-                    }
-                    
-                    yPosition += 10;
-                    
-                    // Add separator line
-                    doc.setDrawColor(200, 200, 200);
-                    doc.line(14, yPosition, 196, yPosition);
-                    yPosition += 15;
-                });
-                
-                // Add footer
-                const totalPages = doc.internal.getNumberOfPages();
-                for (let i = 1; i <= totalPages; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(8);
-                    doc.setTextColor(150, 150, 150);
-                    doc.text(`Page ${i} of ${totalPages}`, 105, 285, { align: "center" });
-                    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
-                }
-                
-                doc.save("lesson_plans_report.pdf");
-                showStatus('Lesson plans exported to PDF');
-            } catch (error) {
-                console.error('Error exporting PDF:', error);
-                showStatus('Error exporting PDF', 'error');
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFontSize(20); doc.text("LESSON PLANS REPORT", 105, 20, { align: "center" });
+            const start = document.getElementById('lsStart').value;
+            const end = document.getElementById('lsEnd').value;
+            doc.setFontSize(12); doc.text(`Date Range: ${start} to ${end}`, 105, 30, { align: "center" });
+            let y = 45;
+            currentData.lessons.filter(l => (!start || l.date >= start) && (!end || l.date <= end)).forEach(l => {
+                if (y > 250) { doc.addPage(); y = 20; }
+                doc.setFontSize(14); doc.text(`${l.date} - ${l.student} - ${l.subject}`, 14, y); y += 8;
+                doc.setFontSize(12); doc.text(`Topic: ${l.topic || 'N/A'}`, 14, y); y += 8;
+                if (l.objectives) { doc.setFontSize(12); doc.text("Objectives:", 14, y); y += 8; doc.setFontSize(10); const o = doc.splitTextToSize(l.objectives, 180); doc.text(o, 20, y); y += o.length * 6 + 8; }
+                if (l.materials) { doc.setFontSize(12); doc.text("Materials:", 14, y); y += 8; doc.setFontSize(10); const m = doc.splitTextToSize(l.materials, 180); doc.text(m, 20, y); y += m.length * 6 + 8; }
+                if (l.activities) { doc.setFontSize(12); doc.text("Activities:", 14, y); y += 8; doc.setFontSize(10); const a = doc.splitTextToSize(l.activities, 180); doc.text(a, 20, y); y += a.length * 6 + 8; }
+                if (l.homework) { doc.setFontSize(12); doc.text("Homework:", 14, y); y += 8; doc.setFontSize(10); const h = doc.splitTextToSize(l.homework, 180); doc.text(h, 20, y); y += h.length * 6 + 8; }
+                y += 10;
+            });
+            for (let i = 1; i <= doc.internal.getNumberOfPages(); i++) {
+                doc.setPage(i);
+                doc.setFontSize(8); doc.setTextColor(150, 150, 150);
+                doc.text(`Page ${i}`, 105, 285, { align: "center" });
+                doc.text(`Generated: ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
             }
+            doc.save("lessons.pdf");
         }
-        
-        function exportSingleMeetingPDF(index) {
-            try {
-                const meeting = currentData.meetings[index];
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                
-                // Add title with professional styling
-                doc.setFontSize(20);
-                doc.setTextColor(40, 40, 40);
-                doc.text("MEETING MINUTES", 105, 20, { align: "center" });
-                
-                let yPosition = 35;
-                
-                // Meeting details
-                doc.setFontSize(12);
-                doc.setTextColor(80, 80, 80);
-                doc.text(`Date: ${meeting.date || 'N/A'}`, 20, yPosition);
-                yPosition += 8;
-                doc.text(`Time: ${meeting.start_time || 'N/A'} - ${meeting.end_time || 'N/A'}`, 20, yPosition);
-                yPosition += 8;
-                doc.text(`Title: ${meeting.title || 'N/A'}`, 20, yPosition);
-                yPosition += 8;
-                doc.text(`Location: ${meeting.location || 'N/A'}`, 20, yPosition);
-                yPosition += 8;
-                doc.text(`Chair: ${meeting.chair || 'N/A'}`, 20, yPosition);
-                yPosition += 8;
-                
-                const participants = Array.isArray(meeting.participants) ? 
-                    meeting.participants.join(', ') : meeting.participants;
-                const splitParticipants = doc.splitTextToSize(`Participants: ${participants || 'N/A'}`, 170);
-                doc.text(splitParticipants, 20, yPosition);
-                yPosition += splitParticipants.length * 6 + 12;
-                
-                // Add agenda if available
-                if (meeting.agenda) {
-                    doc.setFontSize(14);
-                    doc.setTextColor(40, 40, 40);
-                    doc.text("Agenda:", 20, yPosition);
-                    yPosition += 10;
-                    
-                    doc.setFontSize(10);
-                    doc.setTextColor(80, 80, 80);
-                    const splitAgenda = doc.splitTextToSize(meeting.agenda, 170);
-                    doc.text(splitAgenda, 25, yPosition);
-                    yPosition += splitAgenda.length * 6 + 12;
-                }
-                
-                // Add decisions if available
-                if (meeting.decisions) {
-                    doc.setFontSize(14);
-                    doc.setTextColor(40, 40, 40);
-                    doc.text("Decisions:", 20, yPosition);
-                    yPosition += 10;
-                    
-                    doc.setFontSize(10);
-                    doc.setTextColor(80, 80, 80);
-                    const splitDecisions = doc.splitTextToSize(meeting.decisions, 170);
-                    doc.text(splitDecisions, 25, yPosition);
-                    yPosition += splitDecisions.length * 6 + 12;
-                }
-                
-                // Add action items if available
-                if (meeting.actions && meeting.actions.length > 0) {
-                    doc.setFontSize(14);
-                    doc.setTextColor(40, 40, 40);
-                    doc.text("Action Items:", 20, yPosition);
-                    yPosition += 10;
-                    
-                    doc.setFontSize(10);
-                    doc.setTextColor(80, 80, 80);
-                    meeting.actions.forEach(action => {
-                        if (yPosition > 250) {
-                            doc.addPage();
-                            yPosition = 20;
-                        }
-                        
-                        const actionText = `• ${action.text} (Owner: ${action.owner || 'N/A'}, Due: ${action.due || 'N/A'}, Status: ${action.status || 'N/A'})`;
-                        const splitAction = doc.splitTextToSize(actionText, 170);
-                        doc.text(splitAction, 25, yPosition);
-                        yPosition += splitAction.length * 6 + 6;
-                    });
-                }
-                
-                // Add footer
-                const totalPages = doc.internal.getNumberOfPages();
-                for (let i = 1; i <= totalPages; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(8);
-                    doc.setTextColor(150, 150, 150);
-                    doc.text(`Page ${i} of ${totalPages}`, 105, 285, { align: "center" });
-                    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
-                }
-                
-                doc.save(`meeting_minutes_${meeting.date}.pdf`);
-                showStatus('Meeting minutes exported to PDF');
-            } catch (error) {
-                console.error('Error exporting PDF:', error);
-                showStatus('Error exporting PDF', 'error');
+
+        function exportSingleMeetingPDF(i) {
+            const m = currentData.meetings[i];
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFontSize(20); doc.text("MEETING MINUTES", 105, 20, { align: "center" });
+            let y = 35;
+            doc.setFontSize(12); doc.text(`Date: ${m.date}`, 20, y); y += 8;
+            doc.text(`Time: ${m.start_time || 'N/A'} - ${m.end_time || 'N/A'}`, 20, y); y += 8;
+            doc.text(`Title: ${m.title}`, 20, y); y += 8;
+            doc.text(`Location: ${m.location || 'N/A'}`, 20, y); y += 8;
+            doc.text(`Chair: ${m.chair || 'N/A'}`, 20, y); y += 8;
+            const parts = Array.isArray(m.participants) ? m.participants.join(', ') : m.participants || 'N/A';
+            const split = doc.splitTextToSize(`Participants: ${parts}`, 170);
+            doc.text(split, 20, y); y += split.length * 6 + 12;
+            if (m.agenda) { doc.setFontSize(14); doc.text("Agenda:", 20, y); y += 10; doc.setFontSize(10); const a = doc.splitTextToSize(m.agenda, 170); doc.text(a, 25, y); y += a.length * 6 + 12; }
+            if (m.decisions) { doc.setFontSize(14); doc.text("Decisions:", 20, y); y += 10; doc.setFontSize(10); const d = doc.splitTextToSize(m.decisions, 170); doc.text(d, 25, y); y += d.length * 6 + 12; }
+            if (m.actions?.length) { doc.setFontSize(14); doc.text("Action Items:", 20, y); y += 10; m.actions.forEach(a => { if (y > 250) { doc.addPage(); y = 20; } const t = `• ${a.text} (Owner: ${a.owner || 'N/A'}, Due: ${a.due || 'N/A'}, Status: ${a.status || 'N/A'})`; const s = doc.splitTextToSize(t, 170); doc.text(s, 25, y); y += s.length * 6 + 6; }); }
+            for (let i = 1; i <= doc.internal.getNumberOfPages(); i++) {
+                doc.setPage(i);
+                doc.setFontSize(8); doc.setTextColor(150, 150, 150);
+                doc.text(`Page ${i}`, 105, 285, { align: "center" });
+                doc.text(`Generated: ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
             }
+            doc.save(`meeting_${m.date}.pdf`);
         }
-        
-        // Initialize the app
+
+        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             setupAuth();
-            
-            // Set up form handlers
+
             document.getElementById('studentForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                
-                const studentData = {
-                    name: document.getElementById('stuName').value.trim(),
-                    age: parseInt(document.getElementById('stuAge').value) || 0,
+                const name = document.getElementById('stuName').value.trim();
+                if (!name) return alert('Name required');
+                const data = {
+                    id: editingStudent !== null ? currentData.students[editingStudent].id : crypto.randomUUID(),
+                    name,
+                    age: parseInt(document.getElementById('stuAge').value) || null,
                     grade: document.getElementById('stuGrade').value.trim(),
                     level: document.getElementById('stuLevel').value.trim()
                 };
-                
-                if (!studentData.name) {
-                    alert('Please enter a student name');
-                    return;
-                }
-                
-                if (editingStudent !== null) {
-                    // Update existing student
-                    currentData.students[editingStudent] = studentData;
-                } else {
-                    // Add new student
-                    currentData.students.push(studentData);
-                }
-                
+                if (editingStudent !== null) currentData.students[editingStudent] = data;
+                else currentData.students.push(data);
                 if (await saveStudents()) {
-                    showStatus('Student saved successfully');
                     cancelEdit('student');
                     renderStudents();
                     refreshSummary();
                 }
             });
-            
-            // Set up meeting form handler
+
             document.getElementById('meetingForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                
-                if (!document.getElementById('mtDate').value || !document.getElementById('mtTitle').value) {
-                    alert('Please enter date and title');
-                    return;
-                }
-                
+                if (!document.getElementById('mtDate').value || !document.getElementById('mtTitle').value) return alert('Date and title required');
                 if (await saveMeetings()) {
-                    showStatus('Meeting saved successfully');
-                    actionItems = [];
-                    renderActionItems();
+                    cancelEdit('meeting');
                     renderMeetingsRange();
                     refreshSummary();
-                    document.getElementById('meetingForm').reset();
-                    document.getElementById('cancelMeeting').style.display = 'none';
-                    editingMeeting = null;
                 }
             });
-            
-            // Set up lesson form handler
+
             document.getElementById('lessonForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                
-                if (!document.getElementById('lsDate').value || !document.getElementById('lsStudent').value || 
-                    !document.getElementById('lsSubject').value || !document.getElementById('lsTopic').value) {
-                    alert('Please enter date, student, subject, and topic');
-                    return;
-                }
-                
+                const req = ['lsDate', 'lsStudent', 'lsSubject', 'lsTopic'];
+                if (req.some(id => !document.getElementById(id).value)) return alert('Fill all required fields');
                 if (await saveLessons()) {
-                    showStatus('Lesson saved successfully');
+                    cancelEdit('lesson');
                     renderLessonsRange();
                     refreshSummary();
-                    document.getElementById('lessonForm').reset();
-                    document.getElementById('cancelLesson').style.display = 'none';
-                    editingLesson = null;
                 }
             });
-            
-            // Set today's dates
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('attDate').value = today;
-            document.getElementById('lsDate').value = today;
-            document.getElementById('mtDate').value = today;
-            
-            // Make functions global for HTML onclick attributes
+
             window.navigate = navigate;
             window.logout = logout;
             window.editStudent = editStudent;
@@ -1841,13 +1078,13 @@
             window.loadAttendanceForDate = loadAttendanceForDate;
             window.saveAttendance = saveAttendance;
             window.markAll = markAll;
-            window.loadAttendanceRange = loadAttendanceRange;
+            window.loadAttendanceRange = renderAttendanceForDate;
             window.exportAttendanceExcel = exportAttendanceExcel;
+            window.exportStudentsCSV = exportStudentsCSV;
             window.loadMeetingsRange = renderMeetingsRange;
             window.exportMeetingsRangePDF = exportMeetingsRangePDF;
             window.loadLessonsRange = renderLessonsRange;
             window.exportLessonsPDF = exportLessonsPDF;
-            window.exportStudentsCSV = exportStudentsCSV;
             window.exportSingleMeetingPDF = exportSingleMeetingPDF;
             window.editMeeting = editMeeting;
             window.deleteMeeting = deleteMeeting;

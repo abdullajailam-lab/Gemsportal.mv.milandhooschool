@@ -105,7 +105,7 @@
 <body>
     <!-- LOGIN / REGISTER -->
     <div id="authScreen" style="position:fixed;inset:0;background:linear-gradient(180deg,#071a2b,#0a8b8b);display:flex;align-items:center;justify-content:center;z-index:999">
-        <div style="width:480px;background:rgba(255,255,255,0.06);padding:28px;border-radius:14px;color:#fff;box-shadow:0 16px 40px rgba(0,0,0,.5)">
+        <div style="width:480px;background:rgba(255,255,255,0.06;padding:28px;border-radius:14px;color:#fff;box-shadow:0 16px 40px rgba(0,0,0,.5)">
             <h2 style="margin:0 0 8px 0;text-align:center">Welcome to GEMS Milandhoo School Portal</h2>
             <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap">
                 <div style="flex:1;min-width:220px">
@@ -529,27 +529,52 @@
         }
         async function saveStudents() {
             try {
-                // Delete all existing students first
-                const { error: deleteError } = await supabase
-                    .from('students')
-                    .delete()
-                    .neq('id','00000000-0000-0000-0000-000000000000'); //Delete all records
-                if (deleteError) {
-                    console.error('Error deleting students:', deleteError);
+                if (editingStudent !== null) {
+                    // Update existing student
+                    const studentId = currentData.students[editingStudent].id;
+                    const studentData = {
+                        name: document.getElementById('stuName').value.trim(),
+                        age: parseInt(document.getElementById('stuAge').value) || 0,
+                        grade: document.getElementById('stuGrade').value.trim(),
+                        level: document.getElementById('stuLevel').value.trim()
+                    };
+                    
+                    const { error } = await supabase
+                        .from('students')
+                        .update(studentData)
+                        .eq('id', studentId);
+                        
+                    if (error) {
+                        console.error('Error updating student:', error);
+                        showStatus('Error updating student', 'error');
+                        return false;
+                    }
+                } else {
+                    // Add new student
+                    const studentData = {
+                        name: document.getElementById('stuName').value.trim(),
+                        age: parseInt(document.getElementById('stuAge').value) || 0,
+                        grade: document.getElementById('stuGrade').value.trim(),
+                        level: document.getElementById('stuLevel').value.trim()
+                    };
+                    
+                    const { error } = await supabase
+                        .from('students')
+                        .insert([studentData]);
+                        
+                    if (error) {
+                        console.error('Error saving student:', error);
+                        showStatus('Error saving student', 'error');
+                        return false;
+                    }
                 }
-                // Insert all current students
-                const { error } = await supabase
-                    .from('students')
-                    .insert(currentData.students);
-                if (error) {
-                    console.error('Error saving students:',error);
-                    showStatus('Error saving students','error');
-                    return false;
-                }
+                
+                // Reload students data
+                await loadStudents();
                 return true;
             } catch (error) {
-                console.error('Error saving students:',error);
-                showStatus('Error saving students','error');
+                console.error('Error saving students:', error);
+                showStatus('Error saving students', 'error');
                 return false;
             }
         }
@@ -991,12 +1016,18 @@
         }
         function deleteStudent(index) {
             if (confirm('Are you sure you want to delete this student?')) {
-                currentData.students.splice(index,1);
-                saveStudents().then(() => {
-                    renderStudents();
-                    refreshSummary();
-                    showStatus('Student deleted');
-                });
+                const studentId = currentData.students[index].id;
+                supabase
+                    .from('students')
+                    .delete()
+                    .eq('id', studentId)
+                    .then(() => {
+                        loadStudents().then(() => {
+                            renderStudents();
+                            refreshSummary();
+                            showStatus('Student deleted');
+                        });
+                    });
             }
         }
         function cancelEdit(type) {
@@ -1726,6 +1757,7 @@
                         styles: {
                             cellPadding: 3,
                             fontSize: 9,
+                            overflow: 'linebreak'
                         },
                         headStyles: {
                             fillColor: [10, 40, 60],
@@ -1789,17 +1821,12 @@
                     grade: document.getElementById('stuGrade').value.trim(),
                     level: document.getElementById('stuLevel').value.trim()
                 };
+                
                 if (!studentData.name) {
                     alert('Please enter a student name');
                     return;
                 }
-                if (editingStudent !== null) {
-                    // Update existing student
-                    currentData.students[editingStudent] = studentData;
-                } else {
-                    // Add new student
-                    currentData.students.push(studentData);
-                }
+                
                 if (await saveStudents()) {
                     showStatus('Student saved successfully');
                     cancelEdit('student');
@@ -1875,4 +1902,3 @@
     </script>
 </body>
 </html>
-

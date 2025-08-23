@@ -1,6 +1,3 @@
-I've analyzed the issue with your Supabase authentication. The API key you provided is valid, but there's a problem with the authentication flow in your code. Let me fix the login and register functionality:
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -411,17 +408,9 @@ I've analyzed the issue with your Supabase authentication. The API key you provi
                 document.getElementById('loginStatus').textContent = 'Error connecting to Supabase. Please check your API key.';
                 document.getElementById('loginStatus').className = 'auth-status auth-error';
             }
-            // Bind auth buttons - Fixed: Added proper event listeners
-            const loginBtn = document.getElementById('btnLogin');
-            const registerBtn = document.getElementById('btnRegister');
-            
-            if (loginBtn) {
-                loginBtn.addEventListener('click', login);
-            }
-            
-            if (registerBtn) {
-                registerBtn.addEventListener('click', register);
-            }
+            // Bind auth buttons
+            document.getElementById('btnLogin').addEventListener('click', login);
+            document.getElementById('btnRegister').addEventListener('click', register);
         }
         async function login() {
             const email = document.getElementById('loginEmail').value;
@@ -1629,4 +1618,3 @@ I've analyzed the issue with your Supabase authentication. The API key you provi
     </script>
 </body>
 </html>
-```

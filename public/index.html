@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
+    <meta rset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GEMS Milandhoo School Portal — Pro</title>
     <!-- CDNs -->
@@ -11,7 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Your existing CSS remains unchanged */
+        /* Your existing CSS remains unnged */
         :root{
             --sidebar-a:#06283d; --sidebar-b:#0aa3a3; --accent:#ffd166;
             --card:#ffffff; --muted:#6b7c93; --success:#2ea44f; --danger:#ef5350;
@@ -161,7 +161,7 @@
                     <div style="display:flex;flex-direction:column;gap:12px">
                         <input id="regName" placeholder="Full Name" style="width:100%;padding:12px 14px;border-radius:10px;border:none;background:rgba(255,255,255,0.15);color:white;outline:none;transition:all 0.3s" />
                         <input id="regEmail" placeholder="Email address" type="email" style="width:100%;padding:12px 14px;border-radius:10px;border:none;background:rgba(255,255,255,0.15);color:white;outline:none;transition:all 0.3s" />
-                        <input id="regPass" placeholder="Password (min 6 characters)" type="password" style="width:100%;padding:12px 14px;border-radius:10px;border:none;background:rgba(255,255,255,0.15);color:white;outline:none;transition:all 0.3s" />
+                        <input id="regPass" placeholder="Password (min 6 racters)" type="password" style="width:100%;padding:12px 14px;border-radius:10px;border:none;background:rgba(255,255,255,0.15);color:white;outline:none;transition:all 0.3s" />
                         <button id="btnRegister" style="width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(45deg,#4ce0c9, #66f0d9);font-weight:700;color:#003;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 15px rgba(76,224,201,0.3);font-size:15px">
                             Create Account
                         </button>
@@ -311,7 +311,7 @@
                             <input id="mtLocation" type="text" placeholder="Location">
                         </div>
                         <div class="controls" style="margin-top:8px">
-                            <input id="mtChair" type="text" placeholder="Leading Teacher">
+                            <input id="mtir" type="text" placeholder="Leading Teacher">
                             <select id="mtParticipants" multiple style="min-width:220px;max-height:110px;overflow:auto"></select>
                             <input id="mtParticipantsFree" type="text" placeholder="Extra participants (comma separated)">
                         </div>
@@ -426,8 +426,8 @@
                     currentUser = session.user;
                     openApp();
                 }
-                // Listen for auth changes
-                supabase.auth.onAuthStateChange(async (event, session) => {
+                // Listen for auth nges
+                supabase.auth.onAuthStatenge(async (event, session) => {
                     if (event === 'SIGNED_IN' && session) {
                         currentUser = session.user;
                         openApp();
@@ -502,7 +502,7 @@
                 return;
             }
             if (password.length < 6) {
-                status.textContent = 'Password must be at least 6 characters';
+                status.textContent = 'Password must be at least 6 racters';
                 status.className = 'auth-status auth-error';
                 return;
             }
@@ -713,7 +713,7 @@
                     end_time: document.getElementById('mtEndTime').value,
                     title: document.getElementById('mtTitle').value.trim(),
                     location: document.getElementById('mtLocation').value.trim(),
-                    chair: document.getElementById('mtChair').value.trim(),
+                    ir: document.getElementById('mtir').value.trim(),
                     participants: document.getElementById('mtParticipantsFree').value
                         .split(',')
                         .map(p => p.trim())
@@ -821,27 +821,27 @@
         }
         function setupRealtimeUpdates() {
             // Set up realtime subscriptions for each table
-            const channels = [
-                supabase.channel('students-changes')
-                    .on('postgres_changes', 
+            const nnels = [
+                supabase.nnel('students-nges')
+                    .on('postgres_nges', 
                         { event: '*', schema:'public',table:'students' }, 
                         () => loadStudents().then(renderStudents)
                     )
                     .subscribe(),
-                supabase.channel('attendance-changes')
-                    .on('postgres_changes', 
+                supabase.nnel('attendance-nges')
+                    .on('postgres_nges', 
                         { event: '*',schema:'public',table:'attendance' }, 
                         () => loadAttendance().then(renderAttendanceForDate)
                     )
                     .subscribe(),                
-                supabase.channel('meetings-changes')
-                    .on('postgres_changes', 
+                supabase.nnel('meetings-nges')
+                    .on('postgres_nges', 
                         { event: '*',schema:'public',table:'meetings' }, 
                         () => loadMeetings().then(renderMeetingsRange)
                     )
                     .subscribe(),                
-                supabase.channel('lessons-changes')
-                    .on('postgres_changes', 
+                supabase.nnel('lessons-nges')
+                    .on('postgres_nges', 
                         { event: '*',schema:'public',table:'lessons' }, 
                         () => loadLessons().then(renderLessonsRange)
                     )
@@ -986,7 +986,7 @@
                     <td>${currentAttendanceDate}</td>
                     <td>${escapeHtml(student.name)}</td>
                     <td>
-                        <select onchange="updateAttendanceStatus('${student.name}',this.value)">
+                        <select onnge="updateAttendanceStatus('${student.name}',this.value)">
                             <option value="Present" ${status === 'Present' ? 'selected' : ''}>Present</option>
                             <option value="Absent" ${status === 'Absent' ? 'selected' : ''}>Absent</option>
                             <option value="Holiday" ${status === 'Holiday' ? 'selected' : ''}>Holiday</option>
@@ -1171,7 +1171,7 @@
             document.getElementById('mtEndTime').value = meeting.end_time || '';
             document.getElementById('mtTitle').value = meeting.title || '';
             document.getElementById('mtLocation').value = meeting.location || '';
-            document.getElementById('mtChair').value = meeting.chair || '';
+            document.getElementById('mtir').value = meeting.ir || '';
             document.getElementById('mtAgenda').value = meeting.agenda || '';
             document.getElementById('mtDecisions').value = meeting.decisions || '';
             // Handle participants
@@ -1343,7 +1343,7 @@
                         ["Date", meeting.date || ""],
                         ["Time", `${meeting.start_time || ""} - ${meeting.end_time || ""}`],
                         ["Location", meeting.location || ""],
-                        ["studentName", meeting.chair || ""]
+                        ["studentName", meeting.ir || ""]
                     ];
                     // Draw meeting details table
                     doc.autoTable({
@@ -1656,7 +1656,7 @@
                     ["Date", meeting.date || ""],
                     ["Time", `${meeting.start_time || ""} - ${meeting.end_time || ""}`],
                     ["Location", meeting.location || ""],
-                    ["Chairperson", meeting.chair || ""]
+                    ["irperson", meeting.ir || ""]
                 ];
                 // Draw meeting details table
                 doc.autoTable({
@@ -1882,6 +1882,7 @@
     </script>
 </body>
 </html>
+
 
 
 

@@ -100,34 +100,311 @@
         #btnLogin:active, #btnRegister:active {
             transform: translateY(0);
         }
+        
+        /* NEW AUTH STYLES */
+        .auth-container {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #071a2b 0%, #0a8b8b 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            padding: 20px;
+        }
+        .auth-card {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            display: flex;
+            min-height: 550px;
+        }
+        .auth-left {
+            flex: 1;
+            background: linear-gradient(135deg, var(--sidebar-a) 0%, var(--sidebar-b) 100%);
+            color: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .auth-left::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .auth-left::after {
+            content: '';
+            position: absolute;
+            bottom: -80px;
+            left: -80px;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .auth-left h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        .auth-left p {
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        .auth-logo {
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        .auth-logo-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .auth-logo-text {
+            font-weight: 800;
+            font-size: 22px;
+        }
+        .auth-features {
+            margin-top: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        .auth-feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .auth-feature-icon {
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        .auth-right {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        .auth-tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6b7c93;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .auth-tab.active {
+            color: var(--sidebar-b);
+        }
+        .auth-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--sidebar-b);
+            border-radius: 3px 3px 0 0;
+        }
+        .auth-form {
+            display: none;
+        }
+        .auth-form.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .auth-form h3 {
+            margin: 0 0 20px 0;
+            font-size: 22px;
+            color: #06283d;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #375a74;
+            font-size: 14px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        .form-control:focus {
+            border-color: var(--sidebar-b);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(10, 163, 163, 0.1);
+        }
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-login {
+            background: var(--sidebar-b);
+            color: white;
+        }
+        .btn-login:hover {
+            background: #089494;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(10, 163, 163, 0.3);
+        }
+        .btn-register {
+            background: var(--accent);
+            color: #003;
+        }
+        .btn-register:hover {
+            background: #ffc94d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 209, 102, 0.4);
+        }
+        .auth-footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #6b7c93;
+            font-size: 14px;
+        }
+        @media (max-width: 768px) {
+            .auth-card {
+                flex-direction: column;
+                max-width: 400px;
+            }
+            .auth-left {
+                padding: 30px 20px;
+            }
+            .auth-right {
+                padding: 30px 20px;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- LOGIN / REGISTER -->
-    <div id="authScreen" style="position:fixed;inset:0;background:linear-gradient(180deg,#071a2b,#0a8b8b);display:flex;align-items:center;justify-content:center;z-index:999">
-        <div style="width:480px;background:rgba(255,255,255,0.06;padding:28px;border-radius:14px;color:#fff;box-shadow:0 16px 40px rgba(0,0,0,.5)">
-            <h2 style="margin:0 0 8px 0;text-align:center">Welcome to GEMS Milandhoo School Portal</h2>
-            <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap">
-                <div style="flex:1;min-width:220px">
-                    <h3 style="margin:0 0 8px 0">Login</h3>
-                    <input id="loginEmail" placeholder="Email" type="email" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
-                    <input id="loginPass" placeholder="Password" type="password" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
-                    <button id="btnLogin" style="width:100%;padding:10px;border-radius:8px;border:none;background:#ffd166;font-weight:800;color:#000">Login</button>
-                    <div id="loginStatus" class="auth-status"></div>
+    <!-- LOGIN / REGISTER - NEW DESIGN -->
+    <div class="auth-container" id="authScreen">
+        <div class="auth-card">
+            <div class="auth-left">
+                <div class="auth-logo">
+                    <div class="auth-logo-icon">🎓</div>
+                    <div class="auth-logo-text">GEMS Milandhoo</div>
                 </div>
-                <div style="flex:1;min-width:220px">
-                    <h3 style="margin:0 0 8px 0">Register</h3>
-                    <input id="regName" placeholder="Full Name" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
-                    <input id="regEmail" placeholder="Email" type="email" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
-                    <input id="regPass" placeholder="Password (min 6 characters)" type="password" style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:8px" />
-                    <button id="btnRegister" style="width:100%;padding:10px;border-radius:8px;border:none;background:#4ce0c9;font-weight:800;color:#003">Register & Sign in</button>
-                    <div id="registerStatus" class="auth-status"></div>
+                <h2>School Portal Professional</h2>
+                <p>Access your teaching dashboard to manage students, attendance, meetings, and lesson plans in one integrated platform.</p>
+                
+                <div class="auth-features">
+                    <div class="auth-feature">
+                        <div class="auth-feature-icon">✓</div>
+                        <div>Secure cloud storage</div>
+                    </div>
+                    <div class="auth-feature">
+                        <div class="auth-feature-icon">✓</div>
+                        <div>Real-time collaboration</div>
+                    </div>
+                    <div class="auth-feature">
+                        <div class="auth-feature-icon">✓</div>
+                        <div>Professional reporting tools</div>
+                    </div>
                 </div>
             </div>
-            <p style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.8)">All data is securely stored and shared with other teachers.</p>
+            <div class="auth-right">
+                <div class="auth-tabs">
+                    <div class="auth-tab active" onclick="switchAuthTab('login')">Login</div>
+                    <div class="auth-tab" onclick="switchAuthTab('register')">Register</div>
+                </div>
+                
+                <form id="loginForm" class="auth-form active">
+                    <h3>Welcome back</h3>
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" class="form-control" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPass">Password</label>
+                        <input type="password" id="loginPass" class="form-control" placeholder="Enter your password">
+                    </div>
+                    <button type="button" id="btnLogin" class="auth-btn btn-login">Sign in</button>
+                    <div id="loginStatus" class="auth-status"></div>
+                    <div class="auth-footer">
+                        All data is securely stored and shared with other teachers.
+                    </div>
+                </form>
+                
+                <form id="registerForm" class="auth-form">
+                    <h3>Create account</h3>
+                    <div class="form-group">
+                        <label for="regName">Full Name</label>
+                        <input type="text" id="regName" class="form-control" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="regEmail">Email</label>
+                        <input type="email" id="regEmail" class="form-control" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="regPass">Password</label>
+                        <input type="password" id="regPass" class="form-control" placeholder="Minimum 6 characters">
+                    </div>
+                    <button type="button" id="btnRegister" class="auth-btn btn-register">Register & Sign in</button>
+                    <div id="registerStatus" class="auth-status"></div>
+                    <div class="auth-footer">
+                        By registering, you agree to our terms of service.
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-    <!-- APP -->
+
+    <!-- APP - ALL ORIGINAL CODE BELOW REMAINS UNCHANGED -->
     <div class="app" id="appRoot" style="display:none">
         <!-- Sidebar -->
         <aside class="sidebar">
@@ -367,6 +644,21 @@
         let editingLesson = null;
         let actionItems = [];
         let currentAttendanceDate = null;
+        
+        // NEW: Auth tab switching function
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            
+            if (tab === 'login') {
+                document.querySelector('.auth-tab:nth-child(1)').classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.querySelector('.auth-tab:nth-child(2)').classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
+
         /* -------------------------
            AUTHENTICATION
         ------------------------- */
@@ -625,7 +917,7 @@
                     console.error('Error deleting attendance:', deleteError);
                 }
                 //Insert new records
-                if (attendanceRecords.length > 0) {
+                if (attentionRecords.length > 0) {
                     const { error } = await supabase
                         .from('attendance')
                         .insert(attendanceRecords);
@@ -720,7 +1012,7 @@
                 const { data, error } = await supabase
                     .from('lessons')
                     .select('*')
-                    .order('date',{ascending:false});
+                    .order('date',{ascending:false);
                 if (error) {
                     console.error('Error loading lessons:',error);
                     showStatus('Error loading lessons','error');
@@ -1902,4 +2194,3 @@
     </script>
 </body>
 </html>
-

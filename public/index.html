@@ -70,7 +70,7 @@
         @media (max-width:900px){ .sidebar{display:none} .app{flex-direction:column} }
         /* pill badges */
         .badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #cfe0ea;font-size:12px;color:#375a74;background:#f6fbfe}
-        /* Auth status messs */
+        /* Auth status messages */
         .auth-status {
             padding: 8px;
             border-radius: 6px;
@@ -220,14 +220,14 @@
                 </div>
                 <div class="panel" style="margin-top:12px">
                     <h3 style="margin:0 0 8px 0">Overview</h3>
-                    <p class="small-note">Use the sidebar to man Students, Attendance, Meeting Minutes and Lesson Plans. All records are saved to the cloud and shared with all teachers.</p>
+                    <p class="small-note">Use the sidebar to manage Students, Attendance, Meeting Minutes and Lesson Plans. All records are saved to the cloud and shared with all teachers.</p>
                 </div>
             </section>
             <!-- STUDENTS -->
             <section id="students" class="hidden">
                 <div class="panel">
                     <div style="display:flex;justify-content:space-between;align-items:center">
-                        <div><h3 style="margin:0">Students Manment</h3><div class="small-note">Add / Edit / Delete students</div></div>
+                        <div><h3 style="margin:0">Students Management</h3><div class="small-note">Add / Edit / Delete students</div></div>
                         <div id="studentEditingBadge" class="small-note hidden" style="color:#b55">Editing...</div>
                     </div>
                     <form id="studentForm" style="margin-top:12px">
@@ -1343,7 +1343,7 @@
                         ["Date", meeting.date || ""],
                         ["Time", `${meeting.start_time || ""} - ${meeting.end_time || ""}`],
                         ["Location", meeting.location || ""],
-                        ["Student", meeting.chair || ""]
+                        ["Chairperson", meeting.chair || ""]
                     ];
                     // Draw meeting details table
                     doc.autoTable({
@@ -1656,7 +1656,7 @@
                     ["Date", meeting.date || ""],
                     ["Time", `${meeting.start_time || ""} - ${meeting.end_time || ""}`],
                     ["Location", meeting.location || ""],
-                    ["Student", meeting.chair || ""]
+                    ["Chairperson", meeting.chair || ""]
                 ];
                 // Draw meeting details table
                 doc.autoTable({
@@ -1882,6 +1882,4 @@
     </script>
 </body>
 </html>
-
-
 

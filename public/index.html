@@ -70,7 +70,7 @@
         @media (max-width:900px){ .sidebar{display:none} .app{flex-direction:column} }
         /* pill badges */
         .badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #cfe0ea;font-size:12px;color:#375a74;background:#f6fbfe}
-        /* Auth status messs */
+        /* Auth status messages */
         .auth-status {
             padding: 8px;
             border-radius: 6px;
@@ -220,14 +220,14 @@
                 </div>
                 <div class="panel" style="margin-top:12px">
                     <h3 style="margin:0 0 8px 0">Overview</h3>
-                    <p class="small-note">Use the sidebar to man Students, Attendance, Meeting Minutes and Lesson Plans. All records are saved to the cloud and shared with all teachers.</p>
+                    <p class="small-note">Use the sidebar to manage Students, Attendance, Meeting Minutes and Lesson Plans. All records are saved to the cloud and shared with all teachers.</p>
                 </div>
             </section>
             <!-- STUDENTS -->
             <section id="students" class="hidden">
                 <div class="panel">
                     <div style="display:flex;justify-content:space-between;align-items:center">
-                        <div><h3 style="margin:0">Students Manment</h3><div class="small-note">Add / Edit / Delete students</div></div>
+                        <div><h3 style="margin:0">Students Management</h3><div class="small-note">Add / Edit / Delete students</div></div>
                         <div id="studentEditingBadge" class="small-note hidden" style="color:#b55">Editing...</div>
                     </div>
                     <form id="studentForm" style="margin-top:12px">
@@ -487,8 +487,6 @@
                 }
             } catch (error) {
                 status.textContent = 'Login failed. Please try again.';
-                status.className = 'auth-status auth-error';
-                console.error('Login error:', error);
             }
         }
         async function register() {
@@ -640,15 +638,22 @@
         }
         async function saveAttendance() {
             try {
-                //Get the current date
+                // Get the current date
                 const date = document.getElementById('attDate').value;
                 if (!date) {
                     showStatus('Please select a date first','error');
                     return false;
                 }
-                //Get all attendance records for this date
-                const attendanceRecords = [];
+                
+                // Check if we have students loaded
                 const rows = document.querySelectorAll('#attendanceTable tbody tr');
+                if (rows.length === 0) {
+                    showStatus('No students loaded for this date. Click "Load Students" first.','error');
+                    return false;
+                }
+                
+                // Get all attendance records for this date
+                const attendanceRecords = [];
                 rows.forEach(row => {
                     const studentName = row.cells[1].textContent;
                     const statusSelect = row.querySelector('select');
@@ -659,32 +664,27 @@
                         status
                     });
                 });
-                //Delete existing records for this date
-                const { error: deleteError } = await supabase
-                    .from('attendance')
-                    .delete()
-                    .eq('date',date);
-                if (deleteError) {
-                    console.error('Error deleting attendance:', deleteError);
-                }
-                //Insert new records
+
+                // Upsert records instead of delete + insert to avoid unique constraint violations
                 if (attendanceRecords.length > 0) {
                     const { error } = await supabase
                         .from('attendance')
-                        .insert(attendanceRecords);
+                        .upsert(attendanceRecords, { onConflict: 'date,student' });
+                        
                     if (error) {
                         console.error('Error saving attendance:',error);
-                        showStatus('Error saving attendance','error');
+                        showStatus('Error saving attendance: ' + error.message, 'error');
                         return false;
                     }
                 }
-                //Reload attendance data
+
+                // Reload attendance data
                 await loadAttendance();
-                showStatus('Attendance saved successfully');
+                showStatus('Attendance saved successfully for ' + date);
                 return true;
             } catch (error) {
                 console.error('Error saving attendance:',error);
-                showStatus('Error saving attendance','error');
+                showStatus('Error saving attendance: ' + error.message, 'error');
                 return false;
             }
         }
@@ -1343,7 +1343,7 @@
                         ["Date", meeting.date || ""],
                         ["Time", `${meeting.start_time || ""} - ${meeting.end_time || ""}`],
                         ["Location", meeting.location || ""],
-                        ["Student", meeting.chair || ""]
+                        ["Chairperson", meeting.chair || ""]
                     ];
                     // Draw meeting details table
                     doc.autoTable({
@@ -1505,7 +1505,7 @@
                 if (filteredLessons.length === 0) {
                     doc.setFontSize(14);
                     doc.setTextColor(150, 150, 150);
-                    doc.text("No lesson plans found for the selected date range.",pageWidth / 2,50,{align:"center"});
+                    doc.text("No lesson plans found for the selected date range.",pageWidth / 2,50,{align:"center");
                     doc.save("lesson_plans_report.pdf");
                     showStatus('Lesson plans exported to PDF');
                     return;
@@ -1656,7 +1656,7 @@
                     ["Date", meeting.date || ""],
                     ["Time", `${meeting.start_time || ""} - ${meeting.end_time || ""}`],
                     ["Location", meeting.location || ""],
-                    ["Student", meeting.chair || ""]
+                    ["Chairperson", meeting.chair || ""]
                 ];
                 // Draw meeting details table
                 doc.autoTable({
@@ -1815,7 +1815,7 @@
                 }
             });
             // Set up meeting form handler
-            document.getElementById('meetingForm').addEventListener('submit', async (e) => {
+            document.getElementById('meetingForm').addEventListener('submit', async (e) {
                 e.preventDefault();
                 if (!document.getElementById('mtDate').value || !document.getElementById('mtTitle').value) {
                     alert('Please enter date and title');
@@ -1882,6 +1882,3 @@
     </script>
 </body>
 </html>
-
-
-

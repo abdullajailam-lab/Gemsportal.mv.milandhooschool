@@ -653,9 +653,18 @@
             const studentName = row.cells[1].textContent;
             const statusSelect = row.querySelector('select');
             const status = statusSelect ? statusSelect.value : 'Absent';
+            
+            // Find the student object from currentData.students
+            const student = currentData.students.find(s => s.name === studentName);
+            if (!student) {
+                console.warn(`Student not found: ${studentName}`);
+                return; // Skip this record if student not found
+            }
+            
             attendanceRecords.push({
                 date,
                 student: studentName,
+                student_id: student.id,
                 status
             });
         });
@@ -1884,6 +1893,7 @@
     </script>
 </body>
 </html>
+
 
 
 

@@ -667,12 +667,6 @@
             const { error } = await supabase
                 .from('attendance')
                 .insert(attendanceRecords);
-                
-            if (error) {
-                console.error('Error saving attendance:', error);
-                showStatus('Error saving attendance: ' + error.message, 'error');
-                return false;
-            }
         }
 
         // Reload attendance data
@@ -1879,6 +1873,7 @@
     </script>
 </body>
 </html>
+
 
 
 

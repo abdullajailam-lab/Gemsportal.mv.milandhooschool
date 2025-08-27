@@ -10,7 +10,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Your existing CSS remains unchanged */
         :root{
@@ -100,70 +99,6 @@
         }
         #btnLogin:active, #btnRegister:active {
             transform: translateY(0);
-        }
-        
-        /* NEW STYLES FOR DASHBOARD AND DISABILITY FEATURES */
-        .chart-container {
-            position: relative;
-            height: 250px;
-            margin-bottom: 20px;
-            background: white;
-            border-radius: var(--radius);
-            padding: 15px;
-            box-shadow: var(--shadow);
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-        .stat-card {
-            background: white;
-            border-radius: var(--radius);
-            padding: 16px;
-            box-shadow: var(--shadow);
-            text-align: center;
-        }
-        .stat-value {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--sidebar-a);
-            margin: 8px 0;
-        }
-        .stat-label {
-            font-size: 14px;
-            color: var(--muted);
-        }
-        .ai-generator {
-            background: white;
-            border-radius: var(--radius);
-            padding: 16px;
-            box-shadow: var(--shadow);
-            margin-top: 16px;
-        }
-        .ai-controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 12px;
-            align-items: center;
-        }
-        .ai-output {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 12px;
-            min-height: 100px;
-            border: 1px solid #e9ecef;
-        }
-        .disability-tag {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            margin: 2px;
-            background: #e9f7ff;
-            color: #0a8b8b;
         }
     </style>
 </head>
@@ -277,47 +212,22 @@
             </div>
             <!-- DASHBOARD -->
             <section id="dashboard" class="card">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalStudents">0</div>
-                        <div class="stat-label">Total Students</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="attendanceDays">0</div>
-                        <div class="stat-label">Attendance Days</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="meetingsCount">0</div>
-                        <div class="stat-label">Meetings</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="lessonsCount">0</div>
-                        <div class="stat-label">Lesson Plans</div>
-                    </div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap">
+                    <div class="card"><div class="big" id="totalStudents">0</div><div class="small-note">Students</div></div>
+                    <div class="card"><div class="big" id="attendanceDays">0</div><div class="small-note">Attendance Days</div></div>
+                    <div class="card"><div class="big" id="meetingsCount">0</div><div class="small-note">Meetings</div></div>
+                    <div class="card"><div class="big" id="lessonsCount">0</div><div class="small-note">Lesson Plans</div></div>
                 </div>
-                
-                <div class="panel">
-                    <h3 style="margin:0 0 16px 0">Student Statistics</h3>
-                    <div class="row">
-                        <div class="chart-container" style="flex:2">
-                            <canvas id="disabilityChart"></canvas>
-                        </div>
-                        <div class="chart-container" style="flex:1">
-                            <canvas id="attendanceChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="panel">
-                    <h3 style="margin:0 0 8px 0">Recent Activity</h3>
-                    <div id="recentActivity" class="small-note">Loading recent activity...</div>
+                <div class="panel" style="margin-top:12px">
+                    <h3 style="margin:0 0 8px 0">Overview</h3>
+                    <p class="small-note">Use the sidebar to man Students, Attendance, Meeting Minutes and Lesson Plans. All records are saved to the cloud and shared with all teachers.</p>
                 </div>
             </section>
             <!-- STUDENTS -->
             <section id="students" class="hidden">
                 <div class="panel">
                     <div style="display:flex;justify-content:space-between;align-items:center">
-                        <div><h3 style="margin:0">Students Management</h3><div class="small-note">Add / Edit / Delete students</div></div>
+                        <div><h3 style="margin:0">Students Manment</h3><div class="small-note">Add / Edit / Delete students</div></div>
                         <div id="studentEditingBadge" class="small-note hidden" style="color:#b55">Editing...</div>
                     </div>
                     <form id="studentForm" style="margin-top:12px">
@@ -326,22 +236,6 @@
                             <input id="stuAge" type="number" placeholder="Age" min="3">
                             <input id="stuGrade" placeholder="Grade">
                             <input id="stuLevel" placeholder="Level">
-                            <select id="stuDisability">
-                                <option value="">No Disability</option>
-                                <option value="Autism Spectrum Disorder">Autism Spectrum Disorder</option>
-                                <option value="Attention Deficit Hyperactivity Disorder">Attention Deficit Hyperactivity Disorder</option>
-                                <option value="Dyslexia">Dyslexia</option>
-                                <option value="Dyscalculia">Dyscalculia</option>
-                                <option value="Dysgraphia">Dysgraphia</option>
-                                <option value="Hearing Impairment">Hearing Impairment</option>
-                                <option value="Visual Impairment">Visual Impairment</option>
-                                <option value="Physical Disability">Physical Disability</option>
-                                <option value="Speech/Language Impairment">Speech/Language Impairment</option>
-                                <option value="Intellectual Disability">Intellectual Disability</option>
-                                <option value="Emotional/Behavioral Disorder">Emotional/Behavioral Disorder</option>
-                                <option value="Other">Other</option>
-                            </select>
-                            <input id="stuDisabilityOther" placeholder="Specify other disability" class="hidden">
                             <button class="btn" type="submit">Add / Save</button>
                             <button id="cancelStudent" class="btn secondary" type="button" style="display:none" onclick="cancelEdit('student')">Cancel</button>
                         </div>
@@ -356,7 +250,7 @@
                         </div>
                     </div>
                     <table class="table" id="studentsTable">
-                        <thead><tr><th>Name</th><th>Age</th><th>Grade</th><th>Level</th><th>Disability</th><th>Actions</th></tr></thead>
+                        <thead><tr><th>Name</th><th>Age</th><th>Grade</th><th>Level</th><th>Actions</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
@@ -469,20 +363,6 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- NEW: AI Lesson Plan Generator -->
-                <div class="ai-generator">
-                    <h3 style="margin:0 0 12px 0">AI Lesson Plan Generator</h3>
-                    <div class="ai-controls">
-                        <input id="aiLessonIntro" type="text" placeholder="Brief lesson description (e.g., 'Introduction to fractions for 3rd grade')" style="flex:1">
-                        <button class="btn small" onclick="generateLessonPlan()">Generate</button>
-                    </div>
-                    <div class="ai-output" id="aiLessonOutput">
-                        AI-generated lesson plan will appear here...
-                    </div>
-                    <div class="small-note" style="margin-top:8px">This will automatically fill the lesson plan form below.</div>
-                </div>
-                
                 <div class="panel">
                     <form id="lessonForm">
                         <div class="controls">
@@ -535,10 +415,6 @@
         let editingLesson = null;
         let actionItems = [];
         let currentAttendanceDate = null;
-        // Chart instances
-        let disabilityChart = null;
-        let attendanceChart = null;
-        
         /* -------------------------
            AUTHENTICATION
         ------------------------- */
@@ -701,11 +577,6 @@
         }
         async function saveStudents() {
             try {
-                let disabilityValue = document.getElementById('stuDisability').value;
-                if (disabilityValue === 'Other') {
-                    disabilityValue = document.getElementById('stuDisabilityOther').value;
-                }
-                
                 if (editingStudent !== null) {
                     // Update existing student
                     const studentId = currentData.students[editingStudent].id;
@@ -713,8 +584,7 @@
                         name: document.getElementById('stuName').value.trim(),
                         age: parseInt(document.getElementById('stuAge').value) || 0,
                         grade: document.getElementById('stuGrade').value.trim(),
-                        level: document.getElementById('stuLevel').value.trim(),
-                        disability: disabilityValue
+                        level: document.getElementById('stuLevel').value.trim()
                     };
                     const { error } = await supabase
                         .from('students')
@@ -731,8 +601,7 @@
                         name: document.getElementById('stuName').value.trim(),
                         age: parseInt(document.getElementById('stuAge').value) || 0,
                         grade: document.getElementById('stuGrade').value.trim(),
-                        level: document.getElementById('stuLevel').value.trim(),
-                        disability: disabilityValue
+                        level: document.getElementById('stuLevel').value.trim()
                     };
                     const { error } = await supabase
                         .from('students')
@@ -770,55 +639,71 @@
             }
         }
         async function saveAttendance() {
-            try {
-                //Get the current date
-                const date = document.getElementById('attDate').value;
-                if (!date) {
-                    showStatus('Please select a date first','error');
+    try {
+        // Get the current date
+        const date = document.getElementById('attDate').value;
+        if (!date) {
+            showStatus('Please select a date first', 'error');
+            return false;
+        }
+        
+        // Get all attendance records for this date
+        const attendanceRecords = [];
+        const rows = document.querySelectorAll('#attendanceTable tbody tr');
+        
+        rows.forEach(row => {
+            const studentName = row.cells[1].textContent;
+            const statusSelect = row.querySelector('select');
+            const status = statusSelect ? statusSelect.value : 'Absent';
+            
+            attendanceRecords.push({
+                date,
+                student: studentName,
+                status
+            });
+        });
+
+        // Delete existing records for this date
+        const { error: deleteError } = await supabase
+            .from('attendance')
+            .delete()
+            .eq('date', date);
+            
+        if (deleteError) {
+            console.error('Error deleting attendance:', deleteError);
+            showStatus('Error clearing previous attendance', 'error');
+            return false;
+        }
+
+        // Insert new records in batches to avoid Supabase limits
+        if (attendanceRecords.length > 0) {
+            // Split into batches of 50 records (Supabase recommends batches of 100-1000)
+            const batchSize = 50;
+            for (let i = 0; i < attendanceRecords.length; i += batchSize) {
+                const batch = attendanceRecords.slice(i, i + batchSize);
+                
+                const { error } = await supabase
+                    .from('attendance')
+                    .insert(batch);
+                    
+                if (error) {
+                    console.error('Error saving attendance batch:', error);
+                    showStatus('Error saving attendance', 'error');
                     return false;
                 }
-                //Get all attendance records for this date
-                const attendanceRecords = [];
-                const rows = document.querySelectorAll('#attendanceTable tbody tr');
-                rows.forEach(row => {
-                    const studentName = row.cells[1].textContent;
-                    const statusSelect = row.querySelector('select');
-                    const status = statusSelect ? statusSelect.value : 'Absent';
-                    attendanceRecords.push({
-                        date,
-                        student: studentName,
-                        status
-                    });
-                });
-                //Delete existing records for this date
-                const { error: deleteError } = await supabase
-                    .from('attendance')
-                    .delete()
-                    .eq('date',date);
-                if (deleteError) {
-                    console.error('Error deleting attendance:', deleteError);
-                }
-                //Insert new records
-                if (attendanceRecords.length > 0) {
-                    const { error } = await supabase
-                        .from('attendance')
-                        .insert(attendanceRecords);
-                    if (error) {
-                        console.error('Error saving attendance:',error);
-                        showStatus('Error saving attendance','error');
-                        return false;
-                    }
-                }
-                //Reload attendance data
-                await loadAttendance();
-                showStatus('Attendance saved successfully');
-                return true;
-            } catch (error) {
-                console.error('Error saving attendance:',error);
-                showStatus('Error saving attendance','error');
-                return false;
             }
         }
+
+        // Reload attendance data
+        await loadAttendance();
+        showStatus('Attendance saved successfully');
+        return true;
+    } catch (error) {
+        console.error('Error saving attendance:', error);
+        showStatus('Error saving attendance', 'error');
+        return false;
+    }
+}
         async function loadMeetings() {
             try {
                 const { data, error } = await supabase
@@ -1026,10 +911,6 @@
                 populateStudentSelect();
                 renderLessonsRange();
             }
-            if (section === 'dashboard') {
-                updateDashboardCharts();
-                updateRecentActivity();
-            }
         }
         function refreshAll() {
             refreshSummary();
@@ -1037,8 +918,6 @@
             renderAttendanceForDate();
             renderMeetingsRange();
             renderLessonsRange();
-            updateDashboardCharts();
-            updateRecentActivity();
         }
         function refreshSummary() {
             document.getElementById('totalStudents').textContent = currentData.students.length;
@@ -1064,7 +943,6 @@
                     <td>${student.age || ''}</td>
                     <td>${escapeHtml(student.grade || '')}</td>
                     <td>${escapeHtml(student.level || '')}</td>
-                    <td>${student.disability ? `<span class="disability-tag">${escapeHtml(student.disability)}</span>` : ''}</td>
                     <td>
                         <button class="action-btn edit" onclick="editStudent(${index})">Edit</button>
                         <button class="action-btn del"onclick="deleteStudent(${index})">Delete</button>
@@ -1188,28 +1066,6 @@
             document.getElementById('stuAge').value = student.age || '';
             document.getElementById('stuGrade').value = student.grade || '';
             document.getElementById('stuLevel').value = student.level || '';
-            
-            // Handle disability field
-            const disabilitySelect = document.getElementById('stuDisability');
-            const disabilityOther = document.getElementById('stuDisabilityOther');
-            
-            if (student.disability) {
-                // Check if the disability is in our predefined list
-                const options = Array.from(disabilitySelect.options).map(opt => opt.value);
-                if (options.includes(student.disability)) {
-                    disabilitySelect.value = student.disability;
-                    disabilityOther.classList.add('hidden');
-                } else {
-                    disabilitySelect.value = 'Other';
-                    disabilityOther.value = student.disability;
-                    disabilityOther.classList.remove('hidden');
-                }
-            } else {
-                disabilitySelect.value = '';
-                disabilityOther.value = '';
-                disabilityOther.classList.add('hidden');
-            }
-            
             editingStudent = index;
             document.getElementById('studentEditingBadge').classList.remove('hidden');
             document.getElementById('cancelStudent').style.display = 'inline-block';
@@ -1234,7 +1090,6 @@
             if (type === 'student') {
                 editingStudent = null;
                 document.getElementById('studentForm').reset();
-                document.getElementById('stuDisabilityOther').classList.add('hidden');
                 document.getElementById('studentEditingBadge').classList.add('hidden');
                 document.getElementById('cancelStudent').style.display = 'none';
             } else if (type === 'meeting') {
@@ -1429,297 +1284,6 @@
                 }
             }
         }
-        // NEW: Dashboard chart functions
-        function updateDashboardCharts() {
-            updateDisabilityChart();
-            updateAttendanceChart();
-        }
-        
-        function updateDisabilityChart() {
-            const ctx = document.getElementById('disabilityChart').getContext('2d');
-            
-            // Count disabilities
-            const disabilityCounts = {};
-            currentData.students.forEach(student => {
-                if (student.disability) {
-                    disabilityCounts[student.disability] = (disabilityCounts[student.disability] || 0) + 1;
-                }
-            });
-            
-            // Prepare data for chart
-            const labels = Object.keys(disabilityCounts);
-            const data = Object.values(disabilityCounts);
-            
-            // Destroy previous chart if it exists
-            if (disabilityChart) {
-                disabilityChart.destroy();
-            }
-            
-            // Create new chart
-            disabilityChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Students by Disability',
-                        data: data,
-                        backgroundColor: [
-                            'rgba(10, 163, 163, 0.7)',
-                            'rgba(255, 209, 102, 0.7)',
-                            'rgba(46, 164, 79, 0.7)',
-                            'rgba(239, 83, 80, 0.7)',
-                            'rgba(91, 118, 255, 0.7)',
-                            'rgba(200, 100, 200, 0.7)',
-                            'rgba(100, 200, 200, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(10, 163, 163, 1)',
-                            'rgba(255, 209, 102, 1)',
-                            'rgba(46, 164, 79, 1)',
-                            'rgba(239, 83, 80, 1)',
-                            'rgba(91, 118, 255, 1)',
-                            'rgba(200, 100, 200, 1)',
-                            'rgba(100, 200, 200, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Students by Disability Type'
-                        }
-                    }
-                }
-            });
-        }
-        
-        function updateAttendanceChart() {
-            const ctx = document.getElementById('attendanceChart').getContext('2d');
-            
-            // Count attendance statuses for the last 30 days
-            const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-            
-            const recentAttendance = currentData.attendance.filter(a => {
-                return new Date(a.date) >= thirtyDaysAgo;
-            });
-            
-            const statusCounts = {
-                'Present': 0,
-                'Absent': 0,
-                'Holiday': 0
-            };
-            
-            recentAttendance.forEach(record => {
-                if (statusCounts.hasOwnProperty(record.status)) {
-                    statusCounts[record.status]++;
-                }
-            });
-            
-            // Destroy previous chart if it exists
-            if (attendanceChart) {
-                attendanceChart.destroy();
-            }
-            
-            // Create new chart
-            attendanceChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(statusCounts),
-                    datasets: [{
-                        data: Object.values(statusCounts),
-                        backgroundColor: [
-                            'rgba(46, 164, 79, 0.7)', // Present - green
-                            'rgba(239, 83, 80, 0.7)', // Absent - red
-                            'rgba(255, 209, 102, 0.7)' // Holiday - yellow
-                        ],
-                        borderColor: [
-                            'rgba(46, 164, 79, 1)',
-                            'rgba(239, 83, 80, 1)',
-                            'rgba(255, 209, 102, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Recent Attendance (30 days)'
-                        }
-                    }
-                }
-            });
-        }
-        
-        function updateRecentActivity() {
-            const activityContainer = document.getElementById('recentActivity');
-            
-            // Get recent items from all categories
-            const recentItems = [];
-            
-            // Add recent lessons
-            currentData.lessons.slice(0, 3).forEach(lesson => {
-                recentItems.push({
-                    type: 'lesson',
-                    date: lesson.date,
-                    title: `Lesson: ${lesson.topic} for ${lesson.student}`,
-                    content: lesson.subject
-                });
-            });
-            
-            // Add recent meetings
-            currentData.meetings.slice(0, 3).forEach(meeting => {
-                recentItems.push({
-                    type: 'meeting',
-                    date: meeting.date,
-                    title: `Meeting: ${meeting.title}`,
-                    content: meeting.agenda ? meeting.agenda.substring(0, 100) + '...' : ''
-                });
-            });
-            
-            // Add recent attendance records
-            const uniqueDates = [...new Set(currentData.attendance.map(a => a.date))].sort().reverse().slice(0, 3);
-            uniqueDates.forEach(date => {
-                const dateAttendance = currentData.attendance.filter(a => a.date === date);
-                const presentCount = dateAttendance.filter(a => a.status === 'Present').length;
-                
-                recentItems.push({
-                    type: 'attendance',
-                    date: date,
-                    title: `Attendance: ${date}`,
-                    content: `${presentCount}/${dateAttendance.length} students present`
-                });
-            });
-            
-            // Sort by date (newest first)
-            recentItems.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            // Display only the 5 most recent items
-            const displayItems = recentItems.slice(0, 5);
-            
-            if (displayItems.length === 0) {
-                activityContainer.innerHTML = '<p>No recent activity found.</p>';
-                return;
-            }
-            
-            let html = '';
-            displayItems.forEach(item => {
-                html += `
-                    <div style="padding: 8px; border-bottom: 1px solid #eee;">
-                        <div style="font-weight: 600;">${item.title}</div>
-                        <div style="font-size: 13px; color: #666;">${item.date} • ${item.content}</div>
-                    </div>
-                `;
-            });
-            
-            activityContainer.innerHTML = html;
-        }
-        
-        // NEW: AI Lesson Plan Generator
-        async function generateLessonPlan() {
-            const introText = document.getElementById('aiLessonIntro').value.trim();
-            const outputElement = document.getElementById('aiLessonOutput');
-            
-            if (!introText) {
-                outputElement.innerHTML = '<p style="color: #ef5350;">Please enter a lesson description first.</p>';
-                return;
-            }
-            
-            outputElement.innerHTML = '<p>Generating lesson plan... <span class="loading"></span></p>';
-            
-            try {
-                // In a real implementation, you would call the ChatGPT API here
-                // For demonstration, we'll use a simulated response
-                
-                // Simulate API call delay
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                
-                // Simulated response based on the input
-                const responses = {
-                    'math': {
-                        subject: 'Mathematics',
-                        topic: 'Introduction to Fractions',
-                        objectives: 'Students will be able to identify fractions, understand numerator and denominator, and compare simple fractions.',
-                        materials: 'Fraction circles, whiteboards, markers, worksheets with fraction problems',
-                        activities: '1. Introduction to fractions with visual aids\n2. Hands-on activity with fraction circles\n3. Group practice comparing fractions\n4. Individual worksheet practice',
-                        homework: 'Complete fraction worksheet with 10 problems involving identifying and comparing fractions'
-                    },
-                    'science': {
-                        subject: 'Science',
-                        topic: 'Plant Life Cycle',
-                        objectives: 'Students will understand the stages of plant growth from seed to mature plant and be able to describe each stage.',
-                        materials: 'Seeds, soil, pots, magnifying glasses, plant life cycle diagrams',
-                        activities: '1. Discussion of plant life cycle stages\n2. Planting seeds activity\n3. Observation of germinating seeds\n4. Creating a life cycle diagram',
-                        homework: 'Draw and label the plant life cycle stages in a science journal'
-                    },
-                    'english': {
-                        subject: 'English Language Arts',
-                        topic: 'Story Elements',
-                        objectives: 'Students will identify characters, setting, plot, and theme in a story and understand how these elements work together.',
-                        materials: 'Picture books, story elements graphic organizer, whiteboard, markers',
-                        activities: '1. Read-aloud of a picture book\n2. Group discussion of story elements\n3. Completing graphic organizer together\n4. Independent practice with a different story',
-                        homework: 'Read a short story at home and identify the story elements on a worksheet'
-                    },
-                    'default': {
-                        subject: 'General',
-                        topic: introText,
-                        objectives: 'Help students develop understanding and skills related to the topic through engaging activities and practice.',
-                        materials: 'Relevant textbooks, worksheets, visual aids, hands-on materials',
-                        activities: '1. Introduction to the concept\n2. Guided practice with examples\n3. Independent practice activities\n4. Review and assessment',
-                        homework: 'Reinforcement activity or worksheet related to the lesson content'
-                    }
-                };
-                
-                let response;
-                
-                if (introText.toLowerCase().includes('math') || introText.toLowerCase().includes('fraction')) {
-                    response = responses.math;
-                } else if (introText.toLowerCase().includes('science') || introText.toLowerCase().includes('plant')) {
-                    response = responses.science;
-                } else if (introText.toLowerCase().includes('english') || introText.toLowerCase().includes('story')) {
-                    response = responses.english;
-                } else {
-                    response = responses.default;
-                }
-                
-                // Fill the lesson plan form with the generated content
-                document.getElementById('lsSubject').value = response.subject;
-                document.getElementById('lsTopic').value = response.topic;
-                document.getElementById('lsObjectives').value = response.objectives;
-                document.getElementById('lsMaterials').value = response.materials;
-                document.getElementById('lsActivities').value = response.activities;
-                document.getElementById('lsHomework').value = response.homework;
-                
-                outputElement.innerHTML = `
-                    <p style="color: #2ea44f; font-weight: 600;">Lesson plan generated successfully!</p>
-                    <p>The form below has been automatically filled with the generated content.</p>
-                    <p>You can now review and adjust the lesson plan as needed before saving.</p>
-                `;
-                
-            } catch (error) {
-                console.error('Error generating lesson plan:', error);
-                outputElement.innerHTML = `
-                    <p style="color: #ef5350;">Error generating lesson plan. Please try again.</p>
-                    <p>Note: This is a simulation. In a real implementation, this would connect to the ChatGPT API.</p>
-                `;
-            }
-        }
-        
         // Export functions
         function exportStudentsCSV() {
             try {
@@ -1945,7 +1509,7 @@
                 doc.setFontSize(18);
                 doc.setTextColor(30, 30, 30);
                 doc.setFont("helvetica","normal");
-                doc.text("Lesson Plan Report",pageWidth / 2,30,{align:"center"");
+                doc.text("Lesson Plan Report",pageWidth / 2,30,{align:"center"});
                 const startDate = document.getElementById('lsStart').value;
                 const endDate = document.getElementById('lsEnd').value;
                 doc.setFontSize(11);
@@ -2253,12 +1817,8 @@
                     name: document.getElementById('stuName').value.trim(),
                     age: parseInt(document.getElementById('stuAge').value) || 0,
                     grade: document.getElementById('stuGrade').value.trim(),
-                    level: document.getElementById('stuLevel').value.trim(),
-                    disability: document.getElementById('stuDisability').value
+                    level: document.getElementById('stuLevel').value.trim()
                 };
-                if (studentData.disability === 'Other') {
-                    studentData.disability = document.getElementById('stuDisabilityOther').value;
-                }
                 if (!studentData.name) {
                     alert('Please enter a student name');
                     return;
@@ -2305,15 +1865,6 @@
                     editingLesson = null;
                 }
             });
-            // Handle disability dropdown change
-            document.getElementById('stuDisability').addEventListener('change', function() {
-                const otherInput = document.getElementById('stuDisabilityOther');
-                if (this.value === 'Other') {
-                    otherInput.classList.remove('hidden');
-                } else {
-                    otherInput.classList.add('hidden');
-                }
-            });
             // Set today's dates
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('attDate').value = today;
@@ -2343,7 +1894,6 @@
             window.deleteMeeting = deleteMeeting;
             window.editLesson = editLesson;
             window.deleteLesson = deleteLesson;
-            window.generateLessonPlan = generateLessonPlan;
         });
     </script>
 </body>

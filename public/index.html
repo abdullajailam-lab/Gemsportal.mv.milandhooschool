@@ -633,7 +633,7 @@
         // Check if we have students loaded
         const rows = document.querySelectorAll('#attendanceTable tbody tr');
         if (rows.length === 0) {
-            showStatus('No students loaded for this date', 'error');
+            showStatus('No students loaded for this date. Click "Load Students" first.', 'error');
             return false;
         }
         
@@ -670,18 +670,18 @@
                 
             if (error) {
                 console.error('Error saving attendance:', error);
-                showStatus('Error saving attendance', 'error');
+                showStatus('Error saving attendance: ' + error.message, 'error');
                 return false;
             }
         }
 
         // Reload attendance data
         await loadAttendance();
-        showStatus('Attendance saved successfully');
+        showStatus('Attendance saved successfully for ' + date);
         return true;
     } catch (error) {
         console.error('Error saving attendance:', error);
-        showStatus('Error saving attendance', 'error');
+        showStatus('Error saving attendance: ' + error.message, 'error');
         return false;
     }
 }
@@ -1879,6 +1879,7 @@
     </script>
 </body>
 </html>
+
 
 
 

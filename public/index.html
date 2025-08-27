@@ -621,64 +621,73 @@
                 return false;
             }
         }
+        async function loadAttendance() {
+            try {
+                const { data, error } = await supabase
+                    .from('attendance')
+                    .select('*')
+                    .order('date',{ascending:false});
+                if (error) {
+                    console.error('Error loading attendance:',error);
+                    showStatus('Error loading attendance','error');
+                } else {
+                    currentData.attendance = data || [];
+                }
+            } catch (error) {
+                console.error('Error loading attendance:',error);
+                showStatus('Error loading attendance','error');
+            }
+        }
         async function saveAttendance() {
-    try {
-        // Get the current date
-        const date = document.getElementById('attDate').value;
-        if (!date) {
-            showStatus('Please select a date first', 'error');
-            return false;
+            try {
+                //Get the current date
+                const date = document.getElementById('attDate').value;
+                if (!date) {
+                    showStatus('Please select a date first','error');
+                    return false;
+                }
+                //Get all attendance records for this date
+                const attendanceRecords = [];
+                const rows = document.querySelectorAll('#attendanceTable tbody tr');
+                rows.forEach(row => {
+                    const studentName = row.cells[1].textContent;
+                    const statusSelect = row.querySelector('select');
+                    const status = statusSelect ? statusSelect.value : 'Absent';
+                    attendanceRecords.push({
+                        date,
+                        student: studentName,
+                        status
+                    });
+                });
+                //Delete existing records for this date
+                const { error: deleteError } = await supabase
+                    .from('attendance')
+                    .delete()
+                    .eq('date',date);
+                if (deleteError) {
+                    console.error('Error deleting attendance:', deleteError);
+                }
+                //Insert new records
+                if (attendanceRecords.length > 0) {
+                    const { error } = await supabase
+                        .from('attendance')
+                        .insert(attendanceRecords);
+                    if (error) {
+                        console.error('Error saving attendance:',error);
+                        showStatus('Error saving attendance','error');
+                        return false;
+                    }
+                }
+                //Reload attendance data
+                await loadAttendance();
+                showStatus('Attendance saved successfully');
+                return true;
+            } catch (error) {
+                console.error('Error saving attendance:',error);
+                showStatus('Error saving attendance','error');
+                return false;
+            }
         }
-        
-        // Check if we have students loaded
-        const rows = document.querySelectorAll('#attendanceTable tbody tr');
-        if (rows.length === 0) {
-            showStatus('No students loaded for this date. Click "Load Students" first.', 'error');
-            return false;
-        }
-        
-        // Get all attendance records for this date
-        const attendanceRecords = [];
-        rows.forEach(row => {
-            const studentName = row.cells[1].textContent;
-            const statusSelect = row.querySelector('select');
-            const status = statusSelect ? statusSelect.value : 'Absent';
-            attendanceRecords.push({
-                date,
-                student: studentName,
-                status
-            });
-        });
-
-        // Delete existing records for this date
-        const { error: deleteError } = await supabase
-            .from('attendance')
-            .delete()
-            .eq('date', date);
-            
-        if (deleteError) {
-            console.error('Error deleting attendance:', deleteError);
-            showStatus('Error clearing previous attendance', 'error');
-            return false;
-        }
-
-        // Insert new records only if we have records to insert
-        if (attendanceRecords.length > 0) {
-            const { error } = await supabase
-                .from('attendance')
-                .insert(attendanceRecords);
-        }
-
-        // Reload attendance data
-        await loadAttendance();
-        showStatus('Attendance saved successfully for ' + date);
-        return true;
-    } catch (error) {
-        console.error('Error saving attendance:', error);
-        showStatus('Error saving attendance: ' + error.message, 'error');
-        return false;
-    }
-}
         async function loadMeetings() {
             try {
                 const { data, error } = await supabase
@@ -1873,9 +1882,6 @@
     </script>
 </body>
 </html>
-
-
-
 
 
 
